@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.focus-creative-games.hybridclr_unity": {
+      "version": "0.6.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.cn"
+    },
     "com.unity.collab-proxy": {
       "version": "1.15.17",
       "depth": 0,
