@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Text;
-using System.Collections.Generic;
-using UnityEngine.Assertions;
-using UnityEngine;
 
 namespace NRFramework
 {
@@ -22,7 +17,7 @@ namespace NRFramework
         //接收缓冲区应足够大，减少一条消息分多次接收的可能性。
         //这里取两字节能保存的最大长度
         //注意，这样仍然不能保证每次接收到的是完整消息，最终应做消息拼接。  
-        private byte[] m_ReveiveBuffer = new byte[65536];  
+        private byte[] m_ReveiveBuffer = new byte[65536];
 
         public Action onConnected;
         public Action<byte[], int> onSent;
