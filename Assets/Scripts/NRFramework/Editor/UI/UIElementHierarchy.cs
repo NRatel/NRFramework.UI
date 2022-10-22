@@ -6,8 +6,6 @@ namespace NRFramework
     [InitializeOnLoad]
     public class UIElementHierarchy
     {
-        private const bool kEnableOpElementHierarchy = true;
-
         static UIElementHierarchy()
         {
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemOnGUI;
@@ -15,7 +13,7 @@ namespace NRFramework
 
         static private void HierarchyWindowItemOnGUI(int instanceId, Rect selectRect)
         {
-            if (!kEnableOpElementHierarchy) { return; }
+            if (!NRFrameworkEditorSetting.Instance.enableOpElementHierarchy) { return; }
             if (EditorApplication.isPlayingOrWillChangePlaymode) { return; }
 
             GameObject go = EditorUtility.InstanceIDToObject(instanceId) as GameObject;

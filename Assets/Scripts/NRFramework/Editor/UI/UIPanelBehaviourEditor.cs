@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -86,8 +88,32 @@ namespace NRFramework
             if (GUILayout.Button("Export"))
             {
                 RefreshOpElementList(m_OpElementListRL);
-                Debug.Log("执行导出！");
+                
+                DealUIPrefab();
+                GenerateUIBaseClass();
+
+                Debug.Log("导出成功！");
             }
+        }
+
+        private void DealUIPrefab()
+        {
+        }
+
+        private void GenerateUIBaseClass()
+        {
+            string targetName = target.name;
+            string savePath = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiCodeGenerateDir, targetName + "Base.cs");
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("// 导出测试");
+            sb.AppendLine("// savePath: " + savePath);
+
+            File.WriteAllText(savePath, sb.ToString());
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }
