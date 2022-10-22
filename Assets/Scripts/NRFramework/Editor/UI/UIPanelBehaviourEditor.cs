@@ -85,35 +85,70 @@ namespace NRFramework
 
         private void DrawExpoertButton()
         {
-            if (GUILayout.Button("Export"))
+            string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
+            if (string.IsNullOrEmpty(targetPath)){ return; } //仅允许从预设导出（从预设才可获得相对子路径及准确名称）
+
+            GUILayout.BeginHorizontal();
             {
-                RefreshOpElementList(m_OpElementListRL);
-                
-                DealUIPrefab();
-                GenerateUIBaseClass();
+                if (GUILayout.Button("ExportBase"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUIBaseCode();
 
-                Debug.Log("导出成功！");
+                    Debug.Log("Export success!");
+                }
+
+                if (GUILayout.Button("ExportTemp"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUITempCode();
+
+                    Debug.Log("Export success!");
+                }
             }
+            GUILayout.EndHorizontal();
         }
 
-        private void DealUIPrefab()
+        private void GenerateUIBaseCode()
         {
-        }
+            // 1、如果物体不在预设根路径下，则不允许导出。
+            // 2、截取相对子路径（含文件名、不含后缀）。
+            // 3、拼接存储路径，并存储生成的代码。
 
-        private void GenerateUIBaseClass()
-        {
             string targetName = target.name;
-            string savePath = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiCodeGenerateDir, targetName + "Base.cs");
+            string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
+            string uiPrefabRootDir = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir);
 
-            StringBuilder sb = new StringBuilder();
+            
+            string relativePath1 = Path.GetRelativePath(targetPath, uiPrefabRootDir);
+            string relativePath2 = Path.GetRelativePath(uiPrefabRootDir, targetPath);
 
-            sb.AppendLine("// 导出测试");
-            sb.AppendLine("// savePath: " + savePath);
 
-            File.WriteAllText(savePath, sb.ToString());
+            Debug.Log("targetName: " + targetName);
+            Debug.Log("targetPath: " + targetPath);
+            Debug.Log("uiPrefabRootDir: " + uiPrefabRootDir);
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            Debug.Log("relativePath1: " + relativePath1);
+            Debug.Log("relativePath2: " + relativePath2);
+
+
+            //string savePath = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiGenerateRootDir);
+            //string subPath =  targetName + "Base.cs"
+
+            //StringBuilder sb = new StringBuilder();
+
+            //sb.AppendLine("// 导出测试");
+            //sb.AppendLine("// savePath: " + savePath);
+
+            //File.WriteAllText(savePath, sb.ToString());
+
+            //AssetDatabase.SaveAssets();
+            //AssetDatabase.Refresh();
+        }
+
+        private void GenerateUITempCode()
+        {
+            
         }
     }
 }

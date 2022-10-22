@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: NRFrameworkEditorSetting
   m_EditorClassIdentifier: 
   enableOpElementHierarchy: 1
-  uiCodeGenerateDir: Scripts/GameLogic/UIBaseClasses/
+  uiPrefabRootDir: GameRes/GUI/Prefabs
+  uiGenerateRootDir: Scripts/GameLogic/GeneratedTempUICodes

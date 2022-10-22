@@ -16,10 +16,14 @@ namespace NRFramework
         //public AssetUsageMode assetUsageMode = AssetUsageMode.Editor;       //编辑器下运行时
         //public string assetBundleRemoteUrl = "https://127.0.0.1";
 
-        //UI
+        // UI
         public bool enableOpElementHierarchy = true;
 
-        public string uiCodeGenerateDir = "Scripts/GameLogic/UIBaseClasses/"; //相对于 Application.dataPath
+        public string uiPrefabRootDir = "GameRes/GUI/Prefabs";
+        // UI类生成根目录（相对于 Application.dataPath）
+        // 将在在 /预设相对路径/ 下创建对应基类。
+        // 将在其 /_Temp 下创建快捷模板，创建后自行挪走
+        public string uiGenerateRootDir = "Scripts/GameLogic/GeneratedTempUICodes"; 
 
         private static NRFrameworkEditorSetting sm_Instance = null;
         public static NRFrameworkEditorSetting Instance
