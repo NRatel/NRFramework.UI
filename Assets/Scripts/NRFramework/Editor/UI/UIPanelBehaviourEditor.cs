@@ -115,6 +115,8 @@ namespace NRFramework
             // 2、截取相对子路径（含文件名、不含后缀）。
             // 3、拼接存储路径，并存储生成的代码。
 
+            Debug.Log(((UIPanelBehaviour)target).transform.parent);
+
             string targetName = target.name;
             string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
             string uiPrefabRootDir = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir);
