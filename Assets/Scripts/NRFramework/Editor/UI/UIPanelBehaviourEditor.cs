@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace NRFramework
@@ -85,8 +86,8 @@ namespace NRFramework
 
         private void DrawExpoertButton()
         {
-            string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
-            if (string.IsNullOrEmpty(targetPath)){ return; } //仅允许从预设导出（从预设才可获得相对子路径及准确名称）
+            //string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
+            //if (string.IsNullOrEmpty(targetPath)){ return; } //仅允许从预设导出（从预设才可获得相对子路径及准确名称）
 
             GUILayout.BeginHorizontal();
             {
@@ -115,24 +116,45 @@ namespace NRFramework
             // 2、截取相对子路径（含文件名、不含后缀）。
             // 3、拼接存储路径，并存储生成的代码。
 
-            Debug.Log(((UIPanelBehaviour)target).transform.parent);
+            //Debug.Log(((UIPanelBehaviour)target).transform.parent);
 
-            string targetName = target.name;
-            string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
-            string uiPrefabRootDir = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir);
-
-            
-            string relativePath1 = Path.GetRelativePath(targetPath, uiPrefabRootDir);
-            string relativePath2 = Path.GetRelativePath(uiPrefabRootDir, targetPath);
+            //string targetName = target.name;
+            //string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
+            //string uiPrefabRootDir = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir);
 
 
-            Debug.Log("targetName: " + targetName);
-            Debug.Log("targetPath: " + targetPath);
-            Debug.Log("uiPrefabRootDir: " + uiPrefabRootDir);
+            //string relativePath1 = Path.GetRelativePath(targetPath, uiPrefabRootDir);
+            //string relativePath2 = Path.GetRelativePath(uiPrefabRootDir, targetPath);
 
-            Debug.Log("relativePath1: " + relativePath1);
-            Debug.Log("relativePath2: " + relativePath2);
+            //EditorSettings.defaultBehaviorMode
 
+
+            //Debug.Log("targetName: " + targetName);
+            //Debug.Log("targetPath: " + targetPath);
+            //Debug.Log("uiPrefabRootDir: " + uiPrefabRootDir);
+
+            //Debug.Log("relativePath1: " + relativePath1);
+            //Debug.Log("relativePath2: " + relativePath2);
+
+            PrefabAssetType singlePrefabType = PrefabUtility.GetPrefabAssetType(target);
+            PrefabInstanceStatus singleInstanceStatus = PrefabUtility.GetPrefabInstanceStatus(target);
+
+            Debug.Log("singlePrefabType: " + singlePrefabType);
+            Debug.Log("singleInstanceStatus: " + singleInstanceStatus);
+
+            string prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(target);
+            Debug.Log("prefabAssetPath: " + prefabAssetPath);
+
+            //无用，是通过预设内物体找预设的根节点
+            GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(target);
+            Debug.Log(prefabRoot);
+
+            PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            Debug.Log(prefabStage);
+            if (prefabStage != null)
+            {
+                Debug.Log("prefabStage.prefabAssetPath: " + prefabStage.assetPath);
+            }
 
             //string savePath = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiGenerateRootDir);
             //string subPath =  targetName + "Base.cs"
