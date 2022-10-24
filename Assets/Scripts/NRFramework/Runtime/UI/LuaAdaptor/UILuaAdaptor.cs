@@ -11,8 +11,8 @@ namespace NRFramework
     {
         public UILuaPanel OpenPanel(string panelId, string prefabPath, LuaTable luaPanel, LuaTable luaSetting, LuaTable luaContext = null)
         {
-            UILuaPanel panel = new UILuaPanel(panelId, luaPanel);
-            panel.Init(m_UICanvas, prefabPath, luaContext);
+            UILuaPanel panel = new UILuaPanel();
+            panel.Init(panelId, luaPanel, m_UICanvas, prefabPath, luaContext);
             SetAndCache(panel, luaSetting);
             SortAllPanels();
             return panel;

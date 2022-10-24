@@ -97,8 +97,8 @@ namespace NRFramework
 
         public T OpenPanel<T>(string panelId, string prefabPath, UIPanelOpenSetting setting, UIContext context = null) where T : UIPanel
         {
-            T panel = Activator.CreateInstance(typeof(T), panelId) as T;
-            panel.Init(m_UICanvas, prefabPath, context);
+            T panel = Activator.CreateInstance(typeof(T)) as T;
+            panel.Init(panelId, m_UICanvas, prefabPath, context);
             SetAndCache(panel, setting);
             SortAllPanels();
             return panel;

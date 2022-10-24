@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableOpElementHierarchy: 1
   uiPrefabRootDir: GameRes/GUI/Prefabs
-  uiGenerateRootDir: Scripts/GameLogic/GeneratedTempUICodes
+  generatedBaseUIRootDir: Scripts/GameLogic/GeneratedBaseUI
+  generatedTempUIDir: Scripts/GameLogic/_GeneratedTempUI

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace NRFramework
@@ -112,67 +111,78 @@ namespace NRFramework
 
         private void GenerateUIBaseCode()
         {
+            // 大体步骤：
             // 1、如果物体不在预设根路径下，则不允许导出。
             // 2、截取相对子路径（含文件名、不含后缀）。
-            // 3、拼接存储路径，并存储生成的代码。
+            // 3、拼接存储路径。
+            // 4、生成代码并存储。
+            string prefabPath = GetPrefabPath();
+            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
 
-            //Debug.Log(((UIPanelBehaviour)target).transform.parent);
+            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
+            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
 
-            //string targetName = target.name;
-            //string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
-            //string uiPrefabRootDir = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir);
-
-
-            //string relativePath1 = Path.GetRelativePath(targetPath, uiPrefabRootDir);
-            //string relativePath2 = Path.GetRelativePath(uiPrefabRootDir, targetPath);
-
-            //EditorSettings.defaultBehaviorMode
-
-
-            //Debug.Log("targetName: " + targetName);
-            //Debug.Log("targetPath: " + targetPath);
-            //Debug.Log("uiPrefabRootDir: " + uiPrefabRootDir);
-
-            //Debug.Log("relativePath1: " + relativePath1);
-            //Debug.Log("relativePath2: " + relativePath2);
-
-            PrefabAssetType singlePrefabType = PrefabUtility.GetPrefabAssetType(target);
-            PrefabInstanceStatus singleInstanceStatus = PrefabUtility.GetPrefabInstanceStatus(target);
-
-            Debug.Log("singlePrefabType: " + singlePrefabType);
-            Debug.Log("singleInstanceStatus: " + singleInstanceStatus);
-
-            string prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(target);
-            Debug.Log("prefabAssetPath: " + prefabAssetPath);
-
-            //无用，是通过预设内物体找预设的根节点
-            GameObject prefabRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(target);
-            Debug.Log(prefabRoot);
-
-            PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-            Debug.Log(prefabStage);
-            if (prefabStage != null)
+            if (!fullPrefabPath.StartsWith(fullRootDir))
             {
-                Debug.Log("prefabStage.prefabAssetPath: " + prefabStage.assetPath);
+                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
+                return;
             }
 
-            //string savePath = Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiGenerateRootDir);
-            //string subPath =  targetName + "Base.cs"
+            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), Path.GetFileNameWithoutExtension(subPath) + "Base.cs");
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
-            //StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            //sb.AppendLine("// 导出测试");
-            //sb.AppendLine("// savePath: " + savePath);
+            sb.AppendLine("// 导出测试");
+            sb.AppendLine("// savePath: " + savePath);
 
-            //File.WriteAllText(savePath, sb.ToString());
+            string saveDir = Path.GetDirectoryName(savePath);
+            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
 
-            //AssetDatabase.SaveAssets();
-            //AssetDatabase.Refresh();
+            File.WriteAllText(savePath, sb.ToString());
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         private void GenerateUITempCode()
         {
-            
+            // 大体步骤：
+            // 1、如果物体不在预设根路径下，则不允许导出。
+            // 2、截取相对子路径（含文件名、不含后缀）。
+            // 3、拼接存储路径。
+            // 4、生成代码并存储。
+            string prefabPath = GetPrefabPath();
+            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
+
+            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
+            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
+
+            if (!fullPrefabPath.StartsWith(fullRootDir))
+            {
+                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
+                return;
+            }
+
+            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), Path.GetFileNameWithoutExtension(subPath) + ".cs");
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("// 导出测试");
+            sb.AppendLine("// savePath: " + savePath);
+
+            string saveDir = Path.GetDirectoryName(savePath);
+            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
+
+            File.WriteAllText(savePath, sb.ToString());
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 }

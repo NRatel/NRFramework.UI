@@ -8,18 +8,16 @@ namespace NRFramework
         protected string widgetId { get { return viewId; } }
         public UIWidgetBehaviour widgetBehaviour { get { return (UIWidgetBehaviour)viewBehaviour; } }
 
-        public UIWidget(string widgetId) : base(widgetId) { }
-
-        public void Init(UIView parentView, RectTransform parentRectTransform, string prefabPath, UIContext context)
+        public void Init(string widgetId, UIView parentView, RectTransform parentRectTransform, string prefabPath, UIContext context)
         {
             this.parentView = parentView;
-            base.Init(parentRectTransform, prefabPath, context);
+            base.Init(widgetId, parentRectTransform, prefabPath, context);
         }
 
-        public void Init(UIView parentView, RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour, UIContext context)
+        public void Init(string widgetId, UIView parentView, RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour, UIContext context)
         {
             this.parentView = parentView;
-            base.Init(parentRectTransform, widgetBehaviour, context);
+            base.Init(widgetId, parentRectTransform, widgetBehaviour, context);
         }
     }
 }

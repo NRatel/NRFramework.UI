@@ -11,12 +11,10 @@ namespace NRFramework
         public Canvas canvas;
         public GraphicRaycaster gaphicRaycaster;
 
-        public UIPanel(string panelId) : base(panelId) { }
-
-        public void Init(Canvas parentCanvas, string prefabPath, UIContext context)
+        public void Init(string panelId, Canvas parentCanvas, string prefabPath, UIContext context)
         {
             this.parentCanvas = parentCanvas;
-            base.Init(parentCanvas.GetComponent<RectTransform>(), prefabPath, context);
+            base.Init(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath, context);
         }
 
         public void SetSortingOrder(int sortingOrder)

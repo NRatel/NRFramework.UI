@@ -12,13 +12,9 @@ namespace NRFramework
         public RectTransform parentRectTransform;
         public UIContext context;
 
-        public UIView(string viewId)
+        protected void Init(string viewId, RectTransform parentRectTransform, string prefabPath, UIContext context)
         {
             this.viewId = viewId;
-        }
-
-        protected void Init(RectTransform parentRectTransform, string prefabPath, UIContext context)
-        {
             this.parentRectTransform = parentRectTransform;
             this.viewBehaviour = GetUIViewBehaviour(prefabPath);
             this.context = context;
@@ -26,8 +22,9 @@ namespace NRFramework
             this.OnCreated(context);
         }
         
-        protected void Init(RectTransform parentRectTransform, UIViewBehaviour viewBehaviour, UIContext context)
+        protected void Init(string viewId, RectTransform parentRectTransform, UIViewBehaviour viewBehaviour, UIContext context)
         {
+            this.viewId = viewId;
             this.parentRectTransform = parentRectTransform;
             this.viewBehaviour = viewBehaviour;
             this.context = context;
@@ -70,8 +67,8 @@ namespace NRFramework
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
             Debug.Assert(viewBehaviour.Equals(parentViewBehaviour), "必须以当前UIView的元素作为UIWidget的根节点");
 
-            T widget = Activator.CreateInstance(typeof(T), widgetId) as T;
-            widget.Init(this, parentRectTransform, prefabPath, context);
+            T widget = Activator.CreateInstance(typeof(T)) as T;
+            widget.Init(widgetId, this, parentRectTransform, prefabPath, context);
             
             //todo 是否在View中持有widget？
             return widget;
@@ -82,8 +79,8 @@ namespace NRFramework
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
             Debug.Assert(viewBehaviour.Equals(parentViewBehaviour), "必须以当前UIView的元素作为UIWidget的根节点");
 
-            T widget = Activator.CreateInstance(typeof(T), widgetId) as T;
-            widget.Init(this, parentRectTransform, widgetBehaviour, context);
+            T widget = Activator.CreateInstance(typeof(T)) as T;
+            widget.Init(widgetId, this, parentRectTransform, widgetBehaviour, context);
             
             //todo 是否在View中持有widget？
             return widget;

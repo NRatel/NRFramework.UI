@@ -178,5 +178,59 @@ namespace NRFramework
 
             listSP.serializedObject.ApplyModifiedProperties();
         }
+
+        protected string GetPrefabPath()
+        {
+            // 如果正确拿到预设所在路径？
+            PrefabAssetType singlePrefabType = PrefabUtility.GetPrefabAssetType(target);
+            PrefabInstanceStatus singleInstanceStatus = PrefabUtility.GetPrefabInstanceStatus(target);
+            string targetAssetPath = AssetDatabase.GetAssetPath(target);
+            string prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(target);
+            UnityEditor.SceneManagement.PrefabStage prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+
+            //Debug.Log("singlePrefabType: " + singlePrefabType);
+            //Debug.Log("singleInstanceStatus: " + singleInstanceStatus);
+            //Debug.Log("targetAssetPath: " + targetAssetPath);
+            //Debug.Log("prefabAssetPath: " + prefabAssetPath);
+            //Debug.Log("prefabStage: " + prefabStage);
+
+            //1、点击预设时:
+            //      singlePrefabType: Regular;
+            //      singleInstanceStatus: NotAPrefab
+            //      targetAssetPath: 可正确拿到
+            //      prefabAssetPath: 可正确拿到
+            //      prefabStage: Null
+
+            //2、双击预设并在Hierarchy上选择时:
+            //      singlePrefabType: NotAPrefab;    
+            //      singleInstanceStatus: NotAPrefab
+            //      targetAssetPath: "" (空字符串)
+            //      prefabAssetPath: "" (空字符串)
+            //      prefabStage: 可正确拿到
+
+            //3、预设拖入Hierarchy并选择时:
+            //      singlePrefabType: Regular;
+            //      singleInstanceStatus: Connected
+            //      targetAssetPath: "" (空字符串)
+            //      prefabAssetPath: 可正确拿到
+            //      prefabStage: Null
+
+            // 需要覆盖并正确判断这三种情况。
+            string finalPrefabPath = null;
+            if (singlePrefabType == PrefabAssetType.Regular && !string.IsNullOrEmpty(targetAssetPath))
+            {
+                finalPrefabPath = targetAssetPath;   //点击预设时
+            }
+            else if (singlePrefabType == PrefabAssetType.Regular && !string.IsNullOrEmpty(prefabAssetPath))
+            {
+                finalPrefabPath = prefabAssetPath;  //预设拖入Hierarchy并选择时
+            }
+            else if (prefabStage != null)
+            {
+                finalPrefabPath = prefabStage.assetPath; //双击预设并在Hierarchy上选择时
+            }
+
+            return finalPrefabPath;
+        }
     }
 }

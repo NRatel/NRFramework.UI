@@ -17,9 +17,10 @@ namespace NRFramework
         private Action<LuaTable> m_LuaOnDisable;
         private Action<LuaTable> m_LuaOnDestroy;
 
-        public UILuaPanel(string panelId, LuaTable luaTable) : base(panelId)
+        public void Init(string panelId, LuaTable luaTable, Canvas parentCanvas, string prefabPath, UIContext context)
         {
             @this = luaTable;
+            base.Init(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath, context);
         }
 
         protected override void OnCreating()

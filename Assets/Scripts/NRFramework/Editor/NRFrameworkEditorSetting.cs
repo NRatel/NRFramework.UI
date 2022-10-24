@@ -23,7 +23,8 @@ namespace NRFramework
         // UI类生成根目录（相对于 Application.dataPath）
         // 将在在 /预设相对路径/ 下创建对应基类。
         // 将在其 /_Temp 下创建快捷模板，创建后自行挪走
-        public string uiGenerateRootDir = "Scripts/GameLogic/GeneratedTempUICodes"; 
+        public string generatedBaseUIRootDir = "Scripts/GameLogic/GeneratedBaseUI";
+        public string generatedTempUIDir = "Scripts/GameLogic/_GeneratedTempUI";
 
         private static NRFrameworkEditorSetting sm_Instance = null;
         public static NRFrameworkEditorSetting Instance
