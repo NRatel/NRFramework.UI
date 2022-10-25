@@ -6,61 +6,6 @@ namespace NRFramework
 {
     public partial class UIManager : Singleton<UIManager>
     {
-        private class UILayer
-        {
-            public string layerId;
-            public int startOrder;
-            public int endOrder;
-
-            public Dictionary<string, UIPanel> m_PanelDict;
-
-            public UILayer()
-            {
-                m_PanelDict = new Dictionary<string, UIPanel>();
-            }
-
-            public void AddPanel(UIPanel panel, int fixedOrder)
-            {
-                int sortingOrder = startOrder; //默认起始
-                if (fixedOrder >= 0)
-                {
-                    sortingOrder = startOrder + fixedOrder; //若有指定，则使用指定的SortintOrder
-                }
-                else
-                {
-                    UIPanel topPanel = GetTopPanel();
-                    if (topPanel != null)
-                    {
-                        sortingOrder = topPanel.canvas.sortingOrder + topPanel.panelBehaviour.thickness + 1; //若存在topPanel，在其基础上自增
-                    }
-                }
-
-                Debug.Assert(sortingOrder <= endOrder, "sortingOrder超出设定的endOrder");
-
-                panel.SetSortingOrder(sortingOrder);
-                m_PanelDict.Add(panel.panelId, panel);
-            }
-
-            public void RemovePanel(string panelId)
-            {
-                m_PanelDict.Remove(panelId);
-            }
-
-            public UIPanel GetTopPanel()
-            {
-                UIPanel topPanel = null;
-                foreach (KeyValuePair<string, UIPanel> kvPair in m_PanelDict)
-                {
-                    UIPanel panel = kvPair.Value;
-                    if (topPanel == null || panel.canvas.sortingOrder > topPanel.canvas.sortingOrder)
-                    {
-                        topPanel = panel;
-                    }
-                }
-                return topPanel;
-            }
-        }
-
         private Canvas m_UICanvas;
         private Camera m_UICamera;
         private Dictionary<string, UILayer> m_LayerDict;
@@ -76,6 +21,12 @@ namespace NRFramework
             m_PanelToLayerMap = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// 创建一个UI层
+        /// </summary>
+        /// <param name="layerId"></param>
+        /// <param name="startOrder"></param>
+        /// <param name="endOrder"></param>
         public void CreateLayer(string layerId, int startOrder, int endOrder)
         {
             Debug.Assert(!m_LayerDict.ContainsKey(layerId), "layer已存在");
@@ -95,16 +46,57 @@ namespace NRFramework
             });
         }
 
-        public T OpenPanel<T>(string panelId, string prefabPath, UIPanelOpenSetting setting, UIContext context = null) where T : UIPanel
+        /// <summary>
+        /// 创建一个UI面板
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="panelId">panelId</param>
+        /// <param name="prefabPath">预设路径</param>
+        /// <param name="layerId">在哪个层打开</param>
+        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
+        /// <returns></returns>
+        public T CreatePanel<T>(string panelId, string prefabPath, string layerId, int fixedOrder) where T : UIPanel
         {
             T panel = Activator.CreateInstance(typeof(T)) as T;
-            panel.Init(panelId, m_UICanvas, prefabPath, context);
-            SetAndCache(panel, setting);
+            panel.Create(panelId, m_UICanvas, prefabPath);
+
+            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
+
+            UILayer layer = m_LayerDict[layerId];
+            layer.AddPanel(panel, fixedOrder);
+            m_AllPanelDict.Add(panel.panelId, panel);
+            m_PanelToLayerMap.Add(panel.panelId, layerId);
+
             SortAllPanels();
             return panel;
         }
 
-        public void ClosePanel<T>(string panelId)
+        /// <summary>
+        /// 创建一个UI面板
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="panelId">panelId</param>
+        /// <param name="panelBehaviour"></param>
+        /// <param name="layerId">在哪个层打开</param>
+        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
+        /// <returns></returns>
+        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, string layerId, int fixedOrder) where T : UIPanel
+        {
+            T panel = Activator.CreateInstance(typeof(T)) as T;
+            panel.Create(panelId, m_UICanvas, panelBehaviour);
+
+            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
+
+            UILayer layer = m_LayerDict[layerId];
+            layer.AddPanel(panel, fixedOrder);
+            m_AllPanelDict.Add(panel.panelId, panel);
+            m_PanelToLayerMap.Add(panel.panelId, layerId);
+
+            SortAllPanels();
+            return panel;
+        }
+
+        public void DestoryPanel<T>(string panelId)
         {
 
         }
@@ -121,18 +113,6 @@ namespace NRFramework
                 }
             }
             return topPanel;
-        }
-
-        private void SetAndCache(UIPanel panel, UIPanelOpenSetting setting)
-        {
-            //Debug.Log("setting.layerId: " + setting.layerId);
-            Debug.Assert(m_LayerDict.ContainsKey(setting.layerId), "layer不存在");
-
-            UILayer layer = m_LayerDict[setting.layerId];
-
-            layer.AddPanel(panel, setting.fixedOrder);
-            m_AllPanelDict.Add(panel.panelId, panel);
-            m_PanelToLayerMap.Add(panel.panelId, setting.layerId);
         }
 
         //调整所有Panel的 sblingIndex。仅编辑器下？

@@ -11,20 +11,26 @@ namespace NRFramework
         public Canvas canvas;
         public GraphicRaycaster gaphicRaycaster;
 
-        public void Init(string panelId, Canvas parentCanvas, string prefabPath, UIContext context)
+        protected internal void Create(string panelId, Canvas parentCanvas, string prefabPath)
         {
             this.parentCanvas = parentCanvas;
-            base.Init(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath, context);
+            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
         }
 
-        public void SetSortingOrder(int sortingOrder)
+        protected internal void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour)
+        {
+            this.parentCanvas = parentCanvas;
+            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+        }
+
+        internal void SetSortingOrder(int sortingOrder)
         {
             canvas.sortingOrder = sortingOrder;
         }
 
-        protected override void OnCreating()
+        protected internal override void OnInternalCreating()
         {
-            base.OnCreating();
+            base.OnInternalCreating();
             canvas = panelBehaviour.gameObject.AddComponent<Canvas>();
             canvas.overrideSorting = true;
             gaphicRaycaster = panelBehaviour.gameObject.AddComponent<GraphicRaycaster>();

@@ -11,21 +11,23 @@ namespace NRFramework
     {
         public LuaTable @this;
 
-        private Action<LuaTable, LuaTable> m_LuaOnCreated;
-        private Action<LuaTable> m_LuaOnEnable;
-        private Action<LuaTable> m_LuaOnStart;
-        private Action<LuaTable> m_LuaOnDisable;
-        private Action<LuaTable> m_LuaOnDestroy;
+        private Action<LuaTable> m_LuaOnCreated;
 
-        public void Init(string panelId, LuaTable luaTable, Canvas parentCanvas, string prefabPath, UIContext context)
+        public void Create(string panelId, Canvas parentCanvas, string prefabPath, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Init(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath, context);
+            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
         }
 
-        protected override void OnCreating()
+        public void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour, LuaTable luaTable)
         {
-            base.OnCreating();
+            @this = luaTable;
+            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+        }
+
+        protected override void OnInternalCreating()
+        {
+            base.OnInternalCreating();
 
             SetMember("csPanel", this);
             SetMember("panelId", panelId);
@@ -33,16 +35,11 @@ namespace NRFramework
             SetMember("rectTransform", rectTransform);
             SetMember("gameObject", gameObject);
             SetMember("parentRectTransform", parentRectTransform);
-            SetMember("context", ((UILuaContext)context).luaContext);
             SetMember("parentCanvas", parentCanvas);
             SetMember("canvas", canvas);
             SetMember("gaphicRaycaster", gaphicRaycaster);
 
             GetMember("OnCreated", out m_LuaOnCreated);
-            GetMember("OnEnable", out m_LuaOnEnable);
-            GetMember("OnStart", out m_LuaOnStart);
-            GetMember("OnDisable", out m_LuaOnDisable);
-            GetMember("OnDestroy", out m_LuaOnDestroy);
         }
 
         //设置成员 供Lua调C#
@@ -59,39 +56,13 @@ namespace NRFramework
         }
 
 #region UIView生命周期
-        protected override void OnCreated(UIContext context)
+        protected override void OnCreated()
         {
-            base.OnCreated(context);
-            m_LuaOnCreated?.Invoke(@this, ((UILuaContext)context).luaContext);
+            base.OnCreated();
+            m_LuaOnCreated?.Invoke(@this);
         }
-#endregion
 
-#region 来自UIBehaviour的生命周期
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            m_LuaOnEnable?.Invoke(@this);
-        }
-        
-        protected override void OnStart()
-        {
-            base.OnStart();
-            m_LuaOnStart?.Invoke(@this);
-        }
-        
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-            m_LuaOnDisable?.Invoke(@this);
-        }
-        
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            m_LuaOnDestroy?.Invoke(@this);
-            @this.Dispose();
-            @this = null;
-        }
+        //...
 #endregion
     }
 }

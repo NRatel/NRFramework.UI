@@ -9,48 +9,36 @@ namespace NRFramework
 {
     public partial class UIManager
     {
-        public UILuaPanel OpenPanel(string panelId, string prefabPath, LuaTable luaPanel, LuaTable luaSetting, LuaTable luaContext = null)
+        public UILuaPanel CreatePanel(string panelId, string prefabPath, string layerId, int fixedOrder, LuaTable luaPanel)
         {
             UILuaPanel panel = new UILuaPanel();
-            panel.Init(panelId, luaPanel, m_UICanvas, prefabPath, luaContext);
-            SetAndCache(panel, luaSetting);
+            panel.Create(panelId, luaPanel, m_UICanvas, prefabPath, luaPanel);
+
+            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
+
+            UILayer layer = m_LayerDict[layerId];
+            layer.AddPanel(panel, fixedOrder);
+            m_AllPanelDict.Add(panel.panelId, panel);
+            m_PanelToLayerMap.Add(panel.panelId, layerId);
+
             SortAllPanels();
             return panel;
         }
-    }
 
-    public partial class UIPanelOpenSetting
-    {
-        public static implicit operator UIPanelOpenSetting(LuaTable luaSetting)
+        public UILuaPanel CreatePanel(string panelId, UIPanelBehaviour panelBehaviour, string layerId, int fixedOrder, LuaTable luaPanel)
         {
-            string layerId;
-            luaSetting.Get("layerId", out layerId);
-            Debug.Assert(!string.IsNullOrEmpty(layerId));
+            UILuaPanel panel = new UILuaPanel();
+            panel.Create(panelId, m_UICanvas, panelBehaviour, luaPanel);
 
-            int fixedOrder = -1;
-            if (luaSetting.ContainsKey("fixedOrder"))
-            {
-                luaSetting.Get("fixedOrder", out fixedOrder);
-            }
+            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
 
-            return new UIPanelOpenSetting() { layerId = layerId, fixedOrder = fixedOrder };
-        }
-    }
+            UILayer layer = m_LayerDict[layerId];
+            layer.AddPanel(panel, fixedOrder);
+            m_AllPanelDict.Add(panel.panelId, panel);
+            m_PanelToLayerMap.Add(panel.panelId, layerId);
 
-    public class UILuaContext : UIContext
-    {
-        public LuaTable luaContext;
-        public UILuaContext(LuaTable luaContext)
-        {
-            this.luaContext = luaContext;
-        }
-    }
-
-    public partial class UIContext
-    {
-        public static implicit operator UIContext(LuaTable luaContext)
-        {
-            return new UILuaContext(luaContext);
+            SortAllPanels();
+            return panel;
         }
     }
 }
