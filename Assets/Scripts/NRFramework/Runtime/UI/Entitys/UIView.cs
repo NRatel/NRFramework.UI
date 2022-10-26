@@ -72,15 +72,13 @@ namespace NRFramework
             Debug.Assert(viewBehaviour.Equals(parentViewBehaviour), "必须以当前UIView的元素作为UIWidget的根节点");
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
-            widget.Init(widgetId, this, parentRectTransform, widgetBehaviour);
+            widget.Create(widgetId, this, parentRectTransform, widgetBehaviour);
             
             //todo 是否在View中持有widget？
             return widget;
         }
         #endregion
 
-        #region UIView生命周期
-        protected virtual void OnCreated() { Debug.Log("UIView OnCreated"); }
-        #endregion
+        protected virtual void OnCreated() { }
     }
 }

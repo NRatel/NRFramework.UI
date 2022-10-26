@@ -19,5 +19,7 @@ namespace NRFramework
             this.parentView = parentView;
             base.Create(widgetId, parentRectTransform, widgetBehaviour);
         }
+
+        protected override void OnCreated() { }
     }
 }

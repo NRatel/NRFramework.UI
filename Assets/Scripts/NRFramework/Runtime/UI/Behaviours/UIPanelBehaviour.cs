@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NRFramework
 {
@@ -37,9 +38,9 @@ namespace NRFramework
         Window,
     }
 
-    public enum UIPanelOpenAnimation { None }
+    public enum UIPanelOpenAnimType { None, Default, Custom }
 
-    public enum UIPanelCloseAnimation { None }
+    public enum UIPanelCloseAnimType { None, Default, Custom }
 
     public class UIPanelBehaviour: UIViewBehaviour
     {
@@ -60,9 +61,9 @@ namespace NRFramework
 
         //预制标准动画
         [SerializeField]
-        private UIPanelOpenAnimation m_PanelOpenAnim;   //界面打开动画
+        private UIPanelOpenAnimType m_PanelOpenAnim;   //界面打开动画
         [SerializeField]
-        private UIPanelCloseAnimation m_PanelCloseAnim; //界面关闭动画
+        private UIPanelCloseAnimType m_PanelCloseAnim; //界面关闭动画
 
         public UIPanelType panelType { get { return m_PanelType; } }
         public bool colseWhenClickBg { get { return m_ColseWhenClickBg; } }
@@ -70,8 +71,8 @@ namespace NRFramework
         public int thickness { get { return m_Thickness; } }
         public bool inSafeArea { get { return m_InSafeArea; } }
 
-        public UIPanelOpenAnimation panelOpenAnim { get { return m_PanelOpenAnim; } }
-        public UIPanelCloseAnimation panelCloseAnim { get { return m_PanelCloseAnim; } }
+        public UIPanelOpenAnimType panelOpenAnim { get { return m_PanelOpenAnim; } }
+        public UIPanelCloseAnimType panelCloseAnim { get { return m_PanelCloseAnim; } }
 
         public bool hasBg { get { return m_PanelType != UIPanelType.Overlap; } }  //是否有背景？（完全由PanelType决定）
 
@@ -83,9 +84,46 @@ namespace NRFramework
             m_ColseWhenClickBg = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
-            m_PanelOpenAnim = UIPanelOpenAnimation.None;
-            m_PanelCloseAnim = UIPanelCloseAnimation.None;
+            m_PanelOpenAnim = UIPanelOpenAnimType.None;
+            m_PanelCloseAnim = UIPanelCloseAnimType.None;
         }
 #endif
+
+        internal void PlayOpenAnim(Action onComplete)
+        {
+            switch (m_PanelOpenAnim)
+            {
+                case UIPanelOpenAnimType.None:
+                    onComplete();
+                    break;
+                case UIPanelOpenAnimType.Default:
+                    //todo
+                    onComplete();
+                    break;
+                case UIPanelOpenAnimType.Custom:
+                    //todo
+                    onComplete();
+                    break;
+            }
+        }
+
+        internal void PlayCloseAnim(Action onComplete)
+        {
+            switch (m_PanelCloseAnim)
+            {
+                case UIPanelCloseAnimType.None:
+                    onComplete();
+                    break;
+                case UIPanelCloseAnimType.Default:
+                    //todo
+                    onComplete();
+                    break;
+                case UIPanelCloseAnimType.Custom:
+                    //todo
+                    onComplete();
+                    break;
+            }
+        }
+
     }
 }
