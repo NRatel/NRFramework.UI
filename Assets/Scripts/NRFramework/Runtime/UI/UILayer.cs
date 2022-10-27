@@ -12,26 +12,30 @@ namespace NRFramework
         public int startOrder;
         public int endOrder;
 
-        public Dictionary<string, UIPanel> m_PanelDict;
+        private Dictionary<string, UIPanel> m_PanelDict;
 
         public UILayer()
         {
             m_PanelDict = new Dictionary<string, UIPanel>();
         }
 
-        public void AddPanel(UIPanel panel, int fixedOrder)
+        internal void AddPanel(UIPanel panel, int fixedOrder)
         {
-            int sortingOrder = startOrder; //默认起始
+            //默认起始
+            int sortingOrder = startOrder; 
+
             if (fixedOrder >= 0)
             {
-                sortingOrder = startOrder + fixedOrder; //若有指定，则使用指定的SortintOrder
+                //若有指定，则使用指定的SortintOrder
+                sortingOrder = startOrder + fixedOrder; 
             }
             else
             {
                 UIPanel topPanel = GetTopPanel();
                 if (topPanel != null)
                 {
-                    sortingOrder = topPanel.canvas.sortingOrder + topPanel.panelBehaviour.thickness + 1; //若存在topPanel，在其基础上自增
+                    //若存在topPanel，在其基础上自增
+                    sortingOrder = topPanel.canvas.sortingOrder + topPanel.panelBehaviour.thickness + 1; 
                 }
             }
 
@@ -41,9 +45,19 @@ namespace NRFramework
             m_PanelDict.Add(panel.panelId, panel);
         }
 
-        public void RemovePanel(string panelId)
+        internal void RemovePanel(string panelId)
         {
             m_PanelDict.Remove(panelId);
+        }
+
+        public Dictionary<string, UIPanel> GetPanelDict()
+        {
+            return m_PanelDict;
+        }
+
+        public UIPanel GetPanel(string panelId)
+        {
+            return m_PanelDict[panelId];
         }
 
         public UIPanel GetTopPanel()

@@ -9,16 +9,14 @@ namespace NRFramework
         private Canvas m_UICanvas;
         private Camera m_UICamera;
         private Dictionary<string, UILayer> m_LayerDict;
-        public Dictionary<string, UIPanel> m_AllPanelDict;
-        private Dictionary<string, string> m_PanelToLayerMap; //panel与其所在Layer的映射。
+        private Dictionary<string, string> m_Panel2LayerMap; //panel与其所在Layer的映射。
 
         private UIManager()
         {
             m_UICanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
             m_UICamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
             m_LayerDict = new Dictionary<string, UILayer>();
-            m_AllPanelDict = new Dictionary<string, UIPanel>();
-            m_PanelToLayerMap = new Dictionary<string, string>();
+            m_Panel2LayerMap = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -55,19 +53,17 @@ namespace NRFramework
         /// <param name="layerId">在哪个层打开</param>
         /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(string panelId, string prefabPath, string layerId, int fixedOrder) where T : UIPanel
+        public T CreatePanel<T>(string panelId, string prefabPath, string layerId, int fixedOrder = -1) where T : UIPanel
         {
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, m_UICanvas, prefabPath);
 
             Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
 
-            UILayer layer = m_LayerDict[layerId];
-            layer.AddPanel(panel, fixedOrder);
-            m_AllPanelDict.Add(panel.panelId, panel);
-            m_PanelToLayerMap.Add(panel.panelId, layerId);
+            m_LayerDict[layerId].AddPanel(panel, fixedOrder);
+            m_Panel2LayerMap.Add(panel.panelId, layerId);
 
-            SortAllPanels();
+            SortAllSibling();
             return panel;
         }
 
@@ -80,25 +76,33 @@ namespace NRFramework
         /// <param name="layerId">在哪个层打开</param>
         /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, string layerId, int fixedOrder) where T : UIPanel
+        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, string layerId, int fixedOrder = -1) where T : UIPanel
         {
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, m_UICanvas, panelBehaviour);
 
             Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
 
-            UILayer layer = m_LayerDict[layerId];
-            layer.AddPanel(panel, fixedOrder);
-            m_AllPanelDict.Add(panel.panelId, panel);
-            m_PanelToLayerMap.Add(panel.panelId, layerId);
+            m_LayerDict[layerId].AddPanel(panel, fixedOrder);
+            m_Panel2LayerMap.Add(panel.panelId, layerId);
 
-            SortAllPanels();
+            SortAllSibling();
             return panel;
         }
 
-        public void ClosePanel<T>(string panelId)
+        public UIPanel GetPanel(string panelId)
         {
-            //T panel = 
+            Debug.Assert(ExistPanel(panelId), "panel不存在");
+
+            string layerId = m_Panel2LayerMap[panelId];
+            UILayer layer = m_LayerDict[layerId];
+
+            return layer.GetPanel(panelId);
+        }
+
+        public bool ExistPanel(string panelId)
+        {
+            return m_Panel2LayerMap.ContainsKey(panelId);
         }
 
         public UIPanel GetTopPanel()
@@ -115,27 +119,38 @@ namespace NRFramework
             return topPanel;
         }
 
-        //调整所有Panel的 sblingIndex。仅编辑器下？
-        private void SortAllPanels()
+        internal void RemovePanelRef(string panelId)
+        {
+            Debug.Assert(ExistPanel(panelId), "panel不存在");
+
+            string layerId = m_Panel2LayerMap[panelId];
+            UILayer layer = m_LayerDict[layerId];
+            UIPanel panel = GetPanel(panelId);
+
+            layer.RemovePanel(panelId);
+            m_Panel2LayerMap.Remove(panelId);
+        }
+
+        /// <summary>
+        /// 调整所有Panel的 sblingIndex。仅编辑器下？
+        /// </summary>
+        private void SortAllSibling()
         {
 #if UNITY_EDITOR
-            List<UIPanel> panels = new List<UIPanel>();
-            foreach (UIPanel panel in m_AllPanelDict.Values)
+            List<UIPanel> allPanels = new List<UIPanel>();
+            foreach (UILayer layer in m_LayerDict.Values)
             {
-                panels.Add(panel);
+                foreach (UIPanel panel in layer.GetPanelDict().Values)
+                {
+                    allPanels.Add(panel);
+                }
             }
-            panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
-            foreach (UIPanel panel in panels)
+            allPanels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
+            foreach (UIPanel panel in allPanels)
             {
                 panel.rectTransform.SetAsFirstSibling();
             }
 #endif
         }
-    }
-
-    public partial class UIPanelOpenSetting
-    {
-        public string layerId;          //所在层
-        public int fixedOrder;          //指定sortingOrder，正指定；负自增。
     }
 } 

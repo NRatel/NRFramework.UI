@@ -4,10 +4,10 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIPanelShowState { Crated, Initing, Refreshing, Idle }
-    public enum UIPanelAnimState { Crated, Opening, Closing, Idle }
+    public enum UIPanelShowState { Crated, Initing, Refreshing, Idle, Closed }
+    public enum UIPanelAnimState { Crated, Opening, Closing, Idle, Closed }
 
-    public class UIPanel : UIView
+    public abstract class UIPanel : UIView
     {
         public string panelId { get { return viewId; } }
         public UIPanelBehaviour panelBehaviour { get { return (UIPanelBehaviour)viewBehaviour; } }
@@ -18,16 +18,29 @@ namespace NRFramework
         public UIPanelShowState panelShowState { protected set; get; }
         public UIPanelAnimState panelAnimState { protected set; get; }
 
-        protected internal void Create(string panelId, Canvas parentCanvas, string prefabPath)
+        internal void Create(string panelId, Canvas parentCanvas, string prefabPath)
         {
             this.parentCanvas = parentCanvas;
             base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
         }
 
-        protected internal void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour)
+        internal void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour)
         {
             this.parentCanvas = parentCanvas;
             base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+        }
+
+        /// <summary>
+        /// 关闭界面本身。
+        /// 子类清理若是同步，可重写 OnClosing；若是异步，可重写此方法。
+        /// </summary>
+        /// <param name="onClosed">关闭回调（晚于生命周期OnClosed）</param>
+        public override void Close(Action onClosed)
+        {
+            PlayCloseAnim(() =>
+            {
+                base.Close(onClosed);
+            });
         }
 
         internal void SetSortingOrder(int sortingOrder)
@@ -37,25 +50,33 @@ namespace NRFramework
 
         protected internal override void OnInternalCreating()
         {
-            base.OnInternalCreating();
             canvas = panelBehaviour.gameObject.AddComponent<Canvas>();
             canvas.overrideSorting = true;
             gaphicRaycaster = panelBehaviour.gameObject.AddComponent<GraphicRaycaster>();
-
-            panelShowState = UIPanelShowState.Crated;
-            panelAnimState = UIPanelAnimState.Crated;
-
-            PlayOpenAnim();
         }
 
         protected internal override void OnInternalCreated()
         {
-            base.OnInternalCreated();
             panelShowState = UIPanelShowState.Crated;
             panelAnimState = UIPanelAnimState.Crated;
 
             PlayOpenAnim();
         }
+
+        protected internal override void OnInternalClosing()
+        {
+            UIManager.Instance.RemovePanelRef(panelId);
+
+            //组件接触引用即可, 实例会随gameObject销毁
+            gaphicRaycaster = null;
+            canvas = null;
+            parentCanvas = null;
+
+            panelAnimState = UIPanelAnimState.Closed;
+            panelShowState = UIPanelShowState.Closed;
+        }
+
+        protected internal override void OnInternalClosed() { }
 
         /* 关于 界面显示及状态相关问题 的思考：
         // 基本流程：
@@ -108,12 +129,12 @@ namespace NRFramework
         }
         */
 
-        public void Close()
+        public void CloseSelf()
         {
-            
+
         }
 
-        public void PlayOpenAnim()
+        internal void PlayOpenAnim()
         {
             Debug.Assert(panelAnimState == UIPanelAnimState.Idle);
 
@@ -121,18 +142,40 @@ namespace NRFramework
             panelBehaviour.PlayOpenAnim(() => { panelAnimState = UIPanelAnimState.Idle; });
         }
 
-        public virtual void PlayCloseAnim()
+        internal void PlayCloseAnim(Action onFinish)
         {
             Debug.Assert(panelAnimState == UIPanelAnimState.Idle);
 
             panelAnimState = UIPanelAnimState.Closing;
-            panelBehaviour.PlayOpenAnim(() => { panelAnimState = UIPanelAnimState.Idle; });
+            panelBehaviour.PlayOpenAnim(() => { panelAnimState = UIPanelAnimState.Idle; onFinish(); });
         }
 
-        #region 生命周期
+        #region 子类生命周期
+        /// <summary>
+        /// 执行创建（子类在此补充创建内容）
+        /// </summary>
+        protected override void OnCreating() { }
+
+        /// <summary>
+        /// 创建完成（状态已置为“已创建”）（子类可在此做上层逻辑，如：处理外部回调等）
+        /// </summary>
         protected override void OnCreated() { }
 
-        protected virtual void OnGotFoucus(bool got) { }
+        protected virtual void OnFoucus(bool got) { }
+
+        protected virtual void OnClickBackBtn() { }
+
+        protected virtual void OnClickWindowBg() { }
+
+        /// <summary>
+        /// 执行关闭（子类在此补充关闭（清理）内容）
+        /// </summary>
+        protected override void OnClosing() { }
+
+        /// <summary>
+        /// 关闭完成（状态已置为“已关闭”）（子类可在此做上层逻辑，如：处理外部回调等）
+        /// </summary>
+        protected override void OnClosed() { }
 
         #endregion
     }
