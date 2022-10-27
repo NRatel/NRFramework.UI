@@ -97,11 +97,13 @@ namespace NRFramework
                     onComplete();
                     break;
                 case UIPanelOpenAnimType.Default:
-                    //todo
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
                     onComplete();
                     break;
                 case UIPanelOpenAnimType.Custom:
-                    //todo
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
                     onComplete();
                     break;
             }
@@ -115,11 +117,13 @@ namespace NRFramework
                     onComplete();
                     break;
                 case UIPanelCloseAnimType.Default:
-                    //todo
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
                     onComplete();
                     break;
                 case UIPanelCloseAnimType.Custom:
-                    //todo
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
                     onComplete();
                     break;
             }

@@ -4,12 +4,8 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIPanelState { 
-        Created, 
-        ShowReady, 
-        PlayOpenAnim, 
-        Idle
-    }
+    public enum UIPanelShowState { Crated, Initing, Refreshing, Idle }
+    public enum UIPanelAnimState { Crated, Opening, Closing, Idle }
 
     public class UIPanel : UIView
     {
@@ -19,7 +15,8 @@ namespace NRFramework
         public Canvas canvas;
         public GraphicRaycaster gaphicRaycaster;
 
-        public UIPanelState panelState;
+        public UIPanelShowState panelShowState { protected set; get; }
+        public UIPanelAnimState panelAnimState { protected set; get; }
 
         protected internal void Create(string panelId, Canvas parentCanvas, string prefabPath)
         {
@@ -44,84 +41,92 @@ namespace NRFramework
             canvas = panelBehaviour.gameObject.AddComponent<Canvas>();
             canvas.overrideSorting = true;
             gaphicRaycaster = panelBehaviour.gameObject.AddComponent<GraphicRaycaster>();
+
+            panelShowState = UIPanelShowState.Crated;
+            panelAnimState = UIPanelAnimState.Crated;
+
+            PlayOpenAnim();
         }
 
-        /* 界面初始化应该怎么设计？
-        // 界面打开动画应该是 创建后自动开始的，还是初始化时开始的？
-        // 
+        protected internal override void OnInternalCreated()
+        {
+            base.OnInternalCreated();
+            panelShowState = UIPanelShowState.Crated;
+            panelAnimState = UIPanelAnimState.Crated;
 
-        // 基础原则：希望尽量同步，避免异步。但都要支持。
+            PlayOpenAnim();
+        }
 
-        // 含两个过程：
-        //  1、传入Data 或 从内部获取外部Data（可能异步（现请求））并显示，回调界面显示OK。
-        //  2、播放界面打开动画（异步）（也可能无动画），回调动画播放OK。
+        /* 关于 界面显示及状态相关问题 的思考：
+        // 基本流程：
+        //  1、界面创建后，播放打开动画（若有）。
+        //  2、界面初始化时，注入或获取 Data 完成显示。
+        //  3、界面刷新时，注入或获取 Data 完成显示。
+        //  4、界面关闭时，播放关闭动画（若有）。
 
-        // 需要考虑的问题：
-        //  1、异步请求数据，应放在Create前还是Init中？
-        //      且后者更优。
-        //      后者应考虑
-        //      在UIPanel中不用考虑前者，
-        //  2、异步获取是否要考虑计入子Widget动画？
-        //      默认不考虑，有需求自己处理。
-        //  3、动画播放是否在显示完成后才能开始？（依赖数据？）
-        //      只等同步不等异步，否则需要自行组织。
+        // 注意：
+        //  1、动画播放是异步的。动画一般都是创建时挂到预设上的，只操作初始主要节点，不依赖数据。
+        //  2、获取Data可能是异步的（现请求）。
+        //  3、某些组件的显示可能是异步的（如：为了优化脏标记异步更新）。
 
         // 外部需求：
-        //  1、跳转时连续打开多个界面，不关心动画，但依赖数据（数据决定能不能打开目标内容）。
-        //  2、红点、引导等上层系统应能随时知晓界面当前状态（尤其是引导，要等界面完全准备好后才能执行）。
+        //  1、跳转连续打开多个界面时，不关心动画，但依赖数据（由数据决定是否可以依次打开，直至目标界面）。
+        //  2、功能解锁、红点、引导等上层系统需要能随时获取界面当前状态（如引导，要等界面完全准备好后才能执行）。
 
-        // 可能的情况：
-        //  1、无需任何数据、无打开动画。
-        //  2、无需任何数据、有打开动画。
-        //  3、可同步获得数据并显示、无打开动画。
-        //  4、可同步获得数据并显示、有打开动画。
-        //  5、异步获得数据并显示、无打开动画。
-        //  6、异步获得数据并显示、有打开动画。
-
-        // 用户应自定义初始化方法，并自行在 界面显示完成、界面动画播放完成、最终完成时设置自身状态并回调。
-        // 情况1、2，可直接为其提供默认的初始化方法 DefaultInit1 和 DefaultInit2。
-        // 情况3，5可在完成自身显示逻辑后调用 DefaultInit1，完成状态设定和回调处理。
-        // 情况4，可在完成自身显示逻辑后调用 DefaultInit2，完成状态设定和回调处理。
-        // 情况6，需要自行组织（同时调起异步显示逻辑、动画播放逻辑，在各自和最终完成时回调）。
         // ---------------------------------
-        // 默认认为 动画播放 在 界面显示逻辑之后进行。但只等同步不等异步，否则需要自行组织。
-        // 默认不计入子Widget动画，否则需要自行组织。
 
-        // 待考虑问题：
-        // 焦点变化时重播打开/离开动画对状态的影响。
-        // 界面状态是否应支持直观观察？比如暴露到 Inspector中。
-        */
+        // 其他问题：
+        // 1、异步请求数据，应放在Create前还是Init中？
+        //      建议后者，后者可以利用自身界面阻挡操作。但注意，必须处理好“创建后~初始化完成前”的显示。
+        // 2、界面显示状态是否需要考虑子Widget？ 
+        //      初始化/刷新方法 完全由用户自定义，可以根据实际显示逻辑考虑。注意正确标记状态。
+        // 3、是否将界面状态暴露到 Inspector中，便于调试？
+        //      不确定有没必要，待定。
 
-        public void DefaultInit1(Action<UIPanelState> onInitState) 
+        /// <summary>
+        /// 同步初始化示例（刷新同理）
+        /// </summary>
+        public void Init_Sync(object data)
         {
-            panelState = UIPanelState.ShowReady;
-            onInitState(panelState);
-
-            panelState = UIPanelState.PlayOpenAnim;
-            onInitState(panelState);
-
-            panelState = UIPanelState.Idle;
-            onInitState(panelState);
+            ShowWithData(data);
+            panelShowState = UIPanelShowState.Idle;
         }
 
-        public void DefaultInit2(Action<UIPanelState> onInitState)
+        /// <summary>
+        /// 异步初始化示例（刷新同理）
+        /// </summary>
+        public void Init_Async(object data1, Action onInited)
         {
-            panelState = UIPanelState.ShowReady;
-            onInitState(panelState);
-
-
-            panelBehaviour.PlayOpenAnim(()=> {
-                panelState = UIPanelState.PlayOpenAnim;
-                onInitState(panelState);
-
-                panelState = UIPanelState.Idle;
-                onInitState(panelState);
+            GetData2((data2) =>      //异步获取数据
+            {
+                ShowWithDatas(data1, data2, () =>     //异步显示
+                {
+                    panelShowState = UIPanelShowState.Idle;
+                    onInited();
+                });
             });
         }
+        */
 
-        private void RePlayOpenAnim()
+        public void Close()
         {
             
+        }
+
+        public void PlayOpenAnim()
+        {
+            Debug.Assert(panelAnimState == UIPanelAnimState.Idle);
+
+            panelAnimState = UIPanelAnimState.Opening;
+            panelBehaviour.PlayOpenAnim(() => { panelAnimState = UIPanelAnimState.Idle; });
+        }
+
+        public virtual void PlayCloseAnim()
+        {
+            Debug.Assert(panelAnimState == UIPanelAnimState.Idle);
+
+            panelAnimState = UIPanelAnimState.Closing;
+            panelBehaviour.PlayOpenAnim(() => { panelAnimState = UIPanelAnimState.Idle; });
         }
 
         #region 生命周期

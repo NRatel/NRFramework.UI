@@ -17,9 +17,11 @@ namespace NRFramework
             this.parentRectTransform = parentRectTransform;
             this.viewBehaviour = GetUIViewBehaviour(prefabPath);
             OnInternalCreating();
+            OnCreating();
+            OnInternalCreated();
             OnCreated();
         }
-        
+
         protected internal void Create(string viewId, RectTransform parentRectTransform, UIViewBehaviour viewBehaviour)
         {
             this.viewId = viewId;
@@ -53,6 +55,12 @@ namespace NRFramework
             this.gameObject = rectTransform.gameObject;
         }
 
+        protected virtual void OnCreating() { }
+
+        protected internal virtual void OnInternalCreated() { }
+
+        protected virtual void OnCreated() { }
+
         #region 打开Widget接口
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
         {
@@ -61,7 +69,7 @@ namespace NRFramework
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, prefabPath);
-            
+
             //todo 是否要在View中持有widget待定？
             return widget;
         }
@@ -73,12 +81,10 @@ namespace NRFramework
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, widgetBehaviour);
-            
+
             //todo 是否在View中持有widget？
             return widget;
         }
         #endregion
-
-        protected virtual void OnCreated() { }
     }
 }

@@ -20,6 +20,8 @@ namespace NRFramework
             base.Create(widgetId, parentRectTransform, widgetBehaviour);
         }
 
+        protected override void OnCreating() { }
+
         protected override void OnCreated() { }
     }
 }

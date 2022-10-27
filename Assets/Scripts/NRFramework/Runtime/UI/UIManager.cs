@@ -96,9 +96,9 @@ namespace NRFramework
             return panel;
         }
 
-        public void DestoryPanel<T>(string panelId)
+        public void ClosePanel<T>(string panelId)
         {
-
+            //T panel = 
         }
 
         public UIPanel GetTopPanel()
