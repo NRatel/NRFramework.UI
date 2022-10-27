@@ -67,16 +67,17 @@ namespace NRFramework
         {
             UIManager.Instance.RemovePanelRef(panelId);
 
-            //组件接触引用即可, 实例会随gameObject销毁
+            //组件引用解除即可, 实例会随gameObject销毁
             gaphicRaycaster = null;
             canvas = null;
             parentCanvas = null;
+        }
 
+        protected internal override void OnInternalClosed() 
+        {
             panelAnimState = UIPanelAnimState.Closed;
             panelShowState = UIPanelShowState.Closed;
         }
-
-        protected internal override void OnInternalClosed() { }
 
         /* 关于 界面显示及状态相关问题 的思考：
         // 基本流程：
