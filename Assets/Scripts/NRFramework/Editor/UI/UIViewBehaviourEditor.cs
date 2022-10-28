@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using System;
 
 namespace NRFramework
 {
@@ -8,16 +9,31 @@ namespace NRFramework
     public abstract class UIViewBehaviourEditor : Editor
     {
         protected ReorderableList m_OpElementListRL;
+        private SerializedProperty m_UIOpenAnimTypeSP;
+        private SerializedProperty m_UICloseAnimTypeSP;
 
         protected virtual void OnEnable()
         {
+            m_UIOpenAnimTypeSP = serializedObject.FindProperty("m_UIOpenAnim");
+            m_UICloseAnimTypeSP = serializedObject.FindProperty("m_UICloseAnim");
             m_OpElementListRL = CreateReorderableList(serializedObject.FindProperty("m_OpElementList"));
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
+            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
+
+            Enum uiOpenAnimTypeEnum = EditorGUILayout.EnumPopup("UIOpenAnimType", (UIOpenAnimType)m_UIOpenAnimTypeSP.enumValueIndex);
+            m_UIOpenAnimTypeSP.enumValueIndex = (int)(UIOpenAnimType)uiOpenAnimTypeEnum;
+            Enum uiCloseAnimTypeEnum = EditorGUILayout.EnumPopup("UICloseAnimType", (UICloseAnimType)m_UICloseAnimTypeSP.enumValueIndex);
+            m_UICloseAnimTypeSP.enumValueIndex = (int)(UICloseAnimType)uiCloseAnimTypeEnum;
+
+            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
+
             m_OpElementListRL.DoLayoutList();
+
             serializedObject.ApplyModifiedProperties();
         }
 

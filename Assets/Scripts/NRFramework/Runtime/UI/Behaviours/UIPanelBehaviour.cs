@@ -38,10 +38,6 @@ namespace NRFramework
         Window,
     }
 
-    public enum UIPanelOpenAnimType { None, Default, Custom }
-
-    public enum UIPanelCloseAnimType { None, Default, Custom }
-
     public class UIPanelBehaviour: UIViewBehaviour
     {
         [SerializeField]
@@ -59,75 +55,24 @@ namespace NRFramework
         [SerializeField]
         private bool m_InSafeArea;          //是否在安全区域内打开
 
-        //预制标准动画
-        [SerializeField]
-        private UIPanelOpenAnimType m_PanelOpenAnim;   //界面打开动画
-        [SerializeField]
-        private UIPanelCloseAnimType m_PanelCloseAnim; //界面关闭动画
-
         public UIPanelType panelType { get { return m_PanelType; } }
         public bool colseWhenClickBg { get { return m_ColseWhenClickBg; } }
         public bool canGetFoucus { get { return m_CanGetFoucus; } }
         public int thickness { get { return m_Thickness; } }
         public bool inSafeArea { get { return m_InSafeArea; } }
 
-        public UIPanelOpenAnimType panelOpenAnim { get { return m_PanelOpenAnim; } }
-        public UIPanelCloseAnimType panelCloseAnim { get { return m_PanelCloseAnim; } }
-
         public bool hasBg { get { return m_PanelType != UIPanelType.Overlap; } }  //是否有背景？（完全由PanelType决定）
 
 #if UNITY_EDITOR
         protected override void Reset()
         {
+            base.Reset();
             m_PanelType = UIPanelType.Scene;
             m_CanGetFoucus = false;
             m_ColseWhenClickBg = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
-            m_PanelOpenAnim = UIPanelOpenAnimType.None;
-            m_PanelCloseAnim = UIPanelCloseAnimType.None;
         }
 #endif
-
-        internal void PlayOpenAnim(Action onComplete)
-        {
-            switch (m_PanelOpenAnim)
-            {
-                case UIPanelOpenAnimType.None:
-                    onComplete();
-                    break;
-                case UIPanelOpenAnimType.Default:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onComplete();
-                    break;
-                case UIPanelOpenAnimType.Custom:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onComplete();
-                    break;
-            }
-        }
-
-        internal void PlayCloseAnim(Action onComplete)
-        {
-            switch (m_PanelCloseAnim)
-            {
-                case UIPanelCloseAnimType.None:
-                    onComplete();
-                    break;
-                case UIPanelCloseAnimType.Default:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onComplete();
-                    break;
-                case UIPanelCloseAnimType.Custom:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onComplete();
-                    break;
-            }
-        }
-
     }
 }

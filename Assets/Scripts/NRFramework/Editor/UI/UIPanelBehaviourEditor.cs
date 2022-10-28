@@ -14,8 +14,6 @@ namespace NRFramework
         private SerializedProperty m_ColseWhenClickBgSP; //（仅Window界面可选）
         private SerializedProperty m_ThicknessSP;
         private SerializedProperty m_InSafeAreaSP;
-        private SerializedProperty m_PanelOpenAnimTypeSP;
-        private SerializedProperty m_PanelCloseAnimTypeSP;
 
         protected override void OnEnable()
         {
@@ -25,8 +23,6 @@ namespace NRFramework
             m_CanGetFoucusSP = serializedObject.FindProperty("m_CanGetFoucus");    //（仅Float界面可选）
             m_ColseWhenClickBgSP = serializedObject.FindProperty("m_ColseWhenClickBg"); //（仅Window界面可选）
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
-            m_PanelOpenAnimTypeSP = serializedObject.FindProperty("m_PanelOpenAnim");
-            m_PanelCloseAnimTypeSP = serializedObject.FindProperty("m_PanelCloseAnim");
             m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
         }
 
@@ -34,8 +30,8 @@ namespace NRFramework
         {
             serializedObject.Update();
             DrawUIPanelSetting();
+            base.OnInspectorGUI();
             EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 2);
-            m_OpElementListRL.DoLayoutList();
             DrawExpoertButton();
             serializedObject.ApplyModifiedProperties();
         }
@@ -76,11 +72,6 @@ namespace NRFramework
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
 
             m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
-
-            Enum panelOpenAnimTypeEnum = EditorGUILayout.EnumPopup("PanelOpenAnimType", (UIPanelOpenAnimType)m_PanelOpenAnimTypeSP.enumValueIndex);
-            m_PanelOpenAnimTypeSP.enumValueIndex = (int)(UIPanelOpenAnimType)panelOpenAnimTypeEnum;
-            Enum panelCloseAnimTypeEnum = EditorGUILayout.EnumPopup("PanelCloseAnimType", (UIPanelCloseAnimType)m_PanelCloseAnimTypeSP.enumValueIndex);
-            m_PanelCloseAnimTypeSP.enumValueIndex = (int)(UIPanelCloseAnimType)panelCloseAnimTypeEnum;
         }
 
         private void DrawExpoertButton()

@@ -23,9 +23,18 @@ namespace NRFramework
         }
     }
 
+    public enum UIOpenAnimType { None, Default, Custom }
+
+    public enum UICloseAnimType { None, Default, Custom }
+
     [DisallowMultipleComponent]
     public abstract class UIViewBehaviour : MonoBehaviour
     {
+        [SerializeField]
+        private UIOpenAnimType m_UIOpenAnim;   //界面打开动画
+        [SerializeField]
+        private UICloseAnimType m_UICloseAnim; //界面关闭动画
+
         [SerializeField]
         protected List<UIOpElement> m_OpElementList;
 
@@ -33,10 +42,14 @@ namespace NRFramework
         internal Action onStart;
         internal Action onDisable;
         internal Action onDestroy;
-        
+
+        public UIOpenAnimType uiOpenAnim { get { return m_UIOpenAnim; } }
+
+        public UICloseAnimType uiCloseAnim { get { return m_UICloseAnim; } }
+
         public List<UIOpElement> opElementList { get { return m_OpElementList; } }
 
-        public bool IsSavedGameObject(GameObject go)
+        public bool HasSavedGameObject(GameObject go)
         {
             for (int i = 0; i < opElementList.Count; i++)
             {
@@ -50,7 +63,7 @@ namespace NRFramework
             return false;
         }
 
-        public bool IsSavedComponent(GameObject go, Component comp)
+        public bool HasSavedComponent(GameObject go, Component comp)
         {
             for (int i = 0; i < opElementList.Count; i++)
             {
@@ -74,6 +87,7 @@ namespace NRFramework
         }
 
 #if UNITY_EDITOR
+        // todo 验证 添加的Go是否是本UIViewBehaviour所在Go的子物体
         //protected virtual void OnValidate()
         //{
         //    Debug.Log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + m_OpElementList.Count);
@@ -96,15 +110,57 @@ namespace NRFramework
         //        }
         //    }
         //}
-        
+
         protected virtual void Reset()
         {
+            m_UIOpenAnim = UIOpenAnimType.None;
+            m_UICloseAnim = UICloseAnimType.None;
             m_OpElementList = new List<UIOpElement>();
         }
 #endif
         private void Awake()
         {
             hideFlags = HideFlags.NotEditable;
+        }
+
+        internal void PlayOpenAnim(Action onComplete)
+        {
+            switch (m_UIOpenAnim)
+            {
+                case UIOpenAnimType.None:
+                    onComplete();
+                    break;
+                case UIOpenAnimType.Default:
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
+                    onComplete();
+                    break;
+                case UIOpenAnimType.Custom:
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
+                    onComplete();
+                    break;
+            }
+        }
+
+        internal void PlayCloseAnim(Action onComplete)
+        {
+            switch (m_UICloseAnim)
+            {
+                case UICloseAnimType.None:
+                    onComplete();
+                    break;
+                case UICloseAnimType.Default:
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
+                    onComplete();
+                    break;
+                case UICloseAnimType.Custom:
+                    //todo, Animator还是Dotween?
+                    //注意：必须应先停止后执行
+                    onComplete();
+                    break;
+            }
         }
 
         private void OnEnable() { onEnable?.Invoke(); }   //View创建时，不会被调用

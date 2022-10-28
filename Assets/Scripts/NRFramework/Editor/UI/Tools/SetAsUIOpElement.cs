@@ -39,7 +39,7 @@ namespace NRFramework
                 for (int j = 0; j < existComps.Length; j++)
                 {
                     Component comp = existComps[j];
-                    if (behaviour.IsSavedComponent(go, comp))
+                    if (behaviour.HasSavedComponent(go, comp))
                     {
                         continue; //若component已保存，则忽略
                     }

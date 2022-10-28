@@ -28,7 +28,7 @@ namespace NRFramework
             for (int i = existComps.Length - 1; i >= 0; i--) //用它遍历能够保证组件在Inspector上的顺序，倒序为了从右往左绘制
             {
                 Component comp = existComps[i];
-                if (behaviour.IsSavedComponent(go, comp))     //只显示已保存的组件
+                if (behaviour.HasSavedComponent(go, comp))     //只显示已保存的组件
                 {
                     Texture icon = UIEditorUtility.GetIconByType(comp.GetType());
                     DrawIcon(selectRect, posIndex, icon);
@@ -36,7 +36,7 @@ namespace NRFramework
                 }
             }
             //gameObject图标（必有）
-            if (behaviour.IsSavedGameObject(go))
+            if (behaviour.HasSavedGameObject(go))
             {
                 Texture icon = UIEditorUtility.GetIconByType(go.GetType());
                 DrawIcon(selectRect, posIndex, icon);
