@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NRFramework
@@ -16,6 +17,8 @@ namespace NRFramework
 
         public UIShowState showState { protected set; get; }
         public UIAnimState animState { protected set; get; }
+
+        public Dictionary<string, UIWidget> widgetDict;
 
         protected internal void Create(string viewId, RectTransform parentRectTransform, string prefabPath)
         {
@@ -94,12 +97,54 @@ namespace NRFramework
         */
 
         /// <summary>
-        /// 关闭View本身。
-        /// 子类清理若是同步，可重写 OnClosing；若是异步，可重写此方法。
-        /// 注意：创建是先父后子；关闭（清理）动作是先子后父；关闭回调是先父后子。
+        /// 关闭。
+        /// 注意：
+        /// 1、关闭需要先等待关闭所有子Widget后再关闭自身。
+        /// 2、子类应重写 OnClosing 完成自身的清理工作。
+        /// 3、清理过程是先清子类后清父类；关闭回调是先调父类后调子类。
+        /// 4、关闭方法回调 onClosed 晚于生命周期 OnClosed 被调用。
         /// </summary>
         /// <param name="onClosed">关闭回调（晚于生命周期OnClosed）</param>
-        public virtual void Close(Action onClosed)
+        public virtual void Close(Action onClosed = null)
+        {
+            if (widgetDict.Count <= 0)
+            {
+                CloseSelf(onClosed);
+            }
+            else
+            {
+                int wPocess = 0;
+                foreach (UIWidget widget in widgetDict.Values)
+                {
+                    widget.Close(() =>
+                    {
+                        wPocess += 1;
+                        if (wPocess == widgetDict.Count)
+                        {
+                            CloseSelf(onClosed);
+                        }
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// 直接关闭（不播关闭动画）
+        /// 有时候，即使有动画，也想直接关掉。通常在跳转时。
+        /// </summary>
+        public void CloseDirectly()
+        {
+            if (widgetDict.Count > 0)
+            {
+                foreach (UIWidget widget in widgetDict.Values)
+                {
+                    widget.CloseDirectly();
+                }
+            }
+            CloseSelf(null);
+        }
+
+        private void CloseSelf(Action onClosed = null)
         {
             PlayCloseAnim(() =>
             {
@@ -108,19 +153,21 @@ namespace NRFramework
 
                 OnInternalClosed();
                 OnClosed();
-                onClosed(); //注意：方法回调晚于生命周期
+                if (onClosed != null) { onClosed(); }
             });
         }
 
-        protected internal virtual void OnInternalCreating() 
+        protected internal virtual void OnInternalCreating()
         {
             this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
             this.gameObject = rectTransform.gameObject;
+
+            //widgetDict = new Dictionary<string, UIWidget>(); //改为需要时创建
         }
 
         protected virtual void OnCreating() { }
 
-        protected internal virtual void OnInternalCreated() 
+        protected internal virtual void OnInternalCreated()
         {
             showState = UIShowState.Crated;
             animState = UIAnimState.Crated;
@@ -130,7 +177,7 @@ namespace NRFramework
 
         protected virtual void OnCreated() { }
 
-        protected internal virtual void OnInternalClosing() 
+        protected internal virtual void OnInternalClosing()
         {
             GameObject.Destroy(gameObject);
             gameObject = null;
@@ -142,7 +189,7 @@ namespace NRFramework
 
         protected virtual void OnClosing() { }
 
-        protected internal virtual void OnInternalClosed() 
+        protected internal virtual void OnInternalClosed()
         {
             animState = UIAnimState.Closed;
             showState = UIShowState.Closed;
@@ -150,7 +197,7 @@ namespace NRFramework
 
         protected virtual void OnClosed() { }
 
-        #region 打开Widget接口
+        #region Widget相关接口
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
         {
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
@@ -159,7 +206,8 @@ namespace NRFramework
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, prefabPath);
 
-            //todo 是否要在View中持有widget待定？
+            if (widgetDict == null) { widgetDict = new Dictionary<string, UIWidget>(); }
+            widgetDict.Add(widgetId, widget);
             return widget;
         }
 
@@ -171,8 +219,14 @@ namespace NRFramework
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, widgetBehaviour);
 
-            //todo 是否在View中持有widget？
+            if (widgetDict == null) { widgetDict = new Dictionary<string, UIWidget>(); }
+            widgetDict.Add(widgetId, widget);
             return widget;
+        }
+
+        internal void RemoveWidgetRef(string widgetId)
+        {
+            widgetDict.Remove(widgetId);
         }
         #endregion
 

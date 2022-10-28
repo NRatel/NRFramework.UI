@@ -20,6 +20,14 @@ namespace NRFramework
             base.Create(widgetId, parentRectTransform, widgetBehaviour);
         }
 
+        protected internal override void OnInternalClosing()
+        {
+            parentView.RemoveWidgetRef(widgetId);
+            parentView = null;
+
+            base.OnInternalClosing();
+        }
+
         #region 子类生命周期
         /// <summary>
         /// 子类在此补充创建内容
