@@ -51,31 +51,12 @@ namespace NRFramework
         }
 
         #region 子类生命周期
-        /// <summary>
-        /// 执行创建（子类在此补充创建内容）
-        /// </summary>
-        protected override void OnCreating() { }
-
-        /// <summary>
-        /// 创建完成（状态已置为“已创建”）（子类可在此做上层逻辑，如：处理外部回调等）
-        /// </summary>
-        protected override void OnCreated() { }
 
         protected virtual void OnFoucus(bool got) { }
 
         protected virtual void OnClickBackBtn() { }
 
         protected virtual void OnClickWindowBg() { }
-
-        /// <summary>
-        /// 执行关闭（子类在此补充关闭（清理）内容）
-        /// </summary>
-        protected override void OnClosing() { }
-
-        /// <summary>
-        /// 关闭完成（状态已置为“已关闭”）（子类可在此做上层逻辑，如：处理外部回调等）
-        /// </summary>
-        protected override void OnClosed() { }
 
         #endregion
     }

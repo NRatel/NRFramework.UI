@@ -157,6 +157,7 @@ namespace NRFramework
             });
         }
 
+        #region 内部生命周期
         protected internal virtual void OnInternalCreating()
         {
             this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
@@ -165,8 +166,6 @@ namespace NRFramework
             //widgetDict = new Dictionary<string, UIWidget>(); //改为需要时创建
         }
 
-        protected virtual void OnCreating() { }
-
         protected internal virtual void OnInternalCreated()
         {
             showState = UIShowState.Crated;
@@ -174,8 +173,6 @@ namespace NRFramework
 
             PlayOpenAnim();
         }
-
-        protected virtual void OnCreated() { }
 
         protected internal virtual void OnInternalClosing()
         {
@@ -187,15 +184,35 @@ namespace NRFramework
             viewId = null;
         }
 
-        protected virtual void OnClosing() { }
-
         protected internal virtual void OnInternalClosed()
         {
             animState = UIAnimState.Closed;
             showState = UIShowState.Closed;
         }
 
+        #endregion
+
+        #region 子类生命周期
+        /// <summary>
+        /// 子类在此完成自身特有创建内容
+        /// </summary>
+        protected virtual void OnCreating() { }
+
+        /// <summary>
+        /// 创建完成
+        /// </summary>
+        protected virtual void OnCreated() { }
+
+        /// <summary>
+        /// 子类在此完成自身特有关闭（清理）内容
+        /// </summary>
+        protected virtual void OnClosing() { }
+
+        /// <summary>
+        /// 关闭完成
+        /// </summary>
         protected virtual void OnClosed() { }
+        #endregion
 
         #region Widget相关接口
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
