@@ -85,16 +85,12 @@ namespace NRFramework
                 {
                     RefreshOpElementList(m_OpElementListRL);
                     GenerateUIBaseCode();
-
-                    Debug.Log("Export success!");
                 }
 
                 if (GUILayout.Button("ExportTemp"))
                 {
                     RefreshOpElementList(m_OpElementListRL);
                     GenerateUITempCode();
-
-                    Debug.Log("Export success!");
                 }
             }
             GUILayout.EndHorizontal();
@@ -136,6 +132,9 @@ namespace NRFramework
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            Debug.Log("Export success!");
+
         }
 
         private void GenerateUITempCode()
@@ -159,21 +158,15 @@ namespace NRFramework
             }
 
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), Path.GetFileNameWithoutExtension(subPath) + ".cs");
+            string className = Path.GetFileNameWithoutExtension(subPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + ".cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
 
-            StringBuilder sb = new StringBuilder();
+            string content = UICodeGenerator.kPanelTemplate.Replace("${ClassName}", className).Trim();
 
-            sb.AppendLine("// 导出测试");
-            sb.AppendLine("// savePath: " + savePath);
-
-            string saveDir = Path.GetDirectoryName(savePath);
-            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
-
-            File.WriteAllText(savePath, sb.ToString());
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            UICodeGenerator.DoGenerate(savePath, content);
+            
+            Debug.Log("Export success!");
         }
     }
 }
