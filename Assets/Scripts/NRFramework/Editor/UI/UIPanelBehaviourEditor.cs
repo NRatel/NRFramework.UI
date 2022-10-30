@@ -162,9 +162,9 @@ namespace NRFramework
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + ".cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
 
-            string content = UICodeGenerator.kPanelTemplate.Replace("${ClassName}", className).Trim();
+            string content = UIEditorUtility.kPanelTemplate.Replace("${ClassName}", className).Trim();
 
-            UICodeGenerator.DoGenerate(savePath, content);
+            UIEditorUtility.DoGenerate(savePath, content);
             
             Debug.Log("Export success!");
         }
