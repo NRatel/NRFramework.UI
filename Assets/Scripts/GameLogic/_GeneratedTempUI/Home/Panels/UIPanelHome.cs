@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using NRFramework;
 
 public class UIPanelHome : UIPanelHomeBase
@@ -14,7 +15,7 @@ public class UIPanelHome : UIPanelHomeBase
     //public void InitOrRefresh_Sync(object data)
     //{
     //    ShowWithData(data);
-    //    panelShowState = UIPanelShowState.Idle;
+    //    showState = UIShowState.Idle;
     //}
 
     ///// <summary>
@@ -26,11 +27,26 @@ public class UIPanelHome : UIPanelHomeBase
     //    {
     //        ShowWithDatas(data1, data2, () =>     //异步显示
     //        {
-    //            panelShowState = UIPanelShowState.Idle;
+    //            showState = UIShowState.Idle;
     //            onInited();
     //        });
     //    });
     //}
+
+    protected override void OnButtonClicked(Button button) { }
+
+    protected override void OnToggleValueChanged(Toggle toggle, bool value) { }
+
+    protected override void OnDropdownValueChanged(Dropdown dropdown, int value) { }
+
+    protected override void OnInputFieldValueChanged(InputField inputField, string value) { }
+
+    protected override void OnSliderValueChanged(Slider slider, float value) { }
+
+    protected override void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
+
+    protected override void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+    
 
     protected override void OnFoucus(bool got) { }
 

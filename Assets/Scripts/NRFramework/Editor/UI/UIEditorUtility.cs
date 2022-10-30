@@ -7,15 +7,37 @@ namespace NRFramework
 {
     public class UIEditorUtility
     {
-        public const string kPanelBase = @"
-
-";
-        public const string kPanelTemplate = @"
-using System;
+        public const string kUIBaseCode = @"
 using UnityEngine;
+using UnityEngine.UI;
 using NRFramework;
 
-public class ${ClassName} : ${ClassName}Base
+public class ${ClassName} : ${BaseClassName}
+{
+    ${VariantsDefine}
+
+    protected override void OnBindCompsAndEvents()
+    {
+        ${BindComps}
+
+        ${BindEvents}
+    }
+
+    protected override void OnUnbindCompsAndEvents() 
+    {
+        ${UnbindEvents}
+
+        ${UnbindComps}
+    }
+}";
+
+        public const string kUITemporaryCode = @"
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+using NRFramework;
+
+public class ${ClassName} : ${BaseClassName}
 {
     protected override void OnCreating() { }
 
@@ -27,7 +49,7 @@ public class ${ClassName} : ${ClassName}Base
     //public void InitOrRefresh_Sync(object data)
     //{
     //    ShowWithData(data);
-    //    panelShowState = UIPanelShowState.Idle;
+    //    showState = UIShowState.Idle;
     //}
 
     ///// <summary>
@@ -39,7 +61,7 @@ public class ${ClassName} : ${ClassName}Base
     //    {
     //        ShowWithDatas(data1, data2, () =>     //异步显示
     //        {
-    //            panelShowState = UIPanelShowState.Idle;
+    //            showState = UIShowState.Idle;
     //            onInited();
     //        });
     //    });
@@ -58,17 +80,33 @@ public class ${ClassName} : ${ClassName}Base
     protected override void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
 
     protected override void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+    ${PanelLifeCycleCode}
+    protected override void OnClosing() { }
 
+    protected override void OnClosed() { }
+}";
+
+        public const string kPanelLifeCycleCode = @"
     protected override void OnFoucus(bool got) { }
 
     protected override void OnEscButtonClicked() { }
 
     protected override void OnWindowBgClicked() { }
+";
 
-    protected override void OnClosing() { }
+        static public void GenerateCode(string savePath, string content)
+        {
+            string saveDir = Path.GetDirectoryName(savePath);
+            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
 
-    protected override void OnClosed() { }
-}";
+            File.WriteAllText(savePath, content);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            string scriptAssetPath = Path.Combine("Assets", Path.GetRelativePath(Application.dataPath, savePath));
+            EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(scriptAssetPath));
+        }
 
         static public Texture GetIconByType(Type type)
         {
@@ -82,19 +120,6 @@ public class ${ClassName} : ${ClassName}Base
             Texture csScriptIcon = EditorGUIUtility.IconContent("cs Script Icon").image;
 
             return systemIcon ?? customIcon ?? csScriptIcon;
-        }
-        static public void DoGenerate(string savePath, string content)
-        {
-            string saveDir = Path.GetDirectoryName(savePath);
-            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
-
-            File.WriteAllText(savePath, content);
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
-            string scriptAssetPath = Path.Combine("Assets", Path.GetRelativePath(Application.dataPath, savePath));
-            EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(scriptAssetPath));
         }
     }
 }

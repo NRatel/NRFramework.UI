@@ -195,6 +195,7 @@ namespace NRFramework
             listSP.serializedObject.ApplyModifiedProperties();
         }
 
+        #region 代码生成相关
         protected string GetPrefabPath()
         {
             // 如果正确拿到预设所在路径？
@@ -248,5 +249,16 @@ namespace NRFramework
 
             return finalPrefabPath;
         }
+
+        protected string GetVariantsDefineStrs() { return ""; }
+
+        protected string GetBindCompsStrs() { return ""; }
+
+        protected string GetBindEventsStrs() { return ""; }
+
+        protected string GetUnbindEventsStrs() { return ""; }
+
+        protected string GetUnbindCompsStrs() { return ""; }
+        #endregion
     }
 }

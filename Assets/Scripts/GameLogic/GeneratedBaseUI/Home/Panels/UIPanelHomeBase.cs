@@ -1,9 +1,9 @@
 // 导出测试
 // savePath: F:\Github\NRFramework\Assets\Scripts\GameLogic\GeneratedBaseUI\Home\Panels\UIPanelHomeBase.cs
 
+using UnityEngine;
 using UnityEngine.UI;
 using NRFramework;
-using UnityEngine;
 
 public class UIPanelHomeBase : UIPanel
 {

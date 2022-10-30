@@ -98,11 +98,6 @@ namespace NRFramework
 
         private void GenerateUIBaseCode()
         {
-            // 大体步骤：
-            // 1、如果物体不在预设根路径下，则不允许导出。
-            // 2、截取相对子路径（含文件名、不含后缀）。
-            // 3、拼接存储路径。
-            // 4、生成代码并存储。
             string prefabPath = GetPrefabPath();
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
             string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
@@ -117,33 +112,26 @@ namespace NRFramework
             }
 
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), Path.GetFileNameWithoutExtension(subPath) + "Base.cs");
+            string className = Path.GetFileNameWithoutExtension(subPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
-            StringBuilder sb = new StringBuilder();
+            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "Base");
+            content = content.Replace("${BaseClassName}", "UIPanel");
+            content = content.Replace("${VariantsDefine}", GetVariantsDefineStrs());
+            content = content.Replace("${BindComps}", GetBindCompsStrs());
+            content = content.Replace("${BindEvents}", GetBindEventsStrs());
+            content = content.Replace("${UnbindEvents}", GetUnbindEventsStrs());
+            content = content.Replace("${UnbindComps}", GetUnbindCompsStrs());
+            content = content.Trim();
 
-            sb.AppendLine("// 导出测试");
-            sb.AppendLine("// savePath: " + savePath);
-
-            string saveDir = Path.GetDirectoryName(savePath);
-            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
-
-            File.WriteAllText(savePath, sb.ToString());
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            UIEditorUtility.GenerateCode(savePath, content);
 
             Debug.Log("Export success!");
-
         }
 
         private void GenerateUITempCode()
         {
-            // 大体步骤：
-            // 1、如果物体不在预设根路径下，则不允许导出。
-            // 2、截取相对子路径（含文件名、不含后缀）。
-            // 3、拼接存储路径。
-            // 4、生成代码并存储。
             string prefabPath = GetPrefabPath();
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
             string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
@@ -162,9 +150,12 @@ namespace NRFramework
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + ".cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
 
-            string content = UIEditorUtility.kPanelTemplate.Replace("${ClassName}", className).Trim();
+            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className);
+            content = content.Replace("${BaseClassName}", className + "Base");
+            content = content.Replace("${PanelLifeCycleCode}", "\n" + UIEditorUtility.kPanelLifeCycleCode) + "\r\n";
+            content = content.Trim();
 
-            UIEditorUtility.DoGenerate(savePath, content);
+            UIEditorUtility.GenerateCode(savePath, content);
             
             Debug.Log("Export success!");
         }
