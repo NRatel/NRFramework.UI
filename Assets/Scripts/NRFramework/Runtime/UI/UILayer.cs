@@ -4,7 +4,7 @@ using UnityEngine;
 namespace NRFramework
 {
     /// <summary>
-    /// 这只是一个虚拟的层，实质是一个order范围
+    /// 这只是一个根/组
     /// </summary>
     public class UILayer
     {

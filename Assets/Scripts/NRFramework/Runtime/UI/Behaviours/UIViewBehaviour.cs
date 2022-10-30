@@ -14,12 +14,18 @@ namespace NRFramework
         private List<Component> m_ComponentList;    //组件列表，可能为null（引用的丢失但未刷新）。
 
         public GameObject target { set { m_Target = value; } get { return m_Target; } }
+
         public List<Component> componentList { get { return m_ComponentList; } }
 
         public UIOpElement()
         {
             m_Target = null;
             m_ComponentList = new List<Component>();
+        }
+
+        public Component GetComponentByIndex(int index)
+        {
+            return m_ComponentList[index];
         }
     }
 
@@ -86,6 +92,16 @@ namespace NRFramework
             return false;
         }
 
+        public GameObject GetGameObjectByIndex(int index)
+        {
+            return m_OpElementList[index].target;
+        }
+
+        public Component GetComponentByIndexs(int index, int index2)
+        {
+            return m_OpElementList[index].GetComponentByIndex(index2);
+        }
+
 #if UNITY_EDITOR
         // todo 验证 添加的Go是否是本UIViewBehaviour所在Go的子物体
         //protected virtual void OnValidate()
@@ -123,42 +139,42 @@ namespace NRFramework
             hideFlags = HideFlags.NotEditable;
         }
 
-        internal void PlayOpenAnim(Action onComplete)
+        internal void PlayOpenAnim(Action onFinish)
         {
             switch (m_UIOpenAnim)
             {
                 case UIOpenAnimType.None:
-                    onComplete();
+                    onFinish();
                     break;
                 case UIOpenAnimType.Default:
                     //todo, Animator还是Dotween?
                     //注意：必须应先停止后执行
-                    onComplete();
+                    onFinish();
                     break;
                 case UIOpenAnimType.Custom:
                     //todo, Animator还是Dotween?
                     //注意：必须应先停止后执行
-                    onComplete();
+                    onFinish();
                     break;
             }
         }
 
-        internal void PlayCloseAnim(Action onComplete)
+        internal void PlayCloseAnim(Action onFinish)
         {
             switch (m_UICloseAnim)
             {
                 case UICloseAnimType.None:
-                    onComplete();
+                    onFinish();
                     break;
                 case UICloseAnimType.Default:
                     //todo, Animator还是Dotween?
                     //注意：必须应先停止后执行
-                    onComplete();
+                    onFinish();
                     break;
                 case UICloseAnimType.Custom:
                     //todo, Animator还是Dotween?
                     //注意：必须应先停止后执行
-                    onComplete();
+                    onFinish();
                     break;
             }
         }

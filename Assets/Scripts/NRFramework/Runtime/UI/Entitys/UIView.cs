@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NRFramework
 {
@@ -18,11 +19,28 @@ namespace NRFramework
         public UIShowState showState { protected set; get; }
         public UIAnimState animState { protected set; get; }
 
-        public Dictionary<string, UIWidget> widgetDict;
+        public Dictionary<string, UIWidget> widgetDict { private set; get; }
 
+        static public event Action<Button> onButtonClickedGlobalEvent;
+        static public event Action<Toggle, bool> onToggleValueChangedGlobalEvent;
+        static public event Action<Dropdown, int> onDropdownValueChangedGlobalEvent;
+
+        #region 创建关闭接口
         protected internal void Create(string viewId, RectTransform parentRectTransform, string prefabPath)
         {
-            UIViewBehaviour viewBehaviour = GetUIViewBehaviour(prefabPath);
+            GameObject prefab;
+#if UNITY_EDITOR
+            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+#else
+            prefab = null;  //todo，改用资源管理接口加载
+#endif
+            GameObject go = GameObject.Instantiate<GameObject>(prefab);
+            UIViewBehaviour viewBehaviour = go.GetComponent<UIViewBehaviour>();
+
+            Debug.Assert(viewBehaviour != null, "UIViewBehaviour组件不存在");
+
+            viewBehaviour.transform.SetParent(this.parentRectTransform, false);
+
             Create(viewId, parentRectTransform, viewBehaviour);
         }
 
@@ -33,185 +51,49 @@ namespace NRFramework
             this.viewBehaviour = viewBehaviour;
 
             OnInternalCreating();
+            OnBindCompsAndEvents();
             OnCreating();
 
             OnInternalCreated();
             OnCreated();
         }
 
-        /* 关于 界面显示及状态相关问题 的思考：
-        // 基本流程：
-        //  1、界面创建后，播放打开动画（若有）。
-        //  2、界面初始化时，注入或获取 Data 完成显示。
-        //  3、界面刷新时，注入或获取 Data 完成显示。
-        //  4、界面关闭时，播放关闭动画（若有）。
-
-        // 注意：
-        //  1、动画播放是异步的。动画一般都是创建时挂到预设上的，只操作初始主要节点，不依赖数据。
-        //  2、获取Data可能是异步的（现请求）。
-        //  3、某些组件的显示可能是异步的（如：为了优化脏标记异步更新）。
-
-        // 外部需求：
-        //  1、跳转连续打开多个界面时，不关心动画，但依赖数据（由数据决定是否可以依次打开，直至目标界面）。
-        //  2、功能解锁、红点、引导等上层系统需要能随时获取界面当前状态（如引导，要等界面完全准备好后才能执行）。
-
-        // ---------------------------------
-
-        // 其他问题：
-        // 1、异步请求数据，应放在Create前还是Init中？
-        //      建议后者，后者可以利用自身界面阻挡操作。但注意，必须处理好“创建后~初始化完成前”的显示。
-
-        // 2、界面显示和动画状态如何维护？ 
-        //      ⑴、只维护自身状态，不考虑子Widget。
-        //      ⑵、但在外部读取时可以考虑计入自身及所有子Widget的状态（结合实际需求）。
-        //      ⑶、初始化/刷新方法 完全由用户自定义，可以根据实际需求进行标记。
-        //      ⑷、在 OnInternalCreated 中调起打开动画
-        //      ⑸、在 Close 中调起关闭动画。
-        //      
-        // 3、是否将界面状态暴露到 Inspector中，便于调试？
-        //      不确定有没必要，待定。
-
-        /// <summary>
-        /// 同步初始化/刷新示例
-        /// </summary>
-        public void InitOrRefresh_Sync(object data)
-        {
-            ShowWithData(data);
-            panelShowState = UIPanelShowState.Idle;
-        }
-
-        /// <summary>
-        /// 异步初始化/刷新示例
-        /// </summary>
-        public void InitOrRefresh_Async(object data1, Action onInited)
-        {
-            GetData2((data2) =>      //异步获取数据
-            {
-                ShowWithDatas(data1, data2, () =>     //异步显示
-                {
-                    panelShowState = UIPanelShowState.Idle;
-                    onInited();
-                });
-            });
-        }
-        */
-
-        /// <summary>
-        /// 关闭。
-        /// 注意：
-        /// 1、关闭需要先等待关闭所有子Widget后再关闭自身。
-        /// 2、子类应重写 OnClosing 完成自身的清理工作。
-        /// 3、清理过程是先清子类后清父类；关闭回调是先调父类后调子类。
-        /// 4、关闭方法回调 onClosed 晚于生命周期 OnClosed 被调用。
-        /// </summary>
-        /// <param name="onClosed">关闭回调（晚于生命周期OnClosed）</param>
-        public virtual void Close(Action onClosed = null)
-        {
-            if (widgetDict.Count <= 0)
-            {
-                CloseSelf(onClosed);
-            }
-            else
-            {
-                int wPocess = 0;
-                foreach (UIWidget widget in widgetDict.Values)
-                {
-                    widget.Close(() =>
-                    {
-                        wPocess += 1;
-                        if (wPocess == widgetDict.Count)
-                        {
-                            CloseSelf(onClosed);
-                        }
-                    });
-                }
-            }
-        }
-
-        /// <summary>
-        /// 直接关闭（不播关闭动画）
-        /// 有时候，即使有动画，也想直接关掉。通常在跳转时。
-        /// </summary>
-        public void CloseDirectly()
+        public virtual void Close()
         {
             if (widgetDict.Count > 0)
             {
                 foreach (UIWidget widget in widgetDict.Values)
                 {
-                    widget.CloseDirectly();
+                    widget.Close();
                 }
             }
-            CloseSelf(null);
+
+            OnClosing();
+            OnUnbindCompsAndEvents();
+            OnInternalClosing();
+
+            OnInternalClosed();
+            OnClosed();
         }
-
-        private void CloseSelf(Action onClosed = null)
-        {
-            PlayCloseAnim(() =>
-            {
-                OnClosing();
-                OnInternalClosing();
-
-                OnInternalClosed();
-                OnClosed();
-                if (onClosed != null) { onClosed(); }
-            });
-        }
-
-        #region 内部生命周期
-        protected internal virtual void OnInternalCreating()
-        {
-            this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
-            this.gameObject = rectTransform.gameObject;
-
-            //widgetDict = new Dictionary<string, UIWidget>(); //改为需要时创建
-        }
-
-        protected internal virtual void OnInternalCreated()
-        {
-            showState = UIShowState.Crated;
-            animState = UIAnimState.Crated;
-
-            PlayOpenAnim();
-        }
-
-        protected internal virtual void OnInternalClosing()
-        {
-            GameObject.Destroy(gameObject);
-            gameObject = null;
-            rectTransform = null;
-            viewBehaviour = null;
-            parentRectTransform = null;
-            viewId = null;
-        }
-
-        protected internal virtual void OnInternalClosed()
-        {
-            animState = UIAnimState.Closed;
-            showState = UIShowState.Closed;
-        }
-
         #endregion
 
-        #region 子类生命周期
-        /// <summary>
-        /// 子类在此完成自身特有创建内容
-        /// </summary>
-        protected virtual void OnCreating() { }
+        #region 打开关闭动画接口
+        public virtual void PlayOpenAnim(Action onFinish)
+        {
+            Debug.Assert(animState != UIAnimState.Opening && animState != UIAnimState.Closing);
 
-        /// <summary>
-        /// 创建完成
-        /// </summary>
-        protected virtual void OnCreated() { }
+            animState = UIAnimState.Opening;
+            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Idle; onFinish(); });
+        }
 
-        /// <summary>
-        /// 子类在此完成自身特有关闭（清理）内容
-        /// </summary>
-        protected virtual void OnClosing() { }
+        public virtual void PlayCloseAnim(Action onFinish)
+        {
+            Debug.Assert(animState != UIAnimState.Opening && animState != UIAnimState.Closing);
 
-        /// <summary>
-        /// 关闭完成
-        /// </summary>
-        protected virtual void OnClosed() { }
+            animState = UIAnimState.Closing;
+            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Closed; onFinish(); });
+        }
+
         #endregion
 
         #region Widget相关接口
@@ -241,44 +123,143 @@ namespace NRFramework
             return widget;
         }
 
+        public UIWidget GetWidget(string widgetId)
+        {
+            return widgetDict[widgetId];
+        }
+
         internal void RemoveWidgetRef(string widgetId)
         {
             widgetDict.Remove(widgetId);
         }
         #endregion
 
-        private void PlayOpenAnim()
+        #region 组件事件绑定
+        protected void BindButtonEvent(Button button)
         {
-            Debug.Assert(animState == UIAnimState.Idle);
-
-            animState = UIAnimState.Opening;
-            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Idle; });
+            button.onClick.AddListener(() =>
+            {
+                onButtonClickedGlobalEvent(button);
+                OnButtonClicked(button);
+            });
         }
 
-        private void PlayCloseAnim(Action onFinish)
+        protected void BindToggleEvent(Toggle toggle)
         {
-            Debug.Assert(animState == UIAnimState.Idle);
-
-            animState = UIAnimState.Closing;
-            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Idle; onFinish(); });
+            toggle.onValueChanged.AddListener((value) =>
+            {
+                onToggleValueChangedGlobalEvent(toggle, value);
+                OnToggleValueChanged(toggle, value);
+            });
         }
 
-        private UIViewBehaviour GetUIViewBehaviour(string prefabPath)
+        protected void BindDropdownEvent(Dropdown dropdown)
         {
-            GameObject prefab;
-#if UNITY_EDITOR
-            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-#else
-            prefab = null;  //todo，改用资源管理接口加载
-#endif
-
-            GameObject go = GameObject.Instantiate<GameObject>(prefab);
-            UIViewBehaviour viewBehaviour = go.GetComponent<UIViewBehaviour>(); //这里直接取基类组件是可以的。
-
-            Debug.Assert(viewBehaviour != null, "UIViewBehaviour组件不存在");
-
-            viewBehaviour.transform.SetParent(this.parentRectTransform, false);
-            return viewBehaviour;
+            dropdown.onValueChanged.AddListener((value) =>
+            {
+                onDropdownValueChangedGlobalEvent(dropdown, value);
+                OnDropdownValueChanged(dropdown, value);
+            });
         }
+
+        protected void BindInputFieldEvent(InputField inputField)
+        {
+            inputField.onValueChanged.AddListener((value) => { OnInputFieldValueChanged(inputField, value); });
+        }
+
+        protected void BindSliderEvent(Slider slider)
+        {
+            slider.onValueChanged.AddListener((value) => { OnSliderValueChanged(slider, value); });
+        }
+
+        protected void BindScrollbarEvent(Scrollbar scrollbar)
+        {
+            scrollbar.onValueChanged.AddListener((value) => { OnScrollbarValueChanged(scrollbar, value); });
+        }
+
+        protected void BindScrollRectEvent(ScrollRect scrollRect)
+        {
+            scrollRect.onValueChanged.AddListener((value) => { OnScrollRectValueChanged(scrollRect, value); });
+        }
+        #endregion
+
+        #region 内部生命周期
+        protected internal virtual void OnInternalCreating()
+        {
+            this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
+            this.gameObject = rectTransform.gameObject;
+        }
+
+        protected internal virtual void OnInternalCreated()
+        {
+            showState = UIShowState.Crated;
+            animState = UIAnimState.Crated;
+        }
+
+        protected internal virtual void OnInternalClosing()
+        {
+            GameObject.Destroy(gameObject);
+
+            gameObject = null;
+            rectTransform = null;
+            viewBehaviour = null;
+            parentRectTransform = null;
+            viewId = null;
+
+            widgetDict = null;
+        }
+
+        protected internal virtual void OnInternalClosed()
+        {
+            showState = UIShowState.Closed;
+        }
+
+        #endregion
+
+        #region 子类生命周期
+        /// <summary>
+        /// 子类在此完成自身特有创建内容
+        /// </summary>
+        protected virtual void OnCreating() { }
+
+        /// <summary>
+        /// 绑定组件变量和事件（自动生成）
+        /// </summary>
+        protected virtual void OnBindCompsAndEvents() { }
+
+        /// <summary>
+        /// 创建完成
+        /// </summary>
+        protected virtual void OnCreated() { }
+
+        protected virtual void OnButtonClicked(Button button) { }
+
+        protected virtual void OnToggleValueChanged(Toggle toggle, bool value) { }
+
+        protected virtual void OnDropdownValueChanged(Dropdown dropdown, int value) { }
+
+        protected virtual void OnInputFieldValueChanged(InputField inputField, string value) { }
+
+        protected virtual void OnSliderValueChanged(Slider slider, float value) { }
+
+        protected virtual void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
+
+        protected virtual void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+
+        /// <summary>
+        /// 子类在此完成自身特有关闭（清理）内容
+        /// </summary>
+        protected virtual void OnClosing() { }
+
+        /// <summary>
+        /// 解除组件变量和事件（自动生成）
+        /// </summary>
+        protected virtual void OnUnbindCompsAndEvents() { }
+
+        /// <summary>
+        /// 关闭完成
+        /// </summary>
+        protected virtual void OnClosed() { }
+        #endregion
     }
 }

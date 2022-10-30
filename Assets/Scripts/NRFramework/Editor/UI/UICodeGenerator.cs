@@ -44,11 +44,25 @@ public class ${ClassName} : ${ClassName}Base
     //    });
     //}
 
+    protected override void OnButtonClicked(Button button) { }
+
+    protected override void OnToggleValueChanged(Toggle toggle, bool value) { }
+
+    protected override void OnDropdownValueChanged(Dropdown dropdown, int value) { }
+
+    protected override void OnInputFieldValueChanged(InputField inputField, string value) { }
+
+    protected override void OnSliderValueChanged(Slider slider, float value) { }
+
+    protected override void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
+
+    protected override void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+
     protected override void OnFoucus(bool got) { }
 
-    protected override void OnClickBackBtn() { }
+    protected override void OnEscButtonClicked() { }
 
-    protected override void OnClickWindowBg() { }
+    protected override void OnWindowBgClicked() { }
 
     protected override void OnClosing() { }
 

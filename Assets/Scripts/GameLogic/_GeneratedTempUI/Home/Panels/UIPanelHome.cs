@@ -34,9 +34,9 @@ public class UIPanelHome : UIPanelHomeBase
 
     protected override void OnFoucus(bool got) { }
 
-    protected override void OnClickBackBtn() { }
+    protected override void OnEscButtonClicked() { }
 
-    protected override void OnClickWindowBg() { }
+    protected override void OnWindowBgClicked() { }
 
     protected override void OnClosing() { }
 

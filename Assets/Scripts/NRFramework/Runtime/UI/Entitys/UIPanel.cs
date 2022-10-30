@@ -54,9 +54,9 @@ namespace NRFramework
 
         protected virtual void OnFoucus(bool got) { }
 
-        protected virtual void OnClickBackBtn() { }
+        protected virtual void OnEscButtonClicked() { }
 
-        protected virtual void OnClickWindowBg() { }
+        protected virtual void OnWindowBgClicked() { }
 
         #endregion
     }
