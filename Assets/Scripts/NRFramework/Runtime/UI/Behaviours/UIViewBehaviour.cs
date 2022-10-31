@@ -44,10 +44,10 @@ namespace NRFramework
         [SerializeField]
         protected List<UIOpElement> m_OpElementList;
 
-        public event Action onEnable = null;
-        public event Action onStart = null;
-        public event Action onDisable = null;
-        public event Action onDestroy = null;
+        public event Action onEnable;
+        public event Action onStart;
+        public event Action onDisable;
+        public event Action onDestroy;
 
         public UIOpenAnimType uiOpenAnim { get { return m_UIOpenAnim; } }
 
@@ -110,7 +110,7 @@ namespace NRFramework
         //    for (int i = 0; i < m_OpElementList.Count; i++)
         //    {
         //        GameObject target = m_OpElementList[i].target;
-        //        //if (target != null && !this.Equals(target.GetComponentInParent<UIBehaviour>()))
+        //        //if (target != null && !this.Equals(target.GetComponentInParent<UIViewBehaviour>()))
         //        //{
         //        //    m_OpElementList[i].target == null;
         //        //}
@@ -181,7 +181,7 @@ namespace NRFramework
 
         private void OnEnable() { onEnable?.Invoke(); }   //View创建时，不会被调用
 
-        private void Start() { onStart?.Invoke(); }       //View创建时，后期绑定的UIBehaviour，不会被调用
+        private void Start() { onStart?.Invoke(); }       //View创建时，后期绑定的UIViewBehaviour，不会被调用
 
         private void OnDisable() { onDisable?.Invoke(); }
 

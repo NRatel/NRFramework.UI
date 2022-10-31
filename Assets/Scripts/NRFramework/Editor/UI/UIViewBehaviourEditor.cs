@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace NRFramework
 {
@@ -254,24 +255,80 @@ namespace NRFramework
             return finalPrefabPath;
         }
 
-        protected string GetVariantsDefineStrs() 
+        protected void GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr) 
         {
-            //protected GameObject m_XXX_Go;
-            //protected Button m_XXX_Btn;
+            HashSet<string> canBindEventCompSet = new HashSet<string>()
+            { "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect" };
 
-            StringBuilder sb = new StringBuilder();
+            string variantsDefineTempalte = "protected ${CompType} m_${GoName}_${CompName};";
+            string bindCompsLine = "m_${GoName}_${CompName} = (CompType)viweBehaviour.GetComponentByIndexs(${i}, ${j});";
+            string bindEventsLine = "BindEvent(m_${GoName}_${CompName});";
+            string unbindEventsLine = "UnbindEvent(m_${GoName}_${CompName});";
+            string unbindCompsLine = "m_${GoName}_${CompName} = null;";
 
+            UIViewBehaviour uwb = (UIViewBehaviour)target;
 
-            return ""; 
+            StringBuilder vdsb = new StringBuilder();
+            StringBuilder bcsb = new StringBuilder();
+            StringBuilder besb = new StringBuilder();
+            StringBuilder ubesb = new StringBuilder();
+            StringBuilder ubcsb = new StringBuilder();
+
+            for (int i = 0; i < uwb.opElementList.Count; i++)
+            {
+                UIOpElement opElement = uwb.opElementList[i];
+                for (int j = 0; j < opElement.componentList.Count; j++)
+                {
+                    Component comp = opElement.componentList[j];
+                    string compType = comp.GetType().Name;
+                    string goName = UIEditorUtility.GetFormatedGoName(comp.gameObject.name);
+                    string compName = UIEditorUtility.GetCompShortName(compType);
+
+                    Debug.Log("compType111:" + compType);
+                    Debug.Log("goName111:" + goName);
+                    Debug.Log("compName111:" + compName);
+
+                    string vdLine = new string(variantsDefineTempalte);
+                    vdLine = vdLine.Replace("${CompType}", compType);
+                    vdLine = vdLine.Replace("${GoName}", goName);
+                    vdLine = vdLine.Replace("${CompName}", compName);
+                    vdsb.Append(vdLine).Append("\r");
+
+                    string bcLine = new string(bindCompsLine);
+                    bcLine = bcLine.Replace("${CompType}", compType);
+                    bcLine = bcLine.Replace("${GoName}", goName);
+                    bcLine = bcLine.Replace("${CompName}", compName);
+                    bcLine = bcLine.Replace("${i}", i.ToString());
+                    bcLine = bcLine.Replace("${j}", j.ToString());
+                    bcsb.Append(bcLine).Append("\r");
+
+                    if (canBindEventCompSet.Contains(compName))
+                    {
+                        string beLine = new string(bindEventsLine);
+                        beLine = beLine.Replace("${GoName}", goName);
+                        beLine = beLine.Replace("${CompName}", compName);
+                        besb.Append(beLine).Append("\r");
+
+                        string ubeLine = new string(unbindEventsLine);
+                        ubeLine = ubeLine.Replace("${GoName}", goName);
+                        ubeLine = ubeLine.Replace("${CompName}", compName);
+                        ubesb.Append(ubeLine).Append("\r");
+                    }
+
+                    string ubcLine = new string(unbindCompsLine);
+                    ubcLine = ubcLine.Replace("${GoName}", goName);
+                    ubcLine = ubcLine.Replace("${CompName}", compName);
+                    ubcsb.Append(ubcLine).Append("\r");
+                }
+            }
+
+            variantsDefineStr = vdsb.ToString();
+            bindCompsStr = bcsb.ToString();
+            bindEventsStr = besb.ToString();
+            unbindEventsStr = ubesb.ToString();
+            unbindCompsStr = ubcsb.ToString();
         }
 
-        protected string GetBindCompsStrs() { return ""; }
-
-        protected string GetBindEventsStrs() { return ""; }
-
-        protected string GetUnbindEventsStrs() { return ""; }
-
-        protected string GetUnbindCompsStrs() { return ""; }
         #endregion
     }
 }

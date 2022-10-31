@@ -10,8 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1537610612172345523}
   - component: {fileID: 1537610612172345532}
-  - component: {fileID: 1537610612172345522}
-  - component: {fileID: 3265889707443457017}
+  - component: {fileID: 7893247368089146945}
   m_Layer: 5
   m_Name: UIPanelHome
   m_TagString: Untagged
@@ -52,7 +51,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537610612172345520}
   m_CullTransparentMesh: 1
---- !u!114 &1537610612172345522
+--- !u!114 &7893247368089146945
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,40 +63,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d8f3b9cfa92c3439d0cadae9462190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UIOpenAnim: 1
-  m_UICloseAnim: 2
+  m_UIOpenAnim: 0
+  m_UICloseAnim: 0
   m_OpElementList:
   - m_Target: {fileID: 2713375166865697336}
     m_ComponentList:
     - {fileID: 8988358719460630317}
     - {fileID: 6275106294474613726}
   m_PanelType: 0
-  m_CanGetFoucus: 1
-  m_ColseWhenClickBg: 0
+  m_CanGetFoucus: 0
+  m_ColseWhenClickBg: 1
   m_Thickness: 10
   m_InSafeArea: 1
---- !u!1773428102 &3265889707443457017
-ParentConstraint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1537610612172345520}
-  m_Enabled: 1
-  m_Weight: 1
-  m_TranslationAtRest: {x: 0, y: 0, z: 0}
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffsets: []
-  m_RotationOffsets: []
-  m_AffectTranslationX: 1
-  m_AffectTranslationY: 1
-  m_AffectTranslationZ: 1
-  m_AffectRotationX: 1
-  m_AffectRotationY: 1
-  m_AffectRotationZ: 1
-  m_IsContraintActive: 0
-  m_IsLocked: 0
-  m_Sources: []
 --- !u!1 &1537610612515864436
 GameObject:
   m_ObjectHideFlags: 0

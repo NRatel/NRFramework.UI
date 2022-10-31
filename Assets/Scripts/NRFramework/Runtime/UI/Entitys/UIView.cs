@@ -135,51 +135,86 @@ namespace NRFramework
         #endregion
 
         #region 组件事件绑定
-        protected void BindButtonEvent(Button button)
+        protected void BindEvent(Button button)
         {
             button.onClick.AddListener(() =>
             {
                 onButtonClickedGlobalEvent?.Invoke(button);
-                OnButtonClicked(button);
+                OnClicked(button);
             });
         }
 
-        protected void BindToggleEvent(Toggle toggle)
+        protected void BindEvent(Toggle toggle)
         {
             toggle.onValueChanged.AddListener((value) =>
             {
                 onToggleValueChangedGlobalEvent?.Invoke(toggle, value);
-                OnToggleValueChanged(toggle, value);
+                OnValueChanged(toggle, value);
             });
         }
 
-        protected void BindDropdownEvent(Dropdown dropdown)
+        protected void BindEvent(Dropdown dropdown)
         {
             dropdown.onValueChanged.AddListener((value) =>
             {
                 onDropdownValueChangedGlobalEvent?.Invoke(dropdown, value);
-                OnDropdownValueChanged(dropdown, value);
+                OnValueChanged(dropdown, value);
             });
         }
 
-        protected void BindInputFieldEvent(InputField inputField)
+        protected void BindEvent(InputField inputField)
         {
-            inputField.onValueChanged.AddListener((value) => { OnInputFieldValueChanged(inputField, value); });
+            inputField.onValueChanged.AddListener((value) => { OnValueChanged(inputField, value); });
         }
 
-        protected void BindSliderEvent(Slider slider)
+        protected void BindEvent(Slider slider)
         {
-            slider.onValueChanged.AddListener((value) => { OnSliderValueChanged(slider, value); });
+            slider.onValueChanged.AddListener((value) => { OnValueChanged(slider, value); });
         }
 
-        protected void BindScrollbarEvent(Scrollbar scrollbar)
+        protected void BindEvent(Scrollbar scrollbar)
         {
-            scrollbar.onValueChanged.AddListener((value) => { OnScrollbarValueChanged(scrollbar, value); });
+            scrollbar.onValueChanged.AddListener((value) => { OnValueChanged(scrollbar, value); });
         }
 
-        protected void BindScrollRectEvent(ScrollRect scrollRect)
+        protected void BindEvent(ScrollRect scrollRect)
         {
-            scrollRect.onValueChanged.AddListener((value) => { OnScrollRectValueChanged(scrollRect, value); });
+            scrollRect.onValueChanged.AddListener((value) => { OnValueChanged(scrollRect, value); });
+        }
+
+        protected void UnbindEvent(Button button)
+        {
+            button.onClick.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(Toggle toggle)
+        {
+            toggle.onValueChanged.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(Dropdown dropdown)
+        {
+            dropdown.onValueChanged.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(InputField inputField)
+        {
+            inputField.onValueChanged.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(Slider slider)
+        {
+            slider.onValueChanged.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(Scrollbar scrollbar)
+        {
+            scrollbar.onValueChanged.RemoveAllListeners();
+        }
+
+        protected void UnbindEvent(ScrollRect scrollRect)
+        {
+            scrollRect.onValueChanged.RemoveAllListeners();
         }
         #endregion
 
@@ -232,19 +267,19 @@ namespace NRFramework
         /// </summary>
         protected virtual void OnCreated() { }
 
-        protected virtual void OnButtonClicked(Button button) { }
+        protected virtual void OnClicked(Button button) { }
 
-        protected virtual void OnToggleValueChanged(Toggle toggle, bool value) { }
+        protected virtual void OnValueChanged(Toggle toggle, bool value) { }
 
-        protected virtual void OnDropdownValueChanged(Dropdown dropdown, int value) { }
+        protected virtual void OnValueChanged(Dropdown dropdown, int value) { }
 
-        protected virtual void OnInputFieldValueChanged(InputField inputField, string value) { }
+        protected virtual void OnValueChanged(InputField inputField, string value) { }
 
-        protected virtual void OnSliderValueChanged(Slider slider, float value) { }
+        protected virtual void OnValueChanged(Slider slider, float value) { }
 
-        protected virtual void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
+        protected virtual void OnValueChanged(Scrollbar scrollbar, float value) { }
 
-        protected virtual void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+        protected virtual void OnValueChanged(ScrollRect scrollRect, Vector2 value) { }
 
         /// <summary>
         /// 子类在此完成自身特有关闭（清理）内容

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -67,19 +69,19 @@ public class ${ClassName} : ${BaseClassName}
     //    });
     //}
 
-    protected override void OnButtonClicked(Button button) { }
+    protected override void OnClicked(Button button) { }
 
-    protected override void OnToggleValueChanged(Toggle toggle, bool value) { }
+    protected override void OnValueChanged(Toggle toggle, bool value) { }
 
-    protected override void OnDropdownValueChanged(Dropdown dropdown, int value) { }
+    protected override void OnValueChanged(Dropdown dropdown, int value) { }
 
-    protected override void OnInputFieldValueChanged(InputField inputField, string value) { }
+    protected override void OnValueChanged(InputField inputField, string value) { }
 
-    protected override void OnSliderValueChanged(Slider slider, float value) { }
+    protected override void OnValueChanged(Slider slider, float value) { }
 
-    protected override void OnScrollbarValueChanged(Scrollbar scrollbar, float value) { }
+    protected override void OnValueChanged(Scrollbar scrollbar, float value) { }
 
-    protected override void OnScrollRectValueChanged(ScrollRect scrollRect, Vector2 value) { }
+    protected override void OnValueChanged(ScrollRect scrollRect, Vector2 value) { }
     ${PanelLifeCycleCode}
     protected override void OnClosing() { }
 
@@ -106,6 +108,35 @@ public class ${ClassName} : ${BaseClassName}
 
             string scriptAssetPath = Path.Combine("Assets", Path.GetRelativePath(Application.dataPath, savePath));
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<TextAsset>(scriptAssetPath));
+        }
+
+        /// <summary>
+        /// 保留字母数字下划线
+        /// </summary>
+        /// <param name="goName"></param>
+        /// <returns></returns>
+        static public string GetFormatedGoName(string goName)
+        {
+            goName = Regex.Replace(goName, @"[^a-zA-Z0-9]_", "");
+            return goName;
+        }
+
+        /// <summary>
+        /// 取组件短名
+        /// 将过长的缩写即可，默认使用原名
+        /// （主要是太长且多个单词的）
+        /// </summary>
+        /// <returns></returns>
+        static public string GetCompShortName(string compName)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"VerticalLayoutGroup", "VLayoutGroup"},
+                {"HorizontalLayoutGroup","HLayoutGroup"},
+                {"GridLayoutGroup", "GLayoutGroup"}
+            };
+
+            return dict.ContainsKey(compName) ? dict[compName] : compName;
         }
 
         static public Texture GetIconByType(Type type)

@@ -71,12 +71,12 @@ namespace NRFramework
                         break;
                     }
                     //布局相关组件
-                    if (comp is LayoutGroup || comp is ContentSizeFitter || comp is AspectRatioFitter || comp is LayoutElement)
+                    else if (comp is LayoutGroup || comp is ContentSizeFitter || comp is AspectRatioFitter || comp is LayoutElement)
                     {
                         opElement.componentList.Add(comp);
                         break;
                     }
-                    if (sm_CustomSet.Contains(comp.name))
+                    else if (sm_CustomSet.Contains(comp.name))
                     {
                         opElement.componentList.Add(comp);
                         break;

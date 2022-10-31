@@ -116,14 +116,17 @@ namespace NRFramework
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
-            //((GameObject)target).GetComponent<UIViewBehaviour>();
-            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "Base");
+            string content = UIEditorUtility.kUIBaseCode.Replace("${ClassName}", className + "Base");
             content = content.Replace("${BaseClassName}", "UIPanel");
-            content = content.Replace("${VariantsDefine}", GetVariantsDefineStrs());
-            content = content.Replace("${BindComps}", GetBindCompsStrs());
-            content = content.Replace("${BindEvents}", GetBindEventsStrs());
-            content = content.Replace("${UnbindEvents}", GetUnbindEventsStrs());
-            content = content.Replace("${UnbindComps}", GetUnbindCompsStrs());
+
+            string variantsDefineStr, bindCompsStr, bindEventsStr, unbindEventsStr, unbindCompsStr;
+            GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
+
+            content = content.Replace("${VariantsDefine}", variantsDefineStr);
+            content = content.Replace("${BindComps}", bindCompsStr);
+            content = content.Replace("${BindEvents}", bindEventsStr);
+            content = content.Replace("${UnbindEvents}", unbindEventsStr);
+            content = content.Replace("${UnbindComps}", unbindCompsStr);
             content = content.Trim();
 
             UIEditorUtility.GenerateCode(savePath, content);
