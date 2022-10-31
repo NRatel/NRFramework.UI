@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditorInternal;
 using System;
+using System.Text;
 
 namespace NRFramework
 {
@@ -181,11 +182,14 @@ namespace NRFramework
                 }
             }
 
-            //移除所有Target为Null的元素
+            //移除所有target为Null 或 componentList 为空的元素
             for (int i = listSP.arraySize - 1; i >= 0; i--)
             {
-                SerializedProperty targetSP = listSP.GetArrayElementAtIndex(i).FindPropertyRelative("m_Target");
-                if (targetSP.objectReferenceValue == null)
+                SerializedProperty elementSP = listSP.GetArrayElementAtIndex(i);
+                SerializedProperty targetSP = elementSP.FindPropertyRelative("m_Target");
+                SerializedProperty componentListSP = elementSP.FindPropertyRelative("m_ComponentList");
+
+                if (targetSP.objectReferenceValue == null || componentListSP.arraySize == 0)
                 {
                     //注意：这里删除直接DeleteArrayElementAtIndex即可。（不要先置为null，会报错）
                     listSP.DeleteArrayElementAtIndex(i);
@@ -250,7 +254,16 @@ namespace NRFramework
             return finalPrefabPath;
         }
 
-        protected string GetVariantsDefineStrs() { return ""; }
+        protected string GetVariantsDefineStrs() 
+        {
+            //protected GameObject m_XXX_Go;
+            //protected Button m_XXX_Btn;
+
+            StringBuilder sb = new StringBuilder();
+
+
+            return ""; 
+        }
 
         protected string GetBindCompsStrs() { return ""; }
 

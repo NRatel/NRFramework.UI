@@ -116,6 +116,7 @@ namespace NRFramework
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
+            //((GameObject)target).GetComponent<UIViewBehaviour>();
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "Base");
             content = content.Replace("${BaseClassName}", "UIPanel");
             content = content.Replace("${VariantsDefine}", GetVariantsDefineStrs());

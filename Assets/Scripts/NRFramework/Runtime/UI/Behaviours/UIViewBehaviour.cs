@@ -44,10 +44,10 @@ namespace NRFramework
         [SerializeField]
         protected List<UIOpElement> m_OpElementList;
 
-        internal Action onEnable;
-        internal Action onStart;
-        internal Action onDisable;
-        internal Action onDestroy;
+        public event Action onEnable = null;
+        public event Action onStart = null;
+        public event Action onDisable = null;
+        public event Action onDestroy = null;
 
         public UIOpenAnimType uiOpenAnim { get { return m_UIOpenAnim; } }
 

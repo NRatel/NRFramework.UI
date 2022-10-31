@@ -35,13 +35,13 @@ namespace NRFramework
                     posIndex++;
                 }
             }
-            //gameObject图标（必有）
-            if (behaviour.HasSavedGameObject(go))
-            {
-                Texture icon = UIEditorUtility.GetIconByType(go.GetType());
-                DrawIcon(selectRect, posIndex, icon);
-                posIndex++;
-            }
+            ////gameObject图标 (废弃了，似乎没必要)
+            //if (behaviour.HasSavedGameObject(go))
+            //{
+            //    Texture icon = UIEditorUtility.GetIconByType(go.GetType());
+            //    DrawIcon(selectRect, posIndex, icon);
+            //    posIndex++;
+            //}
         }
 
         static private void DrawIcon(Rect selectRect, int posIndex, Texture icon)

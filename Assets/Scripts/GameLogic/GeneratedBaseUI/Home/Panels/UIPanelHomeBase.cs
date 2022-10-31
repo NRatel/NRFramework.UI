@@ -7,8 +7,8 @@ using NRFramework;
 
 public class UIPanelHomeBase : UIPanel
 {
-    public GameObject m_XXX_Go;
-    public Button m_XXX_Btn;
+    protected GameObject m_XXX_Go;
+    protected Button m_XXX_Btn;
 
     protected override void OnBindCompsAndEvents() 
     {

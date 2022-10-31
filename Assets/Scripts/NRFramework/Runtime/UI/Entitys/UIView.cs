@@ -139,7 +139,7 @@ namespace NRFramework
         {
             button.onClick.AddListener(() =>
             {
-                onButtonClickedGlobalEvent(button);
+                onButtonClickedGlobalEvent?.Invoke(button);
                 OnButtonClicked(button);
             });
         }
@@ -148,7 +148,7 @@ namespace NRFramework
         {
             toggle.onValueChanged.AddListener((value) =>
             {
-                onToggleValueChangedGlobalEvent(toggle, value);
+                onToggleValueChangedGlobalEvent?.Invoke(toggle, value);
                 OnToggleValueChanged(toggle, value);
             });
         }
@@ -157,7 +157,7 @@ namespace NRFramework
         {
             dropdown.onValueChanged.AddListener((value) =>
             {
-                onDropdownValueChangedGlobalEvent(dropdown, value);
+                onDropdownValueChangedGlobalEvent?.Invoke(dropdown, value);
                 OnDropdownValueChanged(dropdown, value);
             });
         }
