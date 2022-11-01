@@ -12,25 +12,16 @@ namespace NRFramework
         public const string kUIBaseCode = @"
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using NRFramework;
 
 public class ${ClassName} : ${BaseClassName}
-{
-    ${VariantsDefine}
-
-    protected override void OnBindCompsAndEvents()
-    {
-        ${BindComps}
-
-        ${BindEvents}
-    }
+{${VariantsDefine}
+    protected override void OnBindCompsAndEvents() 
+    {${BindComps}${BindEvents}}
 
     protected override void OnUnbindCompsAndEvents() 
-    {
-        ${UnbindEvents}
-
-        ${UnbindComps}
-    }
+    {${UnbindEvents}${UnbindComps}}
 }";
 
         public const string kUITemporaryCode = @"
@@ -117,7 +108,7 @@ public class ${ClassName} : ${BaseClassName}
         /// <returns></returns>
         static public string GetFormatedGoName(string goName)
         {
-            goName = Regex.Replace(goName, @"[^a-zA-Z0-9]_", "");
+            goName = Regex.Replace(goName, @"[^a-zA-Z0-9_]", "");
             return goName;
         }
 

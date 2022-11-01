@@ -4,7 +4,8 @@
     "references": [
         "NRFramework.Runtime",
         "ExcelData",
-        "ProtobufData"
+        "ProtobufData",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

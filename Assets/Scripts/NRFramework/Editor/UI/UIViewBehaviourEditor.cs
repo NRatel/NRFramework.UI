@@ -261,7 +261,7 @@ namespace NRFramework
             { "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect" };
 
             string variantsDefineTempalte = "protected ${CompType} m_${GoName}_${CompName};";
-            string bindCompsLine = "m_${GoName}_${CompName} = (CompType)viweBehaviour.GetComponentByIndexs(${i}, ${j});";
+            string bindCompsLine = "m_${GoName}_${CompName} = (${CompType})viewBehaviour.GetComponentByIndexs(${i}, ${j});";
             string bindEventsLine = "BindEvent(m_${GoName}_${CompName});";
             string unbindEventsLine = "UnbindEvent(m_${GoName}_${CompName});";
             string unbindCompsLine = "m_${GoName}_${CompName} = null;";
@@ -284,15 +284,11 @@ namespace NRFramework
                     string goName = UIEditorUtility.GetFormatedGoName(comp.gameObject.name);
                     string compName = UIEditorUtility.GetCompShortName(compType);
 
-                    Debug.Log("compType111:" + compType);
-                    Debug.Log("goName111:" + goName);
-                    Debug.Log("compName111:" + compName);
-
                     string vdLine = new string(variantsDefineTempalte);
                     vdLine = vdLine.Replace("${CompType}", compType);
                     vdLine = vdLine.Replace("${GoName}", goName);
                     vdLine = vdLine.Replace("${CompName}", compName);
-                    vdsb.Append(vdLine).Append("\r");
+                    vdsb.Append("\r\t").Append(vdLine);
 
                     string bcLine = new string(bindCompsLine);
                     bcLine = bcLine.Replace("${CompType}", compType);
@@ -300,25 +296,25 @@ namespace NRFramework
                     bcLine = bcLine.Replace("${CompName}", compName);
                     bcLine = bcLine.Replace("${i}", i.ToString());
                     bcLine = bcLine.Replace("${j}", j.ToString());
-                    bcsb.Append(bcLine).Append("\r");
+                    bcsb.Append("\r\t\t").Append(bcLine);
 
                     if (canBindEventCompSet.Contains(compName))
                     {
                         string beLine = new string(bindEventsLine);
                         beLine = beLine.Replace("${GoName}", goName);
                         beLine = beLine.Replace("${CompName}", compName);
-                        besb.Append(beLine).Append("\r");
+                        besb.Append("\r\t\t").Append(beLine);
 
                         string ubeLine = new string(unbindEventsLine);
                         ubeLine = ubeLine.Replace("${GoName}", goName);
                         ubeLine = ubeLine.Replace("${CompName}", compName);
-                        ubesb.Append(ubeLine).Append("\r");
+                        ubesb.Append("\r\t\t").Append(ubeLine); ;
                     }
 
                     string ubcLine = new string(unbindCompsLine);
                     ubcLine = ubcLine.Replace("${GoName}", goName);
                     ubcLine = ubcLine.Replace("${CompName}", compName);
-                    ubcsb.Append(ubcLine).Append("\r");
+                    ubcsb.Append("\r\t\t").Append(ubcLine);
                 }
             }
 

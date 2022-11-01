@@ -124,10 +124,9 @@ namespace NRFramework
 
             content = content.Replace("${VariantsDefine}", variantsDefineStr);
             content = content.Replace("${BindComps}", bindCompsStr);
-            content = content.Replace("${BindEvents}", bindEventsStr);
+            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : "") + bindEventsStr + "\r\t");
             content = content.Replace("${UnbindEvents}", unbindEventsStr);
-            content = content.Replace("${UnbindComps}", unbindCompsStr);
-            content = content.Trim();
+            content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindCompsStr) ? "\r" : "") + unbindCompsStr + "\r\t");
 
             UIEditorUtility.GenerateCode(savePath, content);
 
