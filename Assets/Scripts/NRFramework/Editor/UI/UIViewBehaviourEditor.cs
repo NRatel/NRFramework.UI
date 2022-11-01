@@ -277,11 +277,12 @@ namespace NRFramework
             for (int i = 0; i < uwb.opElementList.Count; i++)
             {
                 UIOpElement opElement = uwb.opElementList[i];
+                string goName = UIEditorUtility.GetFormatedGoName(opElement.target.name);
+
                 for (int j = 0; j < opElement.componentList.Count; j++)
                 {
                     Component comp = opElement.componentList[j];
                     string compType = comp.GetType().Name;
-                    string goName = UIEditorUtility.GetFormatedGoName(comp.gameObject.name);
                     string compName = UIEditorUtility.GetCompShortName(compType);
 
                     string vdLine = new string(variantsDefineTempalte);
