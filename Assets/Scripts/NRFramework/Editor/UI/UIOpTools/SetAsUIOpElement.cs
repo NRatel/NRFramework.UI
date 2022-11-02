@@ -35,7 +35,7 @@ namespace NRFramework
             //...
         };
 
-        [MenuItem("GameObject/NRUITools/#SetAsUIOpElement", false, 0)]
+        [MenuItem("GameObject/NRUITools/SetAsUIOpElement &s", false, 0)]
         static public void DoSet()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }

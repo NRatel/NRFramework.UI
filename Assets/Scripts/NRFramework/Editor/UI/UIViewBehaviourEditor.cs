@@ -323,7 +323,7 @@ namespace NRFramework
             int retCode = GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
             if (retCode < 0) { return; }
 
-            content = content.Replace("${VariantsDefine}", variantsDefineStr);
+            content = content.Replace("${VariantsDefine}", variantsDefineStr + (!string.IsNullOrEmpty(variantsDefineStr) ? "\r" : string.Empty));
             content = content.Replace("${BindComps}", bindCompsStr);
             content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
             content = content.Replace("${UnbindEvents}", unbindEventsStr);

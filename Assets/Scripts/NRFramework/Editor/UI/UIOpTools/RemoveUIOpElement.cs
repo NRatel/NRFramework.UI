@@ -14,7 +14,7 @@ namespace NRFramework
     /// </summary>
     public class RemoveUIOpElement : Editor
     {
-        [MenuItem("GameObject/NRUITools/#RemoveUIOpElement", false, 1)]
+        [MenuItem("GameObject/NRUITools/RemoveUIOpElement &r", false, 1)]
         static public void DoRemove()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }

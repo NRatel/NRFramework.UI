@@ -62,13 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UIOpenAnim: 0
   m_UICloseAnim: 0
-  m_OpElementList:
-  - m_Target: {fileID: 1537610612658071285}
-    m_ComponentList:
-    - {fileID: 1537610612658071287}
-  - m_Target: {fileID: 8327138985740332497}
-    m_ComponentList:
-    - {fileID: 4044200154343071374}
+  m_OpElementList: []
 --- !u!1 &1537610612658071285
 GameObject:
   m_ObjectHideFlags: 0
