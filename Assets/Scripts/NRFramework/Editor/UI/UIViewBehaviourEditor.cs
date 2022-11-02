@@ -63,6 +63,7 @@ namespace NRFramework
             //重写原因（相对ReorderableList源码中的默认实现DrawFooter）：
             //1、删除 list.displayAdd 和 list.displayRemove 的判断逻辑。（不需要，要让+-按钮永远保留）
             //2、删除 增加+按钮时的 onAddDropdownCallback相关逻辑。（不需要）
+            //4、增加一个清空按钮。
             //3、增加一个整理按钮。
             reorderableList.drawFooterCallback = (Rect rect) =>
             {
@@ -75,7 +76,7 @@ namespace NRFramework
                 float singleWidth = 25f;
                 float singleHeight = 16f;
                 float spacing = 5f;
-                int btnsCount = 3;
+                int btnsCount = 4;
 
                 float rightEdge = rect.xMax - rightMargin;
                 float btnsWidth = leftPading + rightPading + singleWidth * btnsCount + spacing * (btnsCount - 1);
@@ -83,7 +84,8 @@ namespace NRFramework
 
                 Rect addRect = new Rect(btnsRect.x + leftPading, btnsRect.y, singleWidth, singleHeight);
                 Rect removeRect = new Rect(btnsRect.x + leftPading + (singleWidth + spacing) * 1, btnsRect.y, singleWidth, singleHeight);
-                Rect refreshRect = new Rect(btnsRect.x + leftPading + (singleWidth + spacing) * 2, btnsRect.y, singleWidth, singleHeight);
+                Rect trashRect = new Rect(btnsRect.x + leftPading + (singleWidth + spacing) * 2, btnsRect.y, singleWidth, singleHeight);
+                Rect refreshRect = new Rect(btnsRect.x + leftPading + (singleWidth + spacing) * 3, btnsRect.y, singleWidth, singleHeight);
 
                 if (UnityEngine.Event.current.type == EventType.Repaint)
                 {
@@ -105,6 +107,15 @@ namespace NRFramework
                     {
                         defaults.DoRemoveButton(list);
                         //list.onRemoveCallback(list);
+                    }
+                }
+
+                using (new EditorGUI.DisabledScope(list.count <= 0))
+                {
+                    Texture icon = EditorGUIUtility.IconContent("TreeEditor.Trash").image;
+                    if (GUI.Button(trashRect, new GUIContent(icon), defaults.preButton))
+                    {
+                        TrashOpElementList(list);
                     }
                 }
 
@@ -134,6 +145,14 @@ namespace NRFramework
             };
 
             return reorderableList;
+        }
+
+        protected void TrashOpElementList(ReorderableList list)
+        {
+            SerializedProperty listSP = list.serializedProperty;
+            listSP.ClearArray();
+
+            listSP.serializedObject.ApplyModifiedProperties();
         }
 
         protected void RefreshOpElementList(ReorderableList list)
@@ -255,7 +274,7 @@ namespace NRFramework
             return finalPrefabPath;
         }
 
-        protected void GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr) 
+        protected int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr) 
         {
             HashSet<string> canBindEventCompSet = new HashSet<string>()
             { "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect" };
@@ -274,10 +293,26 @@ namespace NRFramework
             StringBuilder ubesb = new StringBuilder();
             StringBuilder ubcsb = new StringBuilder();
 
+            Dictionary<string, string> goNameDict = new Dictionary<string, string>();
+
             for (int i = 0; i < uwb.opElementList.Count; i++)
             {
                 UIOpElement opElement = uwb.opElementList[i];
-                string goName = UIEditorUtility.GetFormatedGoName(opElement.target.name);
+                string shortGoName = UIEditorUtility.GetFormatedGoName(opElement.target.name);
+
+                //不允许重名
+                if (goNameDict.ContainsKey(shortGoName))
+                {
+                    Debug.LogError(string.Format("重复的GameObejectName: {0}、{1}", goNameDict[shortGoName], opElement.target.name));
+
+                    variantsDefineStr = string.Empty;
+                    bindCompsStr = string.Empty;
+                    bindEventsStr = string.Empty;
+                    unbindEventsStr = string.Empty;
+                    unbindCompsStr = string.Empty;
+
+                    return -1;
+                }
 
                 for (int j = 0; j < opElement.componentList.Count; j++)
                 {
@@ -287,13 +322,13 @@ namespace NRFramework
 
                     string vdLine = new string(variantsDefineTempalte);
                     vdLine = vdLine.Replace("${CompType}", compType);
-                    vdLine = vdLine.Replace("${GoName}", goName);
+                    vdLine = vdLine.Replace("${GoName}", shortGoName);
                     vdLine = vdLine.Replace("${CompName}", compName);
                     vdsb.Append("\r\t").Append(vdLine);
 
                     string bcLine = new string(bindCompsLine);
                     bcLine = bcLine.Replace("${CompType}", compType);
-                    bcLine = bcLine.Replace("${GoName}", goName);
+                    bcLine = bcLine.Replace("${GoName}", shortGoName);
                     bcLine = bcLine.Replace("${CompName}", compName);
                     bcLine = bcLine.Replace("${i}", i.ToString());
                     bcLine = bcLine.Replace("${j}", j.ToString());
@@ -302,18 +337,18 @@ namespace NRFramework
                     if (canBindEventCompSet.Contains(compName))
                     {
                         string beLine = new string(bindEventsLine);
-                        beLine = beLine.Replace("${GoName}", goName);
+                        beLine = beLine.Replace("${GoName}", shortGoName);
                         beLine = beLine.Replace("${CompName}", compName);
                         besb.Append("\r\t\t").Append(beLine);
 
                         string ubeLine = new string(unbindEventsLine);
-                        ubeLine = ubeLine.Replace("${GoName}", goName);
+                        ubeLine = ubeLine.Replace("${GoName}", shortGoName);
                         ubeLine = ubeLine.Replace("${CompName}", compName);
                         ubesb.Append("\r\t\t").Append(ubeLine); ;
                     }
 
                     string ubcLine = new string(unbindCompsLine);
-                    ubcLine = ubcLine.Replace("${GoName}", goName);
+                    ubcLine = ubcLine.Replace("${GoName}", shortGoName);
                     ubcLine = ubcLine.Replace("${CompName}", compName);
                     ubcsb.Append("\r\t\t").Append(ubcLine);
                 }
@@ -324,6 +359,8 @@ namespace NRFramework
             bindEventsStr = besb.ToString();
             unbindEventsStr = ubesb.ToString();
             unbindCompsStr = ubcsb.ToString();
+
+            return 0;
         }
 
         #endregion

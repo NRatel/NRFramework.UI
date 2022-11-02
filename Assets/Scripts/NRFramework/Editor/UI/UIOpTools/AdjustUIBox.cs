@@ -17,7 +17,7 @@ namespace NRFramework
     /// </summary>
     public class AdjustUIBox : Editor
     {
-        [MenuItem("GameObject/NRFrameworkUITools/AdjustUIBox", false, 9)]
+        [MenuItem("GameObject/NRUITools/AdjustUIBox", false, 3)]
         public static void DoAdjust()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }

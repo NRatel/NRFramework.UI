@@ -21,10 +21,10 @@ namespace NRFramework
 
         public string uiPrefabRootDir = "GameRes/GUI/Prefabs";
         // UI类生成根目录（相对于 Application.dataPath）
-        // 将在在 /预设相对路径/ 下创建对应基类。
-        // 将在其 /_Temp 下创建快捷模板，创建后自行挪走
+        // 将在相对路径下创建对应基类。
+        // 将在相对路径下创建快捷类。创建后应自行改名（避免覆盖）。
         public string generatedBaseUIRootDir = "Scripts/GameLogic/GeneratedBaseUI";
-        public string generatedTempUIDir = "Scripts/GameLogic/_GeneratedTempUI";
+        public string generatedTempUIDir = "Scripts/GameLogic/Modules";
 
         private static NRFrameworkEditorSetting sm_Instance = null;
         public static NRFrameworkEditorSetting Instance

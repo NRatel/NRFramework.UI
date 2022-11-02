@@ -65,26 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UIOpenAnim: 0
   m_UICloseAnim: 0
-  m_OpElementList:
-  - m_Target: {fileID: 2713375166865697336}
-    m_ComponentList:
-    - {fileID: 8988358719460630317}
-  - m_Target: {fileID: 8562270768083967897}
-    m_ComponentList:
-    - {fileID: 2062785453834587736}
-  - m_Target: {fileID: 2495426293168137190}
-    m_ComponentList:
-    - {fileID: 9017339131991703171}
-  - m_Target: {fileID: 1537610612515864436}
-    m_ComponentList:
-    - {fileID: 1537610612515864439}
-  - m_Target: {fileID: 8327138985740332497}
-    m_ComponentList:
-    - {fileID: 3071926029520416491}
-    - {fileID: 4044200154343071374}
-  - m_Target: {fileID: 5133520148822760882}
-    m_ComponentList:
-    - {fileID: 4308293423121239720}
+  m_OpElementList: []
   m_PanelType: 0
   m_CanGetFoucus: 0
   m_ColseWhenClickBg: 1

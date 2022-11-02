@@ -120,13 +120,14 @@ namespace NRFramework
             content = content.Replace("${BaseClassName}", "UIPanel");
 
             string variantsDefineStr, bindCompsStr, bindEventsStr, unbindEventsStr, unbindCompsStr;
-            GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
+            int retCode = GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
+            if (retCode < 0) { return; }
 
             content = content.Replace("${VariantsDefine}", variantsDefineStr);
             content = content.Replace("${BindComps}", bindCompsStr);
-            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : "") + bindEventsStr + "\r\t");
+            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
             content = content.Replace("${UnbindEvents}", unbindEventsStr);
-            content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindCompsStr) ? "\r" : "") + unbindCompsStr + "\r\t");
+            content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindCompsStr) ? "\r" : string.Empty) + unbindCompsStr + "\r\t");
 
             UIEditorUtility.GenerateCode(savePath, content);
 
@@ -150,7 +151,7 @@ namespace NRFramework
 
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
             string className = Path.GetFileNameWithoutExtension(subPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + ".cs");
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
 
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className);

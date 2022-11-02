@@ -17,7 +17,7 @@ namespace NRFramework
     /// </summary>
     public class CreateUIBox : Editor
     {
-        [MenuItem("GameObject/NRFrameworkUITools/CreateUIBox", false, 8)]
+        [MenuItem("GameObject/NRUITools/CreateUIBox", false, 2)]
         public static void DoCreate()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }

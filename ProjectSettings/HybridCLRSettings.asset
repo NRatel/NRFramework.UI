@@ -17,10 +17,8 @@ MonoBehaviour:
   cloneFromGitee: 1
   hotUpdateAssemblyDefinitions:
   - {fileID: 5897886265953266890, guid: be8d865d59cbec548ad937d62d251d21, type: 3}
-  - {fileID: 5897886265953266890, guid: f1b7f4f23672d7646a82fd082d1b3eb6, type: 3}
-  - {fileID: 5897886265953266890, guid: 0fa554b2688407b479adadb8932e86c6, type: 3}
-  - {fileID: 5897886265953266890, guid: c7e538fae1dc1bc4b8e9af8fda444c97, type: 3}
-  hotUpdateAssemblies: []
+  hotUpdateAssemblies:
+  - 
   preserveHotUpdateAssemblies: []
   patchAOTAssemblies:
   - mscorlib
