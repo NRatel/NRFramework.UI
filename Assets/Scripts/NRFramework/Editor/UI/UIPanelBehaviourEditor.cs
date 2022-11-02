@@ -31,8 +31,6 @@ namespace NRFramework
             serializedObject.Update();
             DrawUIPanelSetting();
             base.OnInspectorGUI();
-            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 2);
-            DrawExpoertButton();
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -72,96 +70,6 @@ namespace NRFramework
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
 
             m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
-        }
-
-        private void DrawExpoertButton()
-        {
-            //string targetPath = AssetDatabase.GetAssetPath(((UIPanelBehaviour)target).gameObject);
-            //if (string.IsNullOrEmpty(targetPath)){ return; } //仅允许从预设导出（从预设才可获得相对子路径及准确名称）
-
-            GUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("ExportBase"))
-                {
-                    RefreshOpElementList(m_OpElementListRL);
-                    GenerateUIBaseCode();
-                }
-
-                if (GUILayout.Button("ExportTemp"))
-                {
-                    RefreshOpElementList(m_OpElementListRL);
-                    GenerateUITempCode();
-                }
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        private void GenerateUIBaseCode()
-        {
-            string prefabPath = GetPrefabPath();
-            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
-            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
-
-            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
-            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
-
-            if (!fullPrefabPath.StartsWith(fullRootDir))
-            {
-                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
-                return;
-            }
-
-            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
-            string className = Path.GetFileNameWithoutExtension(subPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
-            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
-
-            string content = UIEditorUtility.kUIBaseCode.Replace("${ClassName}", className + "Base");
-            content = content.Replace("${BaseClassName}", "UIPanel");
-
-            string variantsDefineStr, bindCompsStr, bindEventsStr, unbindEventsStr, unbindCompsStr;
-            int retCode = GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
-            if (retCode < 0) { return; }
-
-            content = content.Replace("${VariantsDefine}", variantsDefineStr);
-            content = content.Replace("${BindComps}", bindCompsStr);
-            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
-            content = content.Replace("${UnbindEvents}", unbindEventsStr);
-            content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindCompsStr) ? "\r" : string.Empty) + unbindCompsStr + "\r\t");
-
-            UIEditorUtility.GenerateCode(savePath, content);
-
-            Debug.Log("Export success!");
-        }
-
-        private void GenerateUITempCode()
-        {
-            string prefabPath = GetPrefabPath();
-            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
-            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
-
-            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
-            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
-
-            if (!fullPrefabPath.StartsWith(fullRootDir))
-            {
-                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
-                return;
-            }
-
-            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
-            string className = Path.GetFileNameWithoutExtension(subPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
-            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
-
-            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className);
-            content = content.Replace("${BaseClassName}", className + "Base");
-            content = content.Replace("${PanelLifeCycleCode}", "\n" + UIEditorUtility.kPanelLifeCycleCode) + "\r\n";
-            content = content.Trim();
-
-            UIEditorUtility.GenerateCode(savePath, content);
-            
-            Debug.Log("Export success!");
         }
     }
 }

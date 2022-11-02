@@ -4,6 +4,7 @@ using UnityEditorInternal;
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NRFramework
 {
@@ -26,15 +27,14 @@ namespace NRFramework
             serializedObject.Update();
 
             EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
-
             Enum uiOpenAnimTypeEnum = EditorGUILayout.EnumPopup("UIOpenAnimType", (UIOpenAnimType)m_UIOpenAnimTypeSP.enumValueIndex);
             m_UIOpenAnimTypeSP.enumValueIndex = (int)(UIOpenAnimType)uiOpenAnimTypeEnum;
             Enum uiCloseAnimTypeEnum = EditorGUILayout.EnumPopup("UICloseAnimType", (UICloseAnimType)m_UICloseAnimTypeSP.enumValueIndex);
             m_UICloseAnimTypeSP.enumValueIndex = (int)(UICloseAnimType)uiCloseAnimTypeEnum;
-
             EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
-
             m_OpElementListRL.DoLayoutList();
+            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 2);
+            DrawExpoertButton();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -147,7 +147,7 @@ namespace NRFramework
             return reorderableList;
         }
 
-        protected void TrashOpElementList(ReorderableList list)
+        private void TrashOpElementList(ReorderableList list)
         {
             SerializedProperty listSP = list.serializedProperty;
             listSP.ClearArray();
@@ -155,7 +155,7 @@ namespace NRFramework
             listSP.serializedObject.ApplyModifiedProperties();
         }
 
-        protected void RefreshOpElementList(ReorderableList list)
+        private void RefreshOpElementList(ReorderableList list)
         {
             SerializedProperty listSP = list.serializedProperty;
 
@@ -219,8 +219,28 @@ namespace NRFramework
             listSP.serializedObject.ApplyModifiedProperties();
         }
 
+        private void DrawExpoertButton()
+        {
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("ExportBase"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUIBaseCode();
+                }
+
+                if (GUILayout.Button("ExportTemp"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUITempCode();
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
+
+
         #region 代码生成相关
-        protected string GetPrefabPath()
+        private string GetPrefabPath()
         {
             // 如果正确拿到预设所在路径？
             PrefabAssetType singlePrefabType = PrefabUtility.GetPrefabAssetType(target);
@@ -274,7 +294,79 @@ namespace NRFramework
             return finalPrefabPath;
         }
 
-        protected int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr) 
+        private void GenerateUIBaseCode()
+        {
+            UIViewBehaviour uwb = (UIViewBehaviour)target;
+
+            string prefabPath = GetPrefabPath();
+            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
+
+            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
+            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
+
+            if (!fullPrefabPath.StartsWith(fullRootDir))
+            {
+                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
+                return;
+            }
+
+            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
+            string className = Path.GetFileNameWithoutExtension(subPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
+
+            string content = UIEditorUtility.kUIBaseCode.Replace("${ClassName}", className + "Base");
+            content = content.Replace("${BaseClassName}", uwb is UIPanelBehaviour ? "UIPanel" : "UIWidget");
+
+            string variantsDefineStr, bindCompsStr, bindEventsStr, unbindEventsStr, unbindCompsStr;
+            int retCode = GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
+            if (retCode < 0) { return; }
+
+            content = content.Replace("${VariantsDefine}", variantsDefineStr);
+            content = content.Replace("${BindComps}", bindCompsStr);
+            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
+            content = content.Replace("${UnbindEvents}", unbindEventsStr);
+            content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindCompsStr) ? "\r" : string.Empty) + unbindCompsStr + "\r\t");
+
+            UIEditorUtility.GenerateCode(savePath, content);
+
+            Debug.Log("Export success!");
+        }
+
+        private void GenerateUITempCode()
+        {
+            UIViewBehaviour uwb = (UIViewBehaviour)target;
+
+            string prefabPath = GetPrefabPath();
+            string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
+
+            //Debug.Log("fullPrefabPath: " + fullPrefabPath);
+            //Debug.Log("uiPrefabRootDir: " + fullRootDir);
+
+            if (!fullPrefabPath.StartsWith(fullRootDir))
+            {
+                Debug.LogError("预设不在可导出的根目录中：" + fullRootDir);
+                return;
+            }
+
+            string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
+            string className = Path.GetFileNameWithoutExtension(subPath);
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
+
+            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
+            content = content.Replace("${BaseClassName}", className + "Base");
+            content = content.Replace("${PanelLifeCycleCode}", uwb is UIPanelBehaviour ? ("\n" + UIEditorUtility.kPanelLifeCycleCode + "\r\n") : "\r\n");
+            content = content.Trim();
+
+            UIEditorUtility.GenerateCode(savePath, content);
+
+            Debug.Log("Export success!");
+        }
+
+        protected int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr)
         {
             HashSet<string> canBindEventCompSet = new HashSet<string>()
             { "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect" };
@@ -362,7 +454,6 @@ namespace NRFramework
 
             return 0;
         }
-
         #endregion
     }
 }
