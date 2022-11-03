@@ -8,20 +8,21 @@ namespace NRFramework
     {
         public string panelId { get { return viewId; } }
         public UIPanelBehaviour panelBehaviour { get { return (UIPanelBehaviour)viewBehaviour; } }
-        public Canvas parentCanvas;
+
+        public UIRoot parentUIRoot;
         public Canvas canvas;
         public GraphicRaycaster gaphicRaycaster;
 
-        internal void Create(string panelId, Canvas parentCanvas, string prefabPath)
+        internal void Create(string panelId, UIRoot uiRoot, string prefabPath)
         {
-            this.parentCanvas = parentCanvas;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
+            this.parentUIRoot = uiRoot;
+            base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), prefabPath);
         }
 
-        internal void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour)
+        internal void Create(string panelId, UIRoot uiRoot, UIPanelBehaviour panelBehaviour)
         {
-            this.parentCanvas = parentCanvas;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+            this.parentUIRoot = uiRoot;
+            base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), panelBehaviour);
         }
 
         internal void SetSortingOrder(int sortingOrder)
@@ -40,12 +41,12 @@ namespace NRFramework
 
         protected internal override void OnInternalClosing()
         {
-            UIManager.Instance.RemovePanelRef(panelId);
+            parentUIRoot.RemovePanelRef(panelId);
 
             //组件引用解除即可, 实例会随gameObject销毁
             gaphicRaycaster = null;
             canvas = null;
-            parentCanvas = null;
+            parentUIRoot = null;
 
             base.OnInternalClosing();
         }

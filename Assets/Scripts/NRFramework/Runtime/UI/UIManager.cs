@@ -4,143 +4,75 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public partial class UIManager : Singleton<UIManager>
+    public class UIManager : Singleton<UIManager>
     {
-        private Canvas m_UICanvas;
-        private Camera m_UICamera;
-        private Dictionary<string, UILayer> m_LayerDict;
-        private Dictionary<string, string> m_Panel2LayerMap; //panel与其所在Layer的映射。
+        public Canvas uiCanvas { private set; get; }
+
+        public Camera uiCamera { private set; get; }
+
+        public Dictionary<string, UIRoot> rootDict { private set; get; }
 
         private UIManager()
         {
-            m_UICanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
-            m_UICamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
-            m_LayerDict = new Dictionary<string, UILayer>();
-            m_Panel2LayerMap = new Dictionary<string, string>();
+            uiCanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
+            uiCamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
+            rootDict = new Dictionary<string, UIRoot>();
         }
 
         /// <summary>
-        /// 创建一个UI层
+        /// 创建一个UI根/层
         /// </summary>
-        /// <param name="layerId"></param>
+        /// <param name="rootId"></param>
         /// <param name="startOrder"></param>
         /// <param name="endOrder"></param>
-        public void CreateLayer(string layerId, int startOrder, int endOrder)
+        public void CreateUIRoot(string rootId, int startOrder, int endOrder)
         {
-            Debug.Assert(!m_LayerDict.ContainsKey(layerId), "layer已存在");
+            Debug.Assert(!rootDict.ContainsKey(rootId), "uiRoot已存在");
             Debug.Assert(startOrder >= 0, "必须使startOrder >= 0");
             Debug.Assert(endOrder >= startOrder, "必须使endOrder >= startOrder");
             
-            foreach (UILayer layer in m_LayerDict.Values)
+            foreach (UIRoot uiRoot in rootDict.Values)
             {
-                Debug.Assert(startOrder > layer.endOrder || endOrder < layer.startOrder, "各layer的sortingOrder范围不允许交叉");
+                Debug.Assert(startOrder > uiRoot.endOrder || endOrder < uiRoot.startOrder, "sortingOrder范围不允许与其他uiRoot交叉");
             }
 
-            m_LayerDict.Add(layerId, new UILayer()
+            rootDict.Add(rootId, new UIRoot()
             {
-                layerId = layerId,
+                rootId = rootId,
                 startOrder = startOrder,
                 endOrder = endOrder
             });
         }
 
-        /// <summary>
-        /// 创建一个UI面板
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="panelId">panelId</param>
-        /// <param name="prefabPath">预设路径</param>
-        /// <param name="layerId">在哪个层打开</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
-        /// <returns></returns>
-        public T CreatePanel<T>(string panelId, string prefabPath, string layerId, int fixedOrder = -1) where T : UIPanel
+        public bool ExistUIRoot(string rootId)
         {
-            T panel = Activator.CreateInstance(typeof(T)) as T;
-            panel.Create(panelId, m_UICanvas, prefabPath);
-
-            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
-
-            m_LayerDict[layerId].AddPanel(panel, fixedOrder);
-            m_Panel2LayerMap.Add(panel.panelId, layerId);
-
-            SortAllSibling();
-            return panel;
+            return rootDict.ContainsKey(rootId);
         }
 
-        /// <summary>
-        /// 创建一个UI面板
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="panelId">panelId</param>
-        /// <param name="panelBehaviour"></param>
-        /// <param name="layerId">在哪个层打开</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
-        /// <returns></returns>
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, string layerId, int fixedOrder = -1) where T : UIPanel
+        public UIPanel GetTopestPanel()
         {
-            T panel = Activator.CreateInstance(typeof(T)) as T;
-            panel.Create(panelId, m_UICanvas, panelBehaviour);
-
-            Debug.Assert(m_LayerDict.ContainsKey(layerId), "layer不存在");
-
-            m_LayerDict[layerId].AddPanel(panel, fixedOrder);
-            m_Panel2LayerMap.Add(panel.panelId, layerId);
-
-            SortAllSibling();
-            return panel;
-        }
-
-        public UIPanel GetPanel(string panelId)
-        {
-            Debug.Assert(ExistPanel(panelId), "panel不存在");
-
-            string layerId = m_Panel2LayerMap[panelId];
-            UILayer layer = m_LayerDict[layerId];
-
-            return layer.GetPanel(panelId);
-        }
-
-        public bool ExistPanel(string panelId)
-        {
-            return m_Panel2LayerMap.ContainsKey(panelId);
-        }
-
-        public UIPanel GetTopPanel()
-        {
-            UIPanel topPanel = null;
-            foreach (UILayer layer in m_LayerDict.Values)
+            UIPanel topestPanel = null;
+            foreach (UIRoot uiRoot in rootDict.Values)
             {
-                UIPanel topPanelInLayer = layer.GetTopPanel();
-                if (topPanelInLayer != null && (topPanel == null || topPanelInLayer.canvas.sortingOrder > topPanel.canvas.sortingOrder))
+                UIPanel panel = uiRoot.GetTopestPanel();
+                if (panel != null && (topestPanel == null || panel.canvas.sortingOrder > topestPanel.canvas.sortingOrder))
                 {
-                    topPanel = topPanelInLayer;
+                    topestPanel = panel;
                 }
             }
-            return topPanel;
-        }
-
-        internal void RemovePanelRef(string panelId)
-        {
-            Debug.Assert(ExistPanel(panelId), "panel不存在");
-
-            string layerId = m_Panel2LayerMap[panelId];
-            UILayer layer = m_LayerDict[layerId];
-            UIPanel panel = GetPanel(panelId);
-
-            layer.RemovePanel(panelId);
-            m_Panel2LayerMap.Remove(panelId);
+            return topestPanel;
         }
 
         /// <summary>
         /// 调整所有Panel的 sblingIndex。仅编辑器下？
         /// </summary>
-        private void SortAllSibling()
+        public void SortAllPanelSiblings()
         {
 #if UNITY_EDITOR
             List<UIPanel> allPanels = new List<UIPanel>();
-            foreach (UILayer layer in m_LayerDict.Values)
+            foreach (UIRoot uiRoot in rootDict.Values)
             {
-                foreach (UIPanel panel in layer.GetPanelDict().Values)
+                foreach (UIPanel panel in uiRoot.panelDict.Values)
                 {
                     allPanels.Add(panel);
                 }

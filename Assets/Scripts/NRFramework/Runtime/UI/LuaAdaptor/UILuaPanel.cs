@@ -35,7 +35,7 @@ namespace NRFramework
             SetMember("rectTransform", rectTransform);
             SetMember("gameObject", gameObject);
             SetMember("parentRectTransform", parentRectTransform);
-            SetMember("parentCanvas", parentCanvas);
+            SetMember("parentUIRoot", parentUIRoot);
             SetMember("canvas", canvas);
             SetMember("gaphicRaycaster", gaphicRaycaster);
 
