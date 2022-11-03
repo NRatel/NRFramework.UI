@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace NRFramework
     public enum UIShowState { Crated, Initing, Refreshing, Idle, Closed }
     public enum UIAnimState { Crated, Opening, Closing, Idle, Closed }
 
-    public abstract class UIView
+    public abstract partial class UIView
     {
         protected string viewId;
         public RectTransform parentRectTransform;
@@ -160,11 +161,6 @@ namespace NRFramework
                 onDropdownValueChangedGlobalEvent?.Invoke(dropdown, value);
                 OnValueChanged(dropdown, value);
             });
-        }
-
-        protected void BindEvent(InputField inputField)
-        {
-            inputField.onValueChanged.AddListener((value) => { OnValueChanged(inputField, value); });
         }
 
         protected void BindEvent(Slider slider)

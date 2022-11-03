@@ -369,7 +369,10 @@ namespace NRFramework
         protected int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr)
         {
             HashSet<string> canBindEventCompSet = new HashSet<string>()
-            { "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect" };
+            { 
+                "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect",
+                "TMP_Dropdown", "TMP_InputField",
+            };
 
             string variantsDefineTempalte = "protected ${CompType} m_${GoName}_${CompName};";
             string bindCompsLine = "m_${GoName}_${CompName} = (${CompType})viewBehaviour.GetComponentByIndexs(${i}, ${j});";

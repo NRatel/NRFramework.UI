@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEditor.Experimental;
 using UnityEngine;
 
 namespace NRFramework
@@ -66,7 +67,11 @@ public class ${ClassName} : ${BaseClassName}
 
     protected override void OnValueChanged(Dropdown dropdown, int value) { }
 
+    protected override void OnValueChanged(TMP_Dropdown tmpDropdown, int value) { }
+
     protected override void OnValueChanged(InputField inputField, string value) { }
+
+    protected override void OnValueChanged(TMP_InputField tmpInputField, string value) { }
 
     protected override void OnValueChanged(Slider slider, float value) { }
 
@@ -124,7 +129,10 @@ public class ${ClassName} : ${BaseClassName}
             {
                 {"VerticalLayoutGroup", "VLayoutGroup"},
                 {"HorizontalLayoutGroup","HLayoutGroup"},
-                {"GridLayoutGroup", "GLayoutGroup"}
+                {"GridLayoutGroup", "GLayoutGroup"},
+
+                {"TMP_Dropdown", "TMPDropdown"},
+                {"TMP_InputField", "TMPInputField"},
             };
 
             return dict.ContainsKey(compName) ? dict[compName] : compName;
@@ -135,8 +143,24 @@ public class ${ClassName} : ${BaseClassName}
             //系统内置图标
             Texture systemIcon = EditorGUIUtility.ObjectContent(null, type).image;
 
-            //自定义组件图标   //todo自行添加
+            //自定义组件图标 
             Texture customIcon = null;
+
+            //TMP 三个组件的图标
+            if (type == typeof(TMPro.TMP_InputField))
+            {
+                customIcon = (Texture2D)EditorGUIUtility.Load("Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Input Field Icon.psd");
+            }
+            else if (type == typeof(TMPro.TMP_Dropdown))
+            {
+                customIcon = (Texture2D)EditorGUIUtility.Load("Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Dropdown Icon.psd");
+            }
+            else if (type == typeof(TMPro.TextMeshProUGUI))
+            {
+                customIcon = (Texture2D)EditorGUIUtility.Load("Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component Icon.psd");
+            }
+
+            //todo其他自定义图标自行添加
 
             //默认图标
             Texture csScriptIcon = EditorGUIUtility.IconContent("cs Script Icon").image;
