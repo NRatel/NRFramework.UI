@@ -413,38 +413,38 @@ namespace NRFramework
                 {
                     Component comp = opElement.componentList[j];
                     string compType = comp.GetType().Name;
-                    string compName = UIEditorUtility.GetCompShortName(compType);
+                    string shortCompName = UIEditorUtility.GetCompShortName(compType);
 
                     string vdLine = new string(variantsDefineTempalte);
                     vdLine = vdLine.Replace("${CompType}", compType);
                     vdLine = vdLine.Replace("${GoName}", shortGoName);
-                    vdLine = vdLine.Replace("${CompName}", compName);
+                    vdLine = vdLine.Replace("${CompName}", shortCompName);
                     vdsb.Append("\r\t").Append(vdLine);
 
                     string bcLine = new string(bindCompsLine);
                     bcLine = bcLine.Replace("${CompType}", compType);
                     bcLine = bcLine.Replace("${GoName}", shortGoName);
-                    bcLine = bcLine.Replace("${CompName}", compName);
+                    bcLine = bcLine.Replace("${CompName}", shortCompName);
                     bcLine = bcLine.Replace("${i}", i.ToString());
                     bcLine = bcLine.Replace("${j}", j.ToString());
                     bcsb.Append("\r\t\t").Append(bcLine);
 
-                    if (canBindEventCompSet.Contains(compName))
+                    if (canBindEventCompSet.Contains(compType))
                     {
                         string beLine = new string(bindEventsLine);
                         beLine = beLine.Replace("${GoName}", shortGoName);
-                        beLine = beLine.Replace("${CompName}", compName);
+                        beLine = beLine.Replace("${CompName}", shortCompName);
                         besb.Append("\r\t\t").Append(beLine);
 
                         string ubeLine = new string(unbindEventsLine);
                         ubeLine = ubeLine.Replace("${GoName}", shortGoName);
-                        ubeLine = ubeLine.Replace("${CompName}", compName);
+                        ubeLine = ubeLine.Replace("${CompName}", shortCompName);
                         ubesb.Append("\r\t\t").Append(ubeLine); ;
                     }
 
                     string ubcLine = new string(unbindCompsLine);
                     ubcLine = ubcLine.Replace("${GoName}", shortGoName);
-                    ubcLine = ubcLine.Replace("${CompName}", compName);
+                    ubcLine = ubcLine.Replace("${CompName}", shortCompName);
                     ubcsb.Append("\r\t\t").Append(ubcLine);
                 }
             }
