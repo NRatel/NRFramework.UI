@@ -124,6 +124,16 @@ namespace NRFramework
             return widget;
         }
 
+        public T CreateWidget<T>(RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour) where T : UIWidget
+        {
+            return CreateWidget<T>(typeof(T).Name, parentRectTransform, widgetBehaviour);
+        }
+
+        public T CreateWidget<T>(RectTransform parentRectTransform, string prefabPath) where T : UIWidget
+        {
+            return CreateWidget<T>(typeof(T).Name, parentRectTransform, prefabPath);
+        }
+
         public UIWidget GetWidget(string widgetId)
         {
             return widgetDict[widgetId];
