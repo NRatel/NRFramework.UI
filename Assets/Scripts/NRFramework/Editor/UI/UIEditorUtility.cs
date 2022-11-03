@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Experimental;
@@ -97,7 +98,7 @@ public class ${ClassName} : ${BaseClassName}
             string saveDir = Path.GetDirectoryName(savePath);
             if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
 
-            File.WriteAllText(savePath, content);
+            File.WriteAllText(savePath, content, Encoding.UTF8);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
