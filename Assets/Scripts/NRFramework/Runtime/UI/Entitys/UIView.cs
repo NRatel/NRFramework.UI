@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIShowState { Crated, Initing, Refreshing, Idle, Closed }
-    public enum UIAnimState { Crated, Opening, Closing, Idle, Closed }
-
     public abstract partial class UIView
     {
         protected string viewId;
@@ -16,9 +12,6 @@ namespace NRFramework
         protected UIViewBehaviour viewBehaviour;
         public RectTransform rectTransform;
         public GameObject gameObject;
-
-        public UIShowState showState { protected set; get; }
-        public UIAnimState animState { protected set; get; }
 
         public Dictionary<string, UIWidget> widgetDict { private set; get; }
 
@@ -78,25 +71,6 @@ namespace NRFramework
         }
         #endregion
 
-        #region 打开关闭动画接口
-        public virtual void PlayOpenAnim(Action onFinish)
-        {
-            Debug.Assert(animState != UIAnimState.Opening && animState != UIAnimState.Closing);
-
-            animState = UIAnimState.Opening;
-            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Idle; onFinish(); });
-        }
-
-        public virtual void PlayCloseAnim(Action onFinish)
-        {
-            Debug.Assert(animState != UIAnimState.Opening && animState != UIAnimState.Closing);
-
-            animState = UIAnimState.Closing;
-            viewBehaviour.PlayOpenAnim(() => { animState = UIAnimState.Closed; onFinish(); });
-        }
-
-        #endregion
-
         #region Widget相关接口
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
         {
@@ -137,6 +111,11 @@ namespace NRFramework
         public UIWidget GetWidget(string widgetId)
         {
             return widgetDict[widgetId];
+        }
+
+        public UIWidget GetWidget<T>() where T : UIWidget
+        {
+            return GetWidget(typeof(T).Name);
         }
 
         internal void RemoveWidgetRef(string widgetId)
@@ -231,11 +210,7 @@ namespace NRFramework
             this.gameObject = rectTransform.gameObject;
         }
 
-        protected internal virtual void OnInternalCreated()
-        {
-            showState = UIShowState.Crated;
-            animState = UIAnimState.Crated;
-        }
+        protected internal virtual void OnInternalCreated() { }
 
         protected internal virtual void OnInternalClosing()
         {
@@ -250,10 +225,7 @@ namespace NRFramework
             widgetDict = null;
         }
 
-        protected internal virtual void OnInternalClosed()
-        {
-            showState = UIShowState.Closed;
-        }
+        protected internal virtual void OnInternalClosed() { }
 
         #endregion
 
