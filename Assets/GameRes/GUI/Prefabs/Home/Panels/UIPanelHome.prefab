@@ -450,8 +450,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d8f3b9cfa92c3439d0cadae9462190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UIOpenAnim: 0
-  m_UICloseAnim: 0
   m_OpElementList:
   - m_Target: {fileID: 8293669259729892286}
     m_ComponentList:
@@ -465,14 +463,13 @@ MonoBehaviour:
   - m_Target: {fileID: 1537610613292185425}
     m_ComponentList:
     - {fileID: 1537610613292185427}
-  - m_Target: {fileID: 8327138985740332497}
-    m_ComponentList:
-    - {fileID: 4044200154343071374}
   m_PanelType: 0
-  m_CanGetFoucus: 0
-  m_ColseWhenClickBg: 1
+  m_CanGetFoucus: 1
+  m_ColseWhenClickBg: 0
   m_Thickness: 10
   m_InSafeArea: 1
+  m_OpenAnimPlayMode: 1
+  m_CloseAnimPlayMode: 1
 --- !u!1 &1537610612515864436
 GameObject:
   m_ObjectHideFlags: 0

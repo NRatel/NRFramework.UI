@@ -12,31 +12,34 @@ namespace NRFramework
     public abstract class UIViewBehaviourEditor : Editor
     {
         protected ReorderableList m_OpElementListRL;
-        private SerializedProperty m_UIOpenAnimTypeSP;
-        private SerializedProperty m_UICloseAnimTypeSP;
 
         protected virtual void OnEnable()
         {
-            m_UIOpenAnimTypeSP = serializedObject.FindProperty("m_UIOpenAnim");
-            m_UICloseAnimTypeSP = serializedObject.FindProperty("m_UICloseAnim");
             m_OpElementListRL = CreateReorderableList(serializedObject.FindProperty("m_OpElementList"));
         }
 
-        public override void OnInspectorGUI()
+        protected void DrawOpElementList()
         {
-            serializedObject.Update();
-
-            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
-            Enum uiOpenAnimTypeEnum = EditorGUILayout.EnumPopup("UIOpenAnimType", (UIOpenAnimType)m_UIOpenAnimTypeSP.enumValueIndex);
-            m_UIOpenAnimTypeSP.enumValueIndex = (int)(UIOpenAnimType)uiOpenAnimTypeEnum;
-            Enum uiCloseAnimTypeEnum = EditorGUILayout.EnumPopup("UICloseAnimType", (UICloseAnimType)m_UICloseAnimTypeSP.enumValueIndex);
-            m_UICloseAnimTypeSP.enumValueIndex = (int)(UICloseAnimType)uiCloseAnimTypeEnum;
-            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
             m_OpElementListRL.DoLayoutList();
-            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 2);
-            DrawExpoertButton();
+        }
 
-            serializedObject.ApplyModifiedProperties();
+        protected void DrawExpoertButton()
+        {
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("ExportBase"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUIBaseCode();
+                }
+
+                if (GUILayout.Button("ExportTemp"))
+                {
+                    RefreshOpElementList(m_OpElementListRL);
+                    GenerateUITempCode();
+                }
+            }
+            GUILayout.EndHorizontal();
         }
 
         private ReorderableList CreateReorderableList(SerializedProperty opElementListSP)
@@ -219,26 +222,6 @@ namespace NRFramework
             listSP.serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawExpoertButton()
-        {
-            GUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("ExportBase"))
-                {
-                    RefreshOpElementList(m_OpElementListRL);
-                    GenerateUIBaseCode();
-                }
-
-                if (GUILayout.Button("ExportTemp"))
-                {
-                    RefreshOpElementList(m_OpElementListRL);
-                    GenerateUITempCode();
-                }
-            }
-            GUILayout.EndHorizontal();
-        }
-
-
         #region 代码生成相关
         private string GetPrefabPath()
         {
@@ -366,7 +349,7 @@ namespace NRFramework
             Debug.Log("Export success!");
         }
 
-        protected int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr)
+        private int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr)
         {
             HashSet<string> canBindEventCompSet = new HashSet<string>()
             { 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,18 +30,9 @@ namespace NRFramework
         }
     }
 
-    public enum UIOpenAnimType { None, Default, Custom }
-
-    public enum UICloseAnimType { None, Default, Custom }
-
     [DisallowMultipleComponent]
     public abstract class UIViewBehaviour : MonoBehaviour
     {
-        [SerializeField]
-        private UIOpenAnimType m_UIOpenAnim;   //界面打开动画
-        [SerializeField]
-        private UICloseAnimType m_UICloseAnim; //界面关闭动画
-
         [SerializeField]
         protected List<UIOpElement> m_OpElementList;
 
@@ -48,10 +40,6 @@ namespace NRFramework
         public event Action onStart;
         public event Action onDisable;
         public event Action onDestroy;
-
-        public UIOpenAnimType uiOpenAnim { get { return m_UIOpenAnim; } }
-
-        public UICloseAnimType uiCloseAnim { get { return m_UICloseAnim; } }
 
         public List<UIOpElement> opElementList { get { return m_OpElementList; } }
 
@@ -129,8 +117,6 @@ namespace NRFramework
 
         protected virtual void Reset()
         {
-            m_UIOpenAnim = UIOpenAnimType.None;
-            m_UICloseAnim = UICloseAnimType.None;
             m_OpElementList = new List<UIOpElement>();
         }
 #endif
@@ -141,42 +127,40 @@ namespace NRFramework
 
         internal void PlayOpenAnim(Action onFinish)
         {
-            switch (m_UIOpenAnim)
+            Animator animator = GetComponent<Animator>();
+            if (animator == null) { onFinish(); return; }
+
+            animator.SetTrigger("open");
+
+            float length = 0;
+            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
             {
-                case UIOpenAnimType.None:
-                    onFinish();
-                    break;
-                case UIOpenAnimType.Default:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onFinish();
-                    break;
-                case UIOpenAnimType.Custom:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onFinish();
-                    break;
+                if (clip.name == "open") { length = clip.length; break; }
             }
+
+            StartCoroutine(DoAfter(length, onFinish));
         }
 
         internal void PlayCloseAnim(Action onFinish)
         {
-            switch (m_UICloseAnim)
+            Animator animator = GetComponent<Animator>();
+            if (animator == null) { onFinish(); return; }
+
+            animator.SetTrigger("close");
+
+            float length = 0;
+            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
             {
-                case UICloseAnimType.None:
-                    onFinish();
-                    break;
-                case UICloseAnimType.Default:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onFinish();
-                    break;
-                case UICloseAnimType.Custom:
-                    //todo, Animator还是Dotween?
-                    //注意：必须应先停止后执行
-                    onFinish();
-                    break;
+                if (clip.name == "close") { length = clip.length; break; }
             }
+
+            StartCoroutine(DoAfter(length, onFinish));
+        }
+
+        private IEnumerator DoAfter(float duration, Action onFinish)
+        {
+            yield return new WaitForSeconds(duration);
+            onFinish();
         }
 
         private void OnEnable() { onEnable?.Invoke(); }   //View创建时，不会被调用

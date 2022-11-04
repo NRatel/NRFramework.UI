@@ -14,6 +14,8 @@ namespace NRFramework
         private SerializedProperty m_ColseWhenClickBgSP; //（仅Window界面可选）
         private SerializedProperty m_ThicknessSP;
         private SerializedProperty m_InSafeAreaSP;
+        private SerializedProperty m_OpenAnimPlayModeSP;
+        private SerializedProperty m_CloseAnimPlayModeSP;
 
         protected override void OnEnable()
         {
@@ -24,13 +26,20 @@ namespace NRFramework
             m_ColseWhenClickBgSP = serializedObject.FindProperty("m_ColseWhenClickBg"); //（仅Window界面可选）
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
             m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
+            m_OpenAnimPlayModeSP = serializedObject.FindProperty("m_OpenAnimPlayMode");
+            m_CloseAnimPlayModeSP = serializedObject.FindProperty("m_CloseAnimPlayMode");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            
             DrawUIPanelSetting();
-            base.OnInspectorGUI();
+            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
+            DrawOpElementList();
+            EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 2);
+            DrawExpoertButton();
+
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -70,6 +79,11 @@ namespace NRFramework
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
 
             m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
+
+            Enum openAnimPlayModeEnum = EditorGUILayout.EnumPopup("OpenAnimPlayMode", (UIPanelOpenAnimPlayMode)m_OpenAnimPlayModeSP.enumValueIndex);
+            m_OpenAnimPlayModeSP.enumValueIndex = (int)(UIPanelOpenAnimPlayMode)openAnimPlayModeEnum;
+            Enum closeAnimPlayModeEnum = EditorGUILayout.EnumPopup("CloseAnimPlayMode", (UIPanelCloseAnimPlayMode)m_CloseAnimPlayModeSP.enumValueIndex);
+            m_CloseAnimPlayModeSP.enumValueIndex = (int)(UIPanelCloseAnimPlayMode)closeAnimPlayModeEnum;
         }
     }
 }
