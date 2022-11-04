@@ -9,6 +9,8 @@ namespace NRFramework
     [CustomEditor(typeof(UIPanelBehaviour))]
     public class UIPanelBehaviourEditor : UIViewBehaviourEditor
     {
+        public enum NoAnimatorEnumForDisplay { NoValidAnimator }
+
         private SerializedProperty m_PanelTypeSP;
         private SerializedProperty m_CanGetFoucusSP;    //（仅Float界面可选）
         private SerializedProperty m_ColseWhenClickBgSP; //（仅Window界面可选）
@@ -33,7 +35,7 @@ namespace NRFramework
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
+
             DrawUIPanelSetting();
             EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4);
             DrawOpElementList();
@@ -77,13 +79,26 @@ namespace NRFramework
             EditorGUI.indentLevel--;
 
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
-
             m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
 
-            Enum openAnimPlayModeEnum = EditorGUILayout.EnumPopup("OpenAnimPlayMode", (UIPanelOpenAnimPlayMode)m_OpenAnimPlayModeSP.enumValueIndex);
-            m_OpenAnimPlayModeSP.enumValueIndex = (int)(UIPanelOpenAnimPlayMode)openAnimPlayModeEnum;
-            Enum closeAnimPlayModeEnum = EditorGUILayout.EnumPopup("CloseAnimPlayMode", (UIPanelCloseAnimPlayMode)m_CloseAnimPlayModeSP.enumValueIndex);
-            m_CloseAnimPlayModeSP.enumValueIndex = (int)(UIPanelCloseAnimPlayMode)closeAnimPlayModeEnum;
+            Animator animator;
+            bool isAimatorExsist = ((UIPanelBehaviour)target).TryGetComponent<Animator>(out animator);
+            //if (isAimatorExsist && animator.enabled && animator.runtimeAnimatorController != null)
+            if (isAimatorExsist && animator.enabled)
+            {
+                Enum openAnimPlayModeEnum = EditorGUILayout.EnumPopup("OpenAnimPlayMode", (UIPanelOpenAnimPlayMode)m_OpenAnimPlayModeSP.enumValueIndex);
+                m_OpenAnimPlayModeSP.enumValueIndex = (int)(UIPanelOpenAnimPlayMode)openAnimPlayModeEnum;
+                Enum closeAnimPlayModeEnum = EditorGUILayout.EnumPopup("CloseAnimPlayMode", (UIPanelCloseAnimPlayMode)m_CloseAnimPlayModeSP.enumValueIndex);
+                m_CloseAnimPlayModeSP.enumValueIndex = (int)(UIPanelCloseAnimPlayMode)closeAnimPlayModeEnum;
+            }
+            else
+            {
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    EditorGUILayout.EnumPopup("OpenAnimPlayMode", (NoAnimatorEnumForDisplay)0);
+                    EditorGUILayout.EnumPopup("CloseAnimPlayMode", (NoAnimatorEnumForDisplay)0);
+                }
+            }
         }
     }
 }

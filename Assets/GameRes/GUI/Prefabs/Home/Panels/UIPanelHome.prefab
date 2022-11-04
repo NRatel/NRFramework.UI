@@ -398,6 +398,7 @@ GameObject:
   - component: {fileID: 1537610612172345523}
   - component: {fileID: 1537610612172345532}
   - component: {fileID: 7893247368089146945}
+  - component: {fileID: 4016419549086567395}
   m_Layer: 5
   m_Name: UIPanelHome
   m_TagString: Untagged
@@ -450,26 +451,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d8f3b9cfa92c3439d0cadae9462190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OpElementList:
-  - m_Target: {fileID: 8293669259729892286}
-    m_ComponentList:
-    - {fileID: 5814960201850514048}
-  - m_Target: {fileID: 1273440249543357864}
-    m_ComponentList:
-    - {fileID: 5876799629482031310}
-  - m_Target: {fileID: 1537610612515864436}
-    m_ComponentList:
-    - {fileID: 1537610612515864438}
-  - m_Target: {fileID: 1537610613292185425}
-    m_ComponentList:
-    - {fileID: 1537610613292185427}
+  m_OpElementList: []
   m_PanelType: 0
   m_CanGetFoucus: 1
   m_ColseWhenClickBg: 0
   m_Thickness: 10
   m_InSafeArea: 1
-  m_OpenAnimPlayMode: 1
-  m_CloseAnimPlayMode: 1
+  m_OpenAnimPlayMode: 0
+  m_CloseAnimPlayMode: 0
+--- !u!95 &4016419549086567395
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537610612172345520}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1537610612515864436
 GameObject:
   m_ObjectHideFlags: 0

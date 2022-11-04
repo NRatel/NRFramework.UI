@@ -125,44 +125,6 @@ namespace NRFramework
             hideFlags = HideFlags.NotEditable;
         }
 
-        internal void PlayOpenAnim(Action onFinish)
-        {
-            Animator animator = GetComponent<Animator>();
-            if (animator == null) { onFinish(); return; }
-
-            animator.SetTrigger("open");
-
-            float length = 0;
-            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
-            {
-                if (clip.name == "open") { length = clip.length; break; }
-            }
-
-            StartCoroutine(DoAfter(length, onFinish));
-        }
-
-        internal void PlayCloseAnim(Action onFinish)
-        {
-            Animator animator = GetComponent<Animator>();
-            if (animator == null) { onFinish(); return; }
-
-            animator.SetTrigger("close");
-
-            float length = 0;
-            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
-            {
-                if (clip.name == "close") { length = clip.length; break; }
-            }
-
-            StartCoroutine(DoAfter(length, onFinish));
-        }
-
-        private IEnumerator DoAfter(float duration, Action onFinish)
-        {
-            yield return new WaitForSeconds(duration);
-            onFinish();
-        }
-
         private void OnEnable() { onEnable?.Invoke(); }   //View创建时，不会被调用
 
         private void Start() { onStart?.Invoke(); }       //View创建时，后期绑定的UIViewBehaviour，不会被调用

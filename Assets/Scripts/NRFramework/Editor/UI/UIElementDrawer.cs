@@ -49,14 +49,13 @@ namespace NRFramework
                     bool isExsistTarget = targetSP.objectReferenceValue != null;
                     using (new EditorGUI.DisabledScope(!isExsistTarget))
                     {
-                        GUIContent guiContent = new GUIContent();
-
                         if (isExsistTarget)
                         {
                             GameObject target = targetSP.objectReferenceValue as GameObject;
                             Component[] existComps = target.GetComponents<Component>();
 
                             //按钮（铺在下方）
+                            GUIContent guiContent = new GUIContent();
                             guiContent.text = (componentListSP.arraySize == 0) ? "None" : string.Empty; //按钮文本
                             if (GUI.Button(selectRect, guiContent, EditorStyles.popup))
                             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace NRFramework
@@ -38,9 +39,9 @@ namespace NRFramework
         Window,
     }
 
-    public enum UIPanelOpenAnimPlayMode { None, AutoPlay, ControlBySelf }
+    public enum UIPanelOpenAnimPlayMode { AutoPlay, ControlBySelf }
 
-    public enum UIPanelCloseAnimPlayMode { None, AutoPlay, ControlBySelf }
+    public enum UIPanelCloseAnimPlayMode { AutoPlay, ControlBySelf }
 
     public class UIPanelBehaviour: UIViewBehaviour
     {
@@ -73,7 +74,7 @@ namespace NRFramework
 
         public UIPanelOpenAnimPlayMode openAnimPlayMode { get { return m_OpenAnimPlayMode; } }
 
-        public UIPanelCloseAnimPlayMode closeAnimMode { get { return m_CloseAnimPlayMode; } }
+        public UIPanelCloseAnimPlayMode closeAnimPlayMode { get { return m_CloseAnimPlayMode; } }
 
         public bool hasBg { get { return m_PanelType != UIPanelType.Overlap; } }  //是否有背景？（完全由PanelType决定）
 
@@ -87,9 +88,47 @@ namespace NRFramework
             m_ColseWhenClickBg = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
-            m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.None;
-            m_CloseAnimPlayMode = UIPanelCloseAnimPlayMode.None;
+            m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
+            m_CloseAnimPlayMode = UIPanelCloseAnimPlayMode.AutoPlay;
         }
 #endif
+
+        internal void PlayOpenAnim(Action onFinish)
+        {
+            Animator animator = GetComponent<Animator>();
+            if (animator == null) { onFinish(); return; }
+
+            animator.SetTrigger("open");
+
+            float length = 0;
+            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+            {
+                if (clip.name == "open") { length = clip.length; break; }
+            }
+
+            StartCoroutine(DoAfterSeconds(length, onFinish));
+        }
+
+        internal void PlayCloseAnim(Action onFinish)
+        {
+            Animator animator = GetComponent<Animator>();
+            if (animator == null) { onFinish(); return; }
+
+            animator.SetTrigger("close");
+
+            float length = 0;
+            foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+            {
+                if (clip.name == "close") { length = clip.length; break; }
+            }
+
+            StartCoroutine(DoAfterSeconds(length, onFinish));
+        }
+
+        private IEnumerator DoAfterSeconds(float duration, Action onFinish)
+        {
+            yield return new WaitForSeconds(duration);
+            onFinish();
+        }
     }
 }
