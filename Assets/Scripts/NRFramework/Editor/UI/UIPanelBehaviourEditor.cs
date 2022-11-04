@@ -9,7 +9,7 @@ namespace NRFramework
     [CustomEditor(typeof(UIPanelBehaviour))]
     public class UIPanelBehaviourEditor : UIViewBehaviourEditor
     {
-        public enum NoAnimatorEnumForDisplay { NoValidAnimator }
+        public enum NoValidAnimatorEnumForDisplay { NoValidAnimator }
 
         private SerializedProperty m_PanelTypeSP;
         private SerializedProperty m_CanGetFoucusSP;    //（仅Float界面可选）
@@ -81,10 +81,8 @@ namespace NRFramework
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
             m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
 
-            Animator animator;
-            bool isAimatorExsist = ((UIPanelBehaviour)target).TryGetComponent<Animator>(out animator);
-            //if (isAimatorExsist && animator.enabled && animator.runtimeAnimatorController != null)
-            if (isAimatorExsist && animator.enabled)
+            bool existValidAnimator = ((UIPanelBehaviour)target).ExistValidAnimator();
+            if (existValidAnimator)
             {
                 Enum openAnimPlayModeEnum = EditorGUILayout.EnumPopup("OpenAnimPlayMode", (UIPanelOpenAnimPlayMode)m_OpenAnimPlayModeSP.enumValueIndex);
                 m_OpenAnimPlayModeSP.enumValueIndex = (int)(UIPanelOpenAnimPlayMode)openAnimPlayModeEnum;
@@ -95,8 +93,8 @@ namespace NRFramework
             {
                 using (new EditorGUI.DisabledScope(true))
                 {
-                    EditorGUILayout.EnumPopup("OpenAnimPlayMode", (NoAnimatorEnumForDisplay)0);
-                    EditorGUILayout.EnumPopup("CloseAnimPlayMode", (NoAnimatorEnumForDisplay)0);
+                    EditorGUILayout.EnumPopup("OpenAnimPlayMode", (NoValidAnimatorEnumForDisplay)0);
+                    EditorGUILayout.EnumPopup("CloseAnimPlayMode", (NoValidAnimatorEnumForDisplay)0);
                 }
             }
         }

@@ -26,7 +26,10 @@ namespace NRFramework
             this.parentUIRoot = uiRoot;
             base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), prefabPath);
 
-            if (panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay) { PlayOpenAnim(null); }
+            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay) 
+            {
+                PlayOpenAnim(null); 
+            }
         }
 
         internal void Create(string panelId, UIRoot uiRoot, UIPanelBehaviour panelBehaviour)
@@ -34,12 +37,15 @@ namespace NRFramework
             this.parentUIRoot = uiRoot;
             base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), panelBehaviour);
 
-            if (panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay) { PlayOpenAnim(null); }
+            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
+            {
+                PlayOpenAnim(null);
+            }
         }
 
         public virtual void Close(Action onFinish = null)
         {
-            if (panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
+            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
             {
                 PlayCloseAnim(() => { base.Close(); onFinish?.Invoke(); });
             }
@@ -56,20 +62,20 @@ namespace NRFramework
         }
 
         #region 打开关闭动画接口
-        protected virtual void PlayOpenAnim(Action onFinish)
+        protected virtual void PlayOpenAnim(Action onFinish = null)
         {
             Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
 
             animState = UIPanelAnimState.Opening;
-            panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Idle; onFinish(); });
+            panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Idle; onFinish?.Invoke(); });
         }
 
-        protected virtual void PlayCloseAnim(Action onFinish)
+        protected virtual void PlayCloseAnim(Action onFinish = null)
         {
             Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
 
             animState = UIPanelAnimState.Closing;
-            viewBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Closed; onFinish(); });
+            panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Closed; onFinish?.Invoke(); });
         }
         #endregion
 

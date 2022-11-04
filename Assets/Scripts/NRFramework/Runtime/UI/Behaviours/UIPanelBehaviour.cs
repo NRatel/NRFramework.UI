@@ -93,6 +93,19 @@ namespace NRFramework
         }
 #endif
 
+        public bool ExistValidAnimator()
+        {
+            Animator animator;
+            bool exsistAimator = TryGetComponent<Animator>(out animator);
+
+            //todo
+            //Animator组件存在、启用、有Controller资源、且内容符合要求(有open、close动画，有跳转条件...)
+            //return isAimatorExsist && animator.enabled && animator.runtimeAnimatorController != null && ...;
+
+            //暂时简单检查
+            return exsistAimator && animator.enabled;
+        }
+
         internal void PlayOpenAnim(Action onFinish)
         {
             Animator animator = GetComponent<Animator>();
