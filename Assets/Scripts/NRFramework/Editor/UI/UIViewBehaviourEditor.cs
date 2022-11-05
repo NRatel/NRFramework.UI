@@ -341,7 +341,7 @@ namespace NRFramework
 
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
             content = content.Replace("${BaseClassName}", className + "Base");
-            content = content.Replace("${PanelLifeCycleCode}", uwb is UIPanelBehaviour ? ("\n" + UIEditorUtility.kPanelLifeCycleCode + "\r\n") : "\r\n");
+            content = content.Replace("${PanelLifeCycleCode}", uwb is UIPanelBehaviour ? UIEditorUtility.kPanelLifeCycleCode : "");
             content = content.Trim();
 
             UIEditorUtility.GenerateCode(savePath, content);
@@ -352,7 +352,7 @@ namespace NRFramework
         private int GetExportBaseCodeStrs(out string variantsDefineStr, out string bindCompsStr, out string bindEventsStr, out string unbindEventsStr, out string unbindCompsStr)
         {
             HashSet<string> canBindEventCompSet = new HashSet<string>()
-            { 
+            {
                 "Button", "Toggle", "Dropdown", "InputField", "Slider", "Scrollbar", "ScrollRect",
                 "TMP_Dropdown", "TMP_InputField",
             };

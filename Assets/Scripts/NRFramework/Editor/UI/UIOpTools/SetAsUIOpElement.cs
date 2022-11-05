@@ -68,10 +68,12 @@ namespace NRFramework
                 {
                     Component comp = comps[j];
 
+                    //Debug.Log("comp.GetType().Name: " + comp.GetType().Name);
+
                     if (comp is Selectable && selectableComp == null) { selectableComp = comp; }
                     if ((comp is LayoutGroup || comp is ContentSizeFitter || comp is AspectRatioFitter || comp is LayoutElement) && layoutComp == null)
                     { layoutComp = comp; }
-                    if (sm_CustomSet.Contains(comp.name) && customComp == null) { customComp = comp; }
+                    if (sm_CustomSet.Contains(comp.GetType().Name) && customComp == null) { customComp = comp; }
                     if (comp is Graphic && graphicComp == null) { graphicComp = comp; }
                     if (comp is Transform && transformComp == null) { transformComp = comp; }
                 }

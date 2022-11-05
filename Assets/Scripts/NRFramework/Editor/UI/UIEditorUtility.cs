@@ -30,6 +30,7 @@ public class ${ClassName} : ${BaseClassName}
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using NRFramework;
 
 public class ${ClassName} : ${BaseClassName}
@@ -37,30 +38,6 @@ public class ${ClassName} : ${BaseClassName}
     protected override void OnCreating() { }
 
     protected override void OnCreated() { }
-
-    ///// <summary>
-    ///// 同步初始化/刷新示例
-    ///// </summary>
-    //public void InitOrRefresh_Sync(object data)
-    //{
-    //    ShowWithData(data);
-    //    showState = UIShowState.Idle;
-    //}
-
-    ///// <summary>
-    ///// 异步初始化/刷新示例
-    ///// </summary>
-    //public void InitOrRefresh_Async(object data1, Action onInited)
-    //{
-    //    GetData2((data2) =>      //异步获取数据
-    //    {
-    //        ShowWithDatas(data1, data2, () =>     //异步显示
-    //        {
-    //            showState = UIShowState.Idle;
-    //            onInited();
-    //        });
-    //    });
-    //}
 
     protected override void OnClicked(Button button) { }
 
