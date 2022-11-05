@@ -37,7 +37,7 @@ namespace NRFramework
 
             SetPanelSortingOrder(panel, fixedOrder);
             panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.SortAllPanelSiblings();
+            UIManager.Instance.SortAllPanels();
 
             return panel;
         }
@@ -59,7 +59,7 @@ namespace NRFramework
 
             SetPanelSortingOrder(panel, fixedOrder);
             panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.SortAllPanelSiblings();
+            UIManager.Instance.SortAllPanels();
 
             return panel;
         }

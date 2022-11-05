@@ -7,7 +7,7 @@ using XLua;
 
 namespace NRFramework
 {
-    public class UILuaPanel : UIPanel
+    public class UIPanelLuaCommon : UIPanel
     {
         public LuaTable @this;
 

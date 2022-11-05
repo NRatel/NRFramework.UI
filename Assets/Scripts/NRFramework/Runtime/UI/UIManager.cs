@@ -64,9 +64,9 @@ namespace NRFramework
         }
 
         /// <summary>
-        /// 调整所有Panel的 sblingIndex。仅编辑器下？
+        /// 调整所有Panel的 sblingIndex、计算focus。
         /// </summary>
-        public void SortAllPanelSiblings()
+        public void SortAllPanels()
         {
 #if UNITY_EDITOR
             List<UIPanel> allPanels = new List<UIPanel>();

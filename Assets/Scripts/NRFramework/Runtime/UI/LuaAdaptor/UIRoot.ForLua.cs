@@ -9,11 +9,11 @@ namespace NRFramework
 {
     public partial class UIRoot
     {
-        public UILuaPanel CreatePanel(string panelId, string prefabPath, LuaTable luaPanel, int fixedOrder = -1)
+        public UIPanelLuaCommon CreatePanel(string panelId, string prefabPath, LuaTable luaPanel, int fixedOrder = -1)
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
-            UILuaPanel panel = new UILuaPanel();
+            UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, prefabPath, luaPanel);
 
             SetPanelSortingOrder(panel, fixedOrder);
@@ -23,11 +23,11 @@ namespace NRFramework
             return panel;
         }
 
-        public UILuaPanel CreatePanel(string panelId, UIPanelBehaviour panelBehaviour, LuaTable luaPanel, int fixedOrder = -1)
+        public UIPanelLuaCommon CreatePanel(string panelId, UIPanelBehaviour panelBehaviour, LuaTable luaPanel, int fixedOrder = -1)
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
-            UILuaPanel panel = new UILuaPanel();
+            UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, panelBehaviour, luaPanel);
 
             SetPanelSortingOrder(panel, fixedOrder);
