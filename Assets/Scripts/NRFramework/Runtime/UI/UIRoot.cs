@@ -26,16 +26,14 @@ namespace NRFramework
         /// <typeparam name="T">自定义panel类</typeparam>
         /// <param name="panelId">panelId</param>
         /// <param name="prefabPath">预设路径</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(string panelId, string prefabPath, int fixedOrder = -1) where T : UIPanel
+        public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, prefabPath);
-
-            SetPanelSortingOrder(panel, fixedOrder);
+            panel.SetSortingOrder(GetCurSortingOrder());
             panelDict.Add(panel.panelId, panel);
             UIManager.Instance.SortAllPanels();
 
@@ -50,14 +48,13 @@ namespace NRFramework
         /// <param name="panelBehaviour">待绑定的panel行为组件</param>
         /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, int fixedOrder = -1) where T : UIPanel
+        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, panelBehaviour);
-
-            SetPanelSortingOrder(panel, fixedOrder);
+            panel.SetSortingOrder(GetCurSortingOrder());
             panelDict.Add(panel.panelId, panel);
             UIManager.Instance.SortAllPanels();
 
@@ -71,9 +68,9 @@ namespace NRFramework
         /// <param name="prefabPath">预设路径</param>
         /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(string prefabPath, int fixedOrder = -1) where T : UIPanel
+        public T CreatePanel<T>(string prefabPath) where T : UIPanel
         {
-            return CreatePanel<T>(typeof(T).Name, prefabPath, fixedOrder);
+            return CreatePanel<T>(typeof(T).Name, prefabPath);
         }
 
         /// <summary>
@@ -83,9 +80,9 @@ namespace NRFramework
         /// <param name="panelBehaviour">待绑定的panel行为组件</param>
         /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
         /// <returns></returns>
-        public T CreatePanel<T>(UIPanelBehaviour panelBehaviour, int fixedOrder = -1) where T : UIPanel
+        public T CreatePanel<T>(UIPanelBehaviour panelBehaviour) where T : UIPanel
         {
-            return CreatePanel<T>(typeof(T).Name, panelBehaviour, fixedOrder);
+            return CreatePanel<T>(typeof(T).Name, panelBehaviour);
         }
 
         internal void RemovePanelRef(string panelId)
@@ -117,28 +114,12 @@ namespace NRFramework
             return topPanel;
         }
 
-        private void SetPanelSortingOrder(UIPanel panel, int fixedOrder)
+        private int GetCurSortingOrder()
         {
-            int sortingOrder = startOrder;  //默认起始
+            UIPanel topestPanel = GetTopestPanel();
+            if (topestPanel == null) { return startOrder; }
 
-            if (fixedOrder >= 0)
-            {
-                //若有指定，则使用指定的SortintOrder
-                sortingOrder = startOrder + fixedOrder;
-            }
-            else
-            {
-                //若存在topestPanel，则在其基础上自增
-                UIPanel topestPanel = GetTopestPanel();
-                if (topestPanel != null)
-                {
-                    sortingOrder = topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1;
-                }
-            }
-
-            Debug.Assert(sortingOrder <= endOrder, "sortingOrder超出设定的endOrder");
-
-            panel.SetSortingOrder(sortingOrder);
+            return topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1;
         }
 
     }

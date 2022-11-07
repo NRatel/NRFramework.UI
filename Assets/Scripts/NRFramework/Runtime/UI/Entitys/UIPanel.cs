@@ -6,7 +6,7 @@ namespace NRFramework
 {
     public enum UIPanelShowState { Initing, Refreshing, Idle, Closed }
 
-    public enum UIPanelAnimState { Opening, Closing, Idle, Closed }
+    public enum UIPanelAnimState { Opening, Idle, Closing, Closed }
 
     public abstract class UIPanel : UIView
     {

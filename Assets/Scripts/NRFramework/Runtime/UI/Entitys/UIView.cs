@@ -33,8 +33,6 @@ namespace NRFramework
 
             Debug.Assert(viewBehaviour != null, "UIViewBehaviour组件不存在");
 
-            viewBehaviour.transform.SetParent(this.parentRectTransform, false);
-
             Create(viewId, parentRectTransform, viewBehaviour);
         }
 
@@ -208,6 +206,12 @@ namespace NRFramework
         {
             this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
             this.gameObject = rectTransform.gameObject;
+
+            viewBehaviour.transform.SetParent(this.parentRectTransform, false);
+
+            rectTransform.localPosition = Vector3.zero;
+            rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
+            rectTransform.localScale = Vector3.one;
         }
 
         protected internal virtual void OnInternalCreated() { }
