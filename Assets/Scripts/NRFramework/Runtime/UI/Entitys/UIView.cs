@@ -54,9 +54,9 @@ namespace NRFramework
         {
             if (widgetDict.Count > 0)
             {
-                foreach (UIWidget widget in widgetDict.Values)
+                foreach (KeyValuePair<string, UIWidget> kvPair in widgetDict)
                 {
-                    widget.Close();
+                    kvPair.Value.Close();
                 }
             }
 
@@ -108,6 +108,8 @@ namespace NRFramework
 
         public void CloseWidget(string widgetId)
         {
+            Debug.Assert(widgetDict.ContainsKey(widgetId), "widget不存在");
+
             UIWidget widget = widgetDict[widgetId];
             widgetDict.Remove(widgetId);
             widget.Close();

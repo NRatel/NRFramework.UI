@@ -11,7 +11,10 @@ namespace NRFramework
     {
         public LuaTable @this;
 
+        private Action<LuaTable> m_LuaOnCreating;
         private Action<LuaTable> m_LuaOnCreated;
+        private Action<LuaTable> m_LuaOnClosing;
+        private Action<LuaTable> m_LuaOnClosed;
 
         public void Create(string panelId, Canvas parentCanvas, string prefabPath, LuaTable luaTable)
         {
@@ -25,9 +28,9 @@ namespace NRFramework
             base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
         }
 
-        protected override void OnInternalCreating()
+        protected override void OnCreating()
         {
-            base.OnInternalCreating();
+            base.OnCreating();
 
             SetMember("csPanel", this);
             SetMember("panelId", panelId);
@@ -39,7 +42,38 @@ namespace NRFramework
             SetMember("canvas", canvas);
             SetMember("gaphicRaycaster", gaphicRaycaster);
 
+            GetMember("OnCreating", out m_LuaOnCreating);
             GetMember("OnCreated", out m_LuaOnCreated);
+            GetMember("OnClosing", out m_LuaOnClosing);
+            GetMember("OnClosed", out m_LuaOnClosed);
+
+            m_LuaOnCreating?.Invoke(@this);
+
+        }
+
+        protected override void OnCreated()
+        {
+            base.OnCreated();
+            m_LuaOnCreated?.Invoke(@this);
+        }
+
+        protected override void OnClosing()
+        {
+            m_LuaOnClosing?.Invoke(@this);
+
+            m_LuaOnCreating = null;
+            m_LuaOnCreated = null;
+            m_LuaOnClosing = null;
+
+            base.OnClosing();
+        }
+
+        protected override void OnClosed()
+        {
+            base.OnClosed();
+            m_LuaOnClosed?.Invoke(@this);
+
+            m_LuaOnClosed = null;
         }
 
         //设置成员 供Lua调C#
@@ -49,21 +83,10 @@ namespace NRFramework
         }
 
         //获取成员 供C#调Lua
-        //注意释放？
         private void GetMember<TKey, TValue>(TKey key, out TValue value)
         {
             @this.Get(key, out value);
         }
-
-#region UIView生命周期
-        protected override void OnCreated()
-        {
-            base.OnCreated();
-            m_LuaOnCreated?.Invoke(@this);
-        }
-
-        //...
-#endregion
     }
 }
 #endif

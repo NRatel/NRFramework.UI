@@ -23,10 +23,11 @@ namespace NRFramework
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, prefabPath);
-            panel.SetSortingOrder(GetCurSortingOrder());
+            int targetSortingOrder = GetTargetSortingOrder();
+            panel.SetSortingOrder(targetSortingOrder);
+            panel.rectTransform.SetSiblingIndex(GetTargetSiblingIndex(targetSortingOrder));
             panelDict.Add(panel.panelId, panel);
-
-            UIManager.Instance.SortAllPanels();
+            UIManager.Instance.ChangeFocus();
 
             return panel;
         }
@@ -37,9 +38,11 @@ namespace NRFramework
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, panelBehaviour);
-            panel.SetSortingOrder(GetCurSortingOrder());
+            int targetSortingOrder = GetTargetSortingOrder();
+            panel.SetSortingOrder(targetSortingOrder);
+            panel.rectTransform.SetSiblingIndex(GetTargetSiblingIndex(targetSortingOrder));
             panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.SortAllPanels();
+            UIManager.Instance.ChangeFocus();
 
             return panel;
         }
@@ -56,20 +59,24 @@ namespace NRFramework
 
         public void ClosePanel(string panelId, Action onFinish = null)
         {
+            Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
+
             UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
             panel.Close(onFinish);
 
-            UIManager.Instance.SortAllPanels();
+            UIManager.Instance.ChangeFocus();
         }
 
         public void ClosePanelWithoutAnim(string panelId)
         {
+            Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
+
             UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
             panel.CloseWithoutAnim();
 
-            UIManager.Instance.SortAllPanels();
+            UIManager.Instance.ChangeFocus();
         }
 
         public void ClosePanel<T>(Action onFinish = null)
@@ -106,13 +113,28 @@ namespace NRFramework
             return topPanel;
         }
 
-        private int GetCurSortingOrder()
+        private int GetTargetSortingOrder()
         {
-            UIPanel topestPanel = GetTopestPanel();
-            if (topestPanel == null) { return startOrder; }
+            int targetOrder = startOrder;
 
-            return topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1;
+            UIPanel topestPanel = GetTopestPanel();
+            if (topestPanel != null) 
+            {
+                targetOrder = topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1;
+            }
+
+            Debug.Assert(targetOrder <= endOrder, "targetOrder 越界了");
+
+            return targetOrder;
         }
 
+        private int GetTargetSiblingIndex(int sortingOrder)
+        {
+            List<UIPanel> panels = UIManager.Instance.GetPanels((panel) => 
+            {
+                return panel.canvas.sortingOrder < sortingOrder;
+            });
+            return panels.Count;
+        }
     }
 }

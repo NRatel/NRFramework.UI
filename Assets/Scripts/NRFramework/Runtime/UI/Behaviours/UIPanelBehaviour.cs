@@ -48,7 +48,7 @@ namespace NRFramework
         [SerializeField]
         private UIPanelType m_PanelType;
         [SerializeField]
-        private bool m_CanGetFoucus;        //可获得焦点？（仅Overlap界面可选）
+        private bool m_CanGetFocus;        //可获得焦点？（仅Overlap界面可选）
         [SerializeField]
         private bool m_ColseWhenClickBg;    //点击背景关闭界面？（建议项目中一致）。（仅Window界面可选）
 
@@ -68,7 +68,7 @@ namespace NRFramework
 
         public UIPanelType panelType { get { return m_PanelType; } }
         public bool colseWhenClickBg { get { return m_ColseWhenClickBg; } }
-        public bool canGetFoucus { get { return m_CanGetFoucus; } }
+        public bool canGetFocus { get { return m_CanGetFocus; } }
         public int thickness { get { return m_Thickness; } }
         public bool inSafeArea { get { return m_InSafeArea; } }
 
@@ -84,7 +84,7 @@ namespace NRFramework
             base.Reset();
 
             m_PanelType = UIPanelType.Scene;
-            m_CanGetFoucus = false;
+            m_CanGetFocus = false;
             m_ColseWhenClickBg = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;

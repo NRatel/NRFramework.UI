@@ -12,7 +12,7 @@ namespace NRFramework
         public enum NoValidAnimatorEnumForDisplay { NoValidAnimator }
 
         private SerializedProperty m_PanelTypeSP;
-        private SerializedProperty m_CanGetFoucusSP;    //（仅Float界面可选）
+        private SerializedProperty m_CanGetFocusSP;    //（仅Float界面可选）
         private SerializedProperty m_ColseWhenClickBgSP; //（仅Window界面可选）
         private SerializedProperty m_ThicknessSP;
         private SerializedProperty m_InSafeAreaSP;
@@ -24,7 +24,7 @@ namespace NRFramework
             base.OnEnable();
 
             m_PanelTypeSP = serializedObject.FindProperty("m_PanelType");
-            m_CanGetFoucusSP = serializedObject.FindProperty("m_CanGetFoucus");    //（仅Float界面可选）
+            m_CanGetFocusSP = serializedObject.FindProperty("m_CanGetFocus");    //（仅Float界面可选）
             m_ColseWhenClickBgSP = serializedObject.FindProperty("m_ColseWhenClickBg"); //（仅Window界面可选）
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
             m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
@@ -57,13 +57,13 @@ namespace NRFramework
                 {
                     using (new EditorGUI.DisabledScope(true))
                     {
-                        m_CanGetFoucusSP.boolValue = EditorGUILayout.Toggle("CanGetFoucus", true); //固定可获得焦点
+                        m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", true); //固定可获得焦点
                         m_ColseWhenClickBgSP.boolValue = EditorGUILayout.Toggle("ColseWhenClickBg", false);    //固定为false
                     }
                 }
                 else if (panelType == UIPanelType.Overlap)
                 {
-                    m_CanGetFoucusSP.boolValue = EditorGUILayout.Toggle("CanGetFoucus", m_CanGetFoucusSP.boolValue); //可选
+                    m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", m_CanGetFocusSP.boolValue); //可选
                     //无背景，不显示背景相关设置。
                     m_ColseWhenClickBgSP.boolValue = false;
                 }
@@ -71,7 +71,7 @@ namespace NRFramework
                 {
                     using (new EditorGUI.DisabledScope(true))
                     {
-                        m_CanGetFoucusSP.boolValue = EditorGUILayout.Toggle("CanGetFoucus", true); //固定可获得焦点
+                        m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", true); //固定可获得焦点
                     }
                     m_ColseWhenClickBgSP.boolValue = EditorGUILayout.Toggle("ColseWhenClickBg", m_ColseWhenClickBgSP.boolValue); //可选
                 }

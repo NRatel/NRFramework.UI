@@ -12,11 +12,16 @@ namespace NRFramework
 
         public Dictionary<string, UIRoot> rootDict { private set; get; }
 
+        private List<UIPanel> m_FocusingPanels;     //关闭界面时无需清理，由ChangeFocus覆盖处理。
+        private List<UIPanel> m_TempNewFocusingPanels;
+
         private UIManager()
         {
             uiCanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
             uiCamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
             rootDict = new Dictionary<string, UIRoot>();
+            m_FocusingPanels = new List<UIPanel>();
+            m_TempNewFocusingPanels = new List<UIPanel>();
         }
 
         public void CreateUIRoot(string rootId, int startOrder, int endOrder)
@@ -43,37 +48,68 @@ namespace NRFramework
             return rootDict.ContainsKey(rootId);
         }
 
-        public UIPanel GetTopestPanel()
+        public List<UIPanel> GetPanels(Func<UIPanel, bool> filterFunc)
         {
-            UIPanel topestPanel = null;
-            foreach (UIRoot uiRoot in rootDict.Values)
+            List<UIPanel> panels = new List<UIPanel>();
+
+            foreach (KeyValuePair<string, UIRoot> kvPair in rootDict)
             {
-                UIPanel panel = uiRoot.GetTopestPanel();
-                if (panel != null && (topestPanel == null || panel.canvas.sortingOrder > topestPanel.canvas.sortingOrder))
+                foreach (KeyValuePair<string, UIPanel> kvPair2 in kvPair.Value.panelDict)
                 {
-                    topestPanel = panel;
+                    if (filterFunc(kvPair2.Value))
+                    {
+                        panels.Add(kvPair2.Value);
+                    }
                 }
             }
-            return topestPanel;
+            return panels;
         }
 
-        public void SortAllPanels()
+        internal void ChangeFocus()
         {
-#if UNITY_EDITOR
-            List<UIPanel> allPanels = new List<UIPanel>();
-            foreach (UIRoot uiRoot in rootDict.Values)
+            List<UIPanel> panels = GetPanels((panel) => { return true; });
+            panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
+
+            m_TempNewFocusingPanels.Clear();
+
+            for (int i = panels.Count - 1; i >= 0; i--)
             {
-                foreach (UIPanel panel in uiRoot.panelDict.Values)
+                UIPanel panel = panels[i];
+                if (panel.panelBehaviour.panelType == UIPanelType.Overlap)
                 {
-                    allPanels.Add(panel);
+                    m_TempNewFocusingPanels.Add(panel); continue;
+                }
+                else
+                {
+                    m_TempNewFocusingPanels.Add(panel); break;
                 }
             }
-            allPanels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
-            foreach (UIPanel panel in allPanels)
+
+            //丢失焦点时，由顶至下
+            for (int i = m_FocusingPanels.Count - 1; i >= 0; i--)
             {
-                panel.rectTransform.SetAsFirstSibling();
+                UIPanel panel = m_FocusingPanels[i];
+                if (panel.panelId != null && !m_TempNewFocusingPanels.Contains(panel))
+                {
+                    panel.ChangeFocus(false);
+                }
             }
-#endif
+
+            //获得焦点时，由底至上
+            for (int i = 0; i < m_TempNewFocusingPanels.Count; i++)
+            {
+                UIPanel panel = m_TempNewFocusingPanels[i];
+                if (m_FocusingPanels.Contains(panel))
+                {
+                    panel.ChangeFocus(true);
+                }
+            }
+
+            List<UIPanel> t = m_FocusingPanels;
+            m_FocusingPanels = m_TempNewFocusingPanels;
+            m_TempNewFocusingPanels = t;
+            m_FocusingPanels.Clear();
+            t = null;
         }
     }
 } 

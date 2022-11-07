@@ -28,7 +28,7 @@ public class UIPanelHome_Temp : UIPanelHomeBase
 
     protected override void OnValueChanged(ScrollRect scrollRect, Vector2 value) { }
     
-    protected override void OnFoucus(bool got) { }
+    protected override void OnFocusChanged(bool got) { }
 
     protected override void OnEscButtonClicked() { }
 

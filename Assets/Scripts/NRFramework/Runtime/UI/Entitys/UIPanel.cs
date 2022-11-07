@@ -100,6 +100,11 @@ namespace NRFramework
         }
         #endregion
 
+        internal void ChangeFocus(bool got)
+        {
+            OnFocusChanged(got);
+        }
+
         protected internal override void OnInternalCreating()
         {
             base.OnInternalCreating();
@@ -131,7 +136,7 @@ namespace NRFramework
         }
 
         #region 子类生命周期
-        protected virtual void OnFoucus(bool got) { }
+        protected virtual void OnFocusChanged(bool got) { }
 
         protected virtual void OnEscButtonClicked() { }
 
