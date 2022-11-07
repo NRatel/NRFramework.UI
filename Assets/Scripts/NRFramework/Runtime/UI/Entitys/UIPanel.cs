@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIPanelShowState { Initing, Refreshing, Idle, Closed }
+    public enum UIPanelShowState { Initing, Idle, Refreshing, Closed }
 
     public enum UIPanelAnimState { Opening, Idle, Closing, Closed }
 
