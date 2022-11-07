@@ -20,9 +20,13 @@ namespace NRFramework
             base.Create(widgetId, parentRectTransform, widgetBehaviour);
         }
 
+        protected void CloseSelf()
+        {
+            parentView.CloseWidget(widgetId);
+        }
+
         protected internal override void OnInternalClosing()
         {
-            parentView.RemoveWidgetRef(widgetId);
             parentView = null;
 
             base.OnInternalClosing();

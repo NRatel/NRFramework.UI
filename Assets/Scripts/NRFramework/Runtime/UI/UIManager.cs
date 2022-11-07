@@ -19,12 +19,6 @@ namespace NRFramework
             rootDict = new Dictionary<string, UIRoot>();
         }
 
-        /// <summary>
-        /// 创建一个UI根/层
-        /// </summary>
-        /// <param name="rootId"></param>
-        /// <param name="startOrder"></param>
-        /// <param name="endOrder"></param>
         public void CreateUIRoot(string rootId, int startOrder, int endOrder)
         {
             Debug.Assert(!rootDict.ContainsKey(rootId), "uiRoot已存在");
@@ -63,9 +57,6 @@ namespace NRFramework
             return topestPanel;
         }
 
-        /// <summary>
-        /// 调整所有Panel的 sblingIndex、计算focus。
-        /// </summary>
         public void SortAllPanels()
         {
 #if UNITY_EDITOR

@@ -20,7 +20,7 @@ namespace NRFramework
         static public event Action<Dropdown, int> onDropdownValueChangedGlobalEvent;
 
         #region 创建关闭接口
-        protected internal void Create(string viewId, RectTransform parentRectTransform, string prefabPath)
+        protected void Create(string viewId, RectTransform parentRectTransform, string prefabPath)
         {
             GameObject prefab;
 #if UNITY_EDITOR
@@ -36,7 +36,7 @@ namespace NRFramework
             Create(viewId, parentRectTransform, viewBehaviour);
         }
 
-        protected internal void Create(string viewId, RectTransform parentRectTransform, UIViewBehaviour viewBehaviour)
+        protected void Create(string viewId, RectTransform parentRectTransform, UIViewBehaviour viewBehaviour)
         {
             this.viewId = viewId;
             this.parentRectTransform = parentRectTransform;
@@ -50,7 +50,7 @@ namespace NRFramework
             OnCreated();
         }
 
-        public virtual void Close()
+        protected void Close()
         {
             if (widgetDict.Count > 0)
             {
@@ -106,6 +106,18 @@ namespace NRFramework
             return CreateWidget<T>(typeof(T).Name, parentRectTransform, prefabPath);
         }
 
+        public void CloseWidget(string widgetId)
+        {
+            UIWidget widget = widgetDict[widgetId];
+            widgetDict.Remove(widgetId);
+            widget.Close();
+        }
+
+        public void CloseWidget<T>()
+        {
+            CloseWidget(typeof(T).Name);
+        }
+
         public UIWidget GetWidget(string widgetId)
         {
             return widgetDict[widgetId];
@@ -114,11 +126,6 @@ namespace NRFramework
         public UIWidget GetWidget<T>() where T : UIWidget
         {
             return GetWidget(typeof(T).Name);
-        }
-
-        internal void RemoveWidgetRef(string widgetId)
-        {
-            widgetDict.Remove(widgetId);
         }
         #endregion
 

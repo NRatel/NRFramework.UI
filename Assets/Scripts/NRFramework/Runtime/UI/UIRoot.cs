@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    /// <summary>
-    /// 这只是一个根/组
-    /// </summary>
     public partial class UIRoot
     {
         public string rootId;
@@ -20,13 +17,6 @@ namespace NRFramework
             panelDict = new Dictionary<string, UIPanel>();
         }
 
-        /// <summary>
-        /// 创建一个UI面板
-        /// </summary>
-        /// <typeparam name="T">自定义panel类</typeparam>
-        /// <param name="panelId">panelId</param>
-        /// <param name="prefabPath">预设路径</param>
-        /// <returns></returns>
         public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
@@ -35,19 +25,12 @@ namespace NRFramework
             panel.Create(panelId, this, prefabPath);
             panel.SetSortingOrder(GetCurSortingOrder());
             panelDict.Add(panel.panelId, panel);
+
             UIManager.Instance.SortAllPanels();
 
             return panel;
         }
 
-        /// <summary>
-        /// 创建一个UI面板
-        /// </summary>
-        /// <typeparam name="T">自定义panel类</typeparam>
-        /// <param name="panelId">panelId</param>
-        /// <param name="panelBehaviour">待绑定的panel行为组件</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
-        /// <returns></returns>
         public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
@@ -61,33 +44,42 @@ namespace NRFramework
             return panel;
         }
 
-        /// <summary>
-        /// 创建一个UI面板（以类型名作为panelId，方便使用）
-        /// </summary>
-        /// <typeparam name="T">自定义panel类</typeparam>
-        /// <param name="prefabPath">预设路径</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
-        /// <returns></returns>
         public T CreatePanel<T>(string prefabPath) where T : UIPanel
         {
             return CreatePanel<T>(typeof(T).Name, prefabPath);
         }
 
-        /// <summary>
-        /// 创建一个UI面板（以类型名作为panelId，方便使用）
-        /// </summary>
-        /// <typeparam name="T">自定义panel类</typeparam>
-        /// <param name="panelBehaviour">待绑定的panel行为组件</param>
-        /// <param name="fixedOrder">指定sortingOrder，正为指定（浮动）；负为自动自增。</param>
-        /// <returns></returns>
         public T CreatePanel<T>(UIPanelBehaviour panelBehaviour) where T : UIPanel
         {
             return CreatePanel<T>(typeof(T).Name, panelBehaviour);
         }
 
-        internal void RemovePanelRef(string panelId)
+        public void ClosePanel(string panelId, Action onFinish = null)
         {
+            UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
+            panel.Close(onFinish);
+
+            UIManager.Instance.SortAllPanels();
+        }
+
+        public void ClosePanelWithoutAnim(string panelId)
+        {
+            UIPanel panel = panelDict[panelId];
+            panelDict.Remove(panelId);
+            panel.CloseWithoutAnim();
+
+            UIManager.Instance.SortAllPanels();
+        }
+
+        public void ClosePanel<T>(Action onFinish = null)
+        {
+            ClosePanel(typeof(T).Name, onFinish);
+        }
+
+        public void ClosePanelWithoutAnim<T>()
+        {
+            ClosePanelWithoutAnim(typeof(T).Name);
         }
 
         public UIPanel GetPanel(string panelId)

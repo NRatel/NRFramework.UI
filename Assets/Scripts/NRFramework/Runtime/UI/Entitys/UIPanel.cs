@@ -26,10 +26,7 @@ namespace NRFramework
             this.parentUIRoot = uiRoot;
             base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), prefabPath);
 
-            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay) 
-            {
-                PlayOpenAnim(null); 
-            }
+            PlayOpenAnim(null);
         }
 
         internal void Create(string panelId, UIRoot uiRoot, UIPanelBehaviour panelBehaviour)
@@ -37,23 +34,31 @@ namespace NRFramework
             this.parentUIRoot = uiRoot;
             base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), panelBehaviour);
 
-            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
-            {
-                PlayOpenAnim(null);
-            }
+            PlayOpenAnim(null);
         }
 
-        public virtual void Close(Action onFinish = null)
+        internal void Close(Action onFinish = null)
         {
-            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
-            {
-                PlayCloseAnim(() => { base.Close(); onFinish?.Invoke(); });
-            }
-            else
-            {
-                base.Close();
-                onFinish?.Invoke();
-            }
+            PlayCloseAnim(() => 
+            { 
+                base.Close(); 
+                onFinish?.Invoke(); 
+            });
+        }
+
+        internal void CloseWithoutAnim()
+        {
+            base.Close();
+        }
+
+        protected void CloseSelf(Action onFinish = null)
+        {
+            parentUIRoot.ClosePanel(panelId);
+        }
+
+        protected void CloseSelfWithoutAnim()
+        {
+            parentUIRoot.ClosePanelWithoutAnim(panelId);
         }
 
         internal void SetSortingOrder(int sortingOrder)
@@ -64,18 +69,34 @@ namespace NRFramework
         #region 打开关闭动画接口
         protected virtual void PlayOpenAnim(Action onFinish = null)
         {
-            Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
+            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
+            {
+                Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
 
-            animState = UIPanelAnimState.Opening;
-            panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Idle; onFinish?.Invoke(); });
+                animState = UIPanelAnimState.Opening;
+                panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Idle; onFinish?.Invoke(); });
+            }
+            else
+            {
+                animState = UIPanelAnimState.Idle;
+                onFinish?.Invoke();
+            }
         }
 
         protected virtual void PlayCloseAnim(Action onFinish = null)
         {
-            Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
+            if (panelBehaviour.ExistValidAnimator() && panelBehaviour.openAnimPlayMode == UIPanelOpenAnimPlayMode.AutoPlay)
+            {
+                Debug.Assert(animState != UIPanelAnimState.Opening && animState != UIPanelAnimState.Closing);
 
-            animState = UIPanelAnimState.Closing;
-            panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Closed; onFinish?.Invoke(); });
+                animState = UIPanelAnimState.Closing;
+                panelBehaviour.PlayOpenAnim(() => { animState = UIPanelAnimState.Closed; onFinish?.Invoke(); });
+            }
+            else
+            {
+                animState = UIPanelAnimState.Closed;
+                onFinish?.Invoke();
+            }
         }
         #endregion
 
@@ -96,8 +117,6 @@ namespace NRFramework
 
         protected internal override void OnInternalClosing()
         {
-            parentUIRoot.RemovePanelRef(panelId);
-
             //组件引用解除即可, 实例会随gameObject销毁
             gaphicRaycaster = null;
             canvas = null;
