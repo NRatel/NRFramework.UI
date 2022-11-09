@@ -10,6 +10,11 @@ public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
 
     protected override void OnCreated() { }
 
+    public void Init(int thisCount)
+    {
+        Debug.Log("UIPanelHome_MyIcon Custom Init " + thisCount);
+    }
+
     protected override void OnClicked(Button button)
     {
         if (button == m_BtnCover_Button) 

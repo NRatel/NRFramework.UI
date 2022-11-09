@@ -20,7 +20,7 @@ public class UIPanelHome : UIPanelHomeBase
 
     public void Init()
     {
-        Debug.Log("UIPanelHome Init");
+        Debug.Log("UIPanelHome Custom Init");
 
         m_desc_TextMeshProUGUI.text = "Hello NRatel!";
         m_IconCount = 0;
@@ -32,7 +32,8 @@ public class UIPanelHome : UIPanelHomeBase
 
         string widgetId = "MyIcon" + m_IconCount;
         UIPanelHome_MyIcon myIcon = CreateWidget<UIPanelHome_MyIcon>(widgetId, m_iconRoot_RectTransform, "Assets/GameRes/GUI/Prefabs/Home/Widgets/UIPanelHome_MyIcon.prefab");
-        myIcon.rectTransform.anchoredPosition = new Vector2(UnityEngine.Random.Range(0, 100), UnityEngine.Random.Range(0, 100));
+        myIcon.Init(m_IconCount);
+        myIcon.rectTransform.anchoredPosition = new Vector2(UnityEngine.Random.Range(0, 200), UnityEngine.Random.Range(0, 200));
         m_IconCount += 1;
     }
     

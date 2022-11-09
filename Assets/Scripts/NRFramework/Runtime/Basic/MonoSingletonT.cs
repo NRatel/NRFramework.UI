@@ -58,12 +58,14 @@ namespace NRFramework
 
         protected virtual void OnDestroy()
         {
-            Debug.Assert(sm_AppQuitted, "MonoSingleton 被意外销毁！");
+            //Debug.Log("xxxxxxxx OnDestroy");
+            //Debug.Assert(sm_AppQuitted, "MonoSingleton 被意外销毁！");
             sm_Instance = null;
         }
 
         protected virtual void OnApplicationQuit()
         {
+            //Debug.Log("xxxxxxxx OnApplicationQuit");
             sm_AppQuitted = true;
         }
     }

@@ -14,7 +14,7 @@ namespace NRFramework
 
         private void Awake()
         {
-            m_RectTrransform = (RectTransform)transform;
+            m_RectTrransform = gameObject.AddComponent<RectTransform>();
             m_RawImage = gameObject.AddComponent<RawImage>();
             m_Btn = gameObject.AddComponent<Button>();
 

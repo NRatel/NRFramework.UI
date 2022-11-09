@@ -102,7 +102,7 @@ namespace NRFramework
             for (int i = 0; i < m_TempNewFocusingPanels.Count; i++)
             {
                 UIPanel panel = m_TempNewFocusingPanels[i];
-                if (m_FocusingPanels.Contains(panel))
+                if (!m_FocusingPanels.Contains(panel))
                 {
                     panel.ChangeFocus(true);
                 }
