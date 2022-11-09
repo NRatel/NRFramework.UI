@@ -4,13 +4,19 @@ using UnityEngine.UI;
 using TMPro;
 using NRFramework;
 
-public class UIPanelHome_MyIcon_Temp : UIPanelHome_MyIconBase
+public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
 {
     protected override void OnCreating() { }
 
     protected override void OnCreated() { }
 
-    protected override void OnClicked(Button button) { }
+    protected override void OnClicked(Button button)
+    {
+        if (button == m_BtnCover_Button) 
+        {
+            CloseSelf();
+        }
+    }
 
     protected override void OnValueChanged(Toggle toggle, bool value) { }
 

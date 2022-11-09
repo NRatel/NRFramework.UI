@@ -52,7 +52,7 @@ namespace NRFramework
 
         protected void Close()
         {
-            if (widgetDict.Count > 0)
+            if (widgetDict != null && widgetDict.Count > 0)
             {
                 foreach (KeyValuePair<string, UIWidget> kvPair in widgetDict)
                 {

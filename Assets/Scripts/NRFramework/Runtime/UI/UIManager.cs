@@ -24,23 +24,21 @@ namespace NRFramework
             m_TempNewFocusingPanels = new List<UIPanel>();
         }
 
-        public void CreateUIRoot(string rootId, int startOrder, int endOrder)
+        public UIRoot CreateUIRoot(string rootId, int startOrder, int endOrder)
         {
-            Debug.Assert(!rootDict.ContainsKey(rootId), "uiRoot已存在");
+            Debug.Assert(!rootDict.ContainsKey(rootId), "uiRoot已存在" + rootId);
             Debug.Assert(startOrder >= 0, "必须使startOrder >= 0");
             Debug.Assert(endOrder >= startOrder, "必须使endOrder >= startOrder");
-            
-            foreach (UIRoot uiRoot in rootDict.Values)
+
+            foreach (UIRoot root in rootDict.Values)
             {
-                Debug.Assert(startOrder > uiRoot.endOrder || endOrder < uiRoot.startOrder, "sortingOrder范围不允许与其他uiRoot交叉");
+                Debug.Assert(startOrder > root.endOrder || endOrder < root.startOrder, "sortingOrder范围不允许与其他uiRoot交叉");
             }
 
-            rootDict.Add(rootId, new UIRoot()
-            {
-                rootId = rootId,
-                startOrder = startOrder,
-                endOrder = endOrder
-            });
+            UIRoot uiRoot = new UIRoot() { rootId = rootId, startOrder = startOrder, endOrder = endOrder };
+            rootDict.Add(rootId, uiRoot);
+
+            return uiRoot;
         }
 
         public List<UIPanel> GetPanels(Func<UIPanel, bool> filterFunc)
@@ -117,4 +115,4 @@ namespace NRFramework
             t = null;
         }
     }
-} 
+}

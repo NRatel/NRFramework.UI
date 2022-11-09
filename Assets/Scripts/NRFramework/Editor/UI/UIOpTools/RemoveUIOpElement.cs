@@ -31,7 +31,11 @@ namespace NRFramework
                 {
                     behaviour.opElementList.RemoveAt(j);
                 }
+
+                EditorUtility.SetDirty(behaviour);
             }
+
+            AssetDatabase.Refresh();
         }
     }
 }

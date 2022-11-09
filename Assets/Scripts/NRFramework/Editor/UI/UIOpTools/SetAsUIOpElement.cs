@@ -91,7 +91,11 @@ namespace NRFramework
                 {
                     opElement.componentList.Add(theComp);
                 }
+
+                EditorUtility.SetDirty(behaviour);
             }
+
+            AssetDatabase.Refresh();
         }
     }
 }

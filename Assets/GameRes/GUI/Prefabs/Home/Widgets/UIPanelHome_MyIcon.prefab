@@ -60,9 +60,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 384a0c7d288e4db44b4575f0d48976d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UIOpenAnim: 0
-  m_UICloseAnim: 0
-  m_OpElementList: []
+  m_OpElementList:
+  - m_Target: {fileID: 1537610612658071285}
+    m_ComponentList:
+    - {fileID: 1537610612658071287}
+  - m_Target: {fileID: 8327138985740332497}
+    m_ComponentList:
+    - {fileID: 4044200154343071374}
 --- !u!1 &1537610612658071285
 GameObject:
   m_ObjectHideFlags: 0
