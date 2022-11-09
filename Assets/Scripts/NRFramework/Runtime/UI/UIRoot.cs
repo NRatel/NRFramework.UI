@@ -99,29 +99,19 @@ namespace NRFramework
             return GetPanel(typeof(T).Name);
         }
 
-        public UIPanel GetTopestPanel()
+        private int GetTargetSortingOrder()
         {
-            UIPanel topPanel = null;
+            UIPanel topestPanel = null;
             foreach (KeyValuePair<string, UIPanel> kvPair in panelDict)
             {
                 UIPanel panel = kvPair.Value;
-                if (topPanel == null || panel.canvas.sortingOrder > topPanel.canvas.sortingOrder)
+                if (topestPanel == null || panel.canvas.sortingOrder > topestPanel.canvas.sortingOrder)
                 {
-                    topPanel = panel;
+                    topestPanel = panel;
                 }
             }
-            return topPanel;
-        }
 
-        private int GetTargetSortingOrder()
-        {
-            int targetOrder = startOrder;
-
-            UIPanel topestPanel = GetTopestPanel();
-            if (topestPanel != null) 
-            {
-                targetOrder = topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1;
-            }
+            int targetOrder = topestPanel != null ? (topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1) : startOrder;
 
             Debug.Assert(targetOrder <= endOrder, "targetOrder 越界了");
 
@@ -132,7 +122,7 @@ namespace NRFramework
         {
             List<UIPanel> panels = UIManager.Instance.GetPanels((panel) => 
             {
-                return panel.canvas.sortingOrder < sortingOrder;
+                return sortingOrder > panel.canvas.sortingOrder;
             });
             return panels.Count;
         }

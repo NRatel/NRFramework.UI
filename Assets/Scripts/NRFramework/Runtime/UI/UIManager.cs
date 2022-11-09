@@ -12,7 +12,7 @@ namespace NRFramework
 
         public Dictionary<string, UIRoot> rootDict { private set; get; }
 
-        private List<UIPanel> m_FocusingPanels;     //关闭界面时无需清理，由ChangeFocus覆盖处理。
+        private List<UIPanel> m_FocusingPanels;     //关闭界面时无需清理，由ChangeFocus覆盖。
         private List<UIPanel> m_TempNewFocusingPanels;
 
         private UIManager()
@@ -43,11 +43,6 @@ namespace NRFramework
             });
         }
 
-        public bool ExistUIRoot(string rootId)
-        {
-            return rootDict.ContainsKey(rootId);
-        }
-
         public List<UIPanel> GetPanels(Func<UIPanel, bool> filterFunc)
         {
             List<UIPanel> panels = new List<UIPanel>();
@@ -63,6 +58,16 @@ namespace NRFramework
                 }
             }
             return panels;
+        }
+
+        public List<UIPanel> GetFocusingPanels()
+        {
+            List<UIPanel> vaildPanels = new List<UIPanel>();
+            foreach (UIPanel panel in m_FocusingPanels)
+            {
+                if (panel != null) { vaildPanels.Add(panel); }
+            }
+            return vaildPanels;
         }
 
         internal void ChangeFocus()

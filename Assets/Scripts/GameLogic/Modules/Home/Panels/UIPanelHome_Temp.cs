@@ -30,9 +30,9 @@ public class UIPanelHome_Temp : UIPanelHomeBase
     
     protected override void OnFocusChanged(bool got) { }
 
-    protected override void OnEscButtonClicked() { }
-
-    protected override void OnWindowBgClicked() { }
+    //protected override void OnWindowBgClicked() { }
+    
+    //protected override void OnEscButtonClicked() { }
 
     protected override void OnClosing() { }
 

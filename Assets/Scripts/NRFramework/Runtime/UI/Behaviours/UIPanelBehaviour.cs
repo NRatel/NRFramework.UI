@@ -76,8 +76,6 @@ namespace NRFramework
 
         public UIPanelCloseAnimPlayMode closeAnimPlayMode { get { return m_CloseAnimPlayMode; } }
 
-        public bool hasBg { get { return m_PanelType != UIPanelType.Overlap; } }  //是否有背景？（完全由PanelType决定）
-
 #if UNITY_EDITOR
         protected override void Reset()
         {
@@ -104,6 +102,15 @@ namespace NRFramework
 
             //暂时简单检查
             return exsistAimator && animator.enabled;
+        }
+
+        static private Color sm_AlphaBgColor = new Color(0, 0, 0, 0);
+        static private Color sm_BlackBgColor = new Color(0, 0, 0, 0.5f);
+        internal Color GetBgColor()
+        {
+            if (panelType == UIPanelType.Scene) { return sm_AlphaBgColor; }
+            else if (panelType == UIPanelType.Window) { return sm_BlackBgColor; }
+            else { throw new Exception(); }
         }
 
         internal void PlayOpenAnim(Action onFinish)

@@ -39,10 +39,10 @@ namespace NRFramework
 
         internal void Close(Action onFinish = null)
         {
-            PlayCloseAnim(() => 
-            { 
-                base.Close(); 
-                onFinish?.Invoke(); 
+            PlayCloseAnim(() =>
+            {
+                base.Close();
+                onFinish?.Invoke();
             });
         }
 
@@ -50,6 +50,19 @@ namespace NRFramework
         {
             base.Close();
         }
+
+        internal void SetSortingOrder(int sortingOrder)
+        {
+            canvas.sortingOrder = sortingOrder;
+        }
+
+        internal void ChangeFocus(bool got)
+        {
+            OnInternalFocusChanged(got);
+            OnFocusChanged(got);
+        }
+
+        #region 关闭自身接口
 
         protected void CloseSelf(Action onFinish = null)
         {
@@ -61,10 +74,7 @@ namespace NRFramework
             parentUIRoot.ClosePanelWithoutAnim(panelId);
         }
 
-        internal void SetSortingOrder(int sortingOrder)
-        {
-            canvas.sortingOrder = sortingOrder;
-        }
+        #endregion
 
         #region 打开关闭动画接口
         protected virtual void PlayOpenAnim(Action onFinish = null)
@@ -100,11 +110,6 @@ namespace NRFramework
         }
         #endregion
 
-        internal void ChangeFocus(bool got)
-        {
-            OnFocusChanged(got);
-        }
-
         protected internal override void OnInternalCreating()
         {
             base.OnInternalCreating();
@@ -114,7 +119,7 @@ namespace NRFramework
             gaphicRaycaster = panelBehaviour.gameObject.AddComponent<GraphicRaycaster>();
         }
 
-        protected internal override void OnInternalCreated() 
+        protected internal override void OnInternalCreated()
         {
             showState = UIPanelShowState.Idle;
             animState = UIPanelAnimState.Idle;
@@ -122,6 +127,18 @@ namespace NRFramework
 
         protected internal override void OnInternalClosing()
         {
+            switch (panelBehaviour.panelType)
+            {
+                case (UIPanelType.Scene):
+                    if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
+                    break;
+                case (UIPanelType.Overlap):
+                    break;
+                case (UIPanelType.Window):
+                    if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
+                    break;
+            }
+
             //组件引用解除即可, 实例会随gameObject销毁
             gaphicRaycaster = null;
             canvas = null;
@@ -130,17 +147,34 @@ namespace NRFramework
             base.OnInternalClosing();
         }
 
-        protected internal override void OnInternalClosed() 
+        protected internal override void OnInternalClosed()
         {
             showState = UIPanelShowState.Closed;
+        }
+
+        protected internal void OnInternalFocusChanged(bool got)
+        {
+            switch (panelBehaviour.panelType)
+            {
+                case (UIPanelType.Scene):
+                    if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), null); }
+                    else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
+                    break;
+                case (UIPanelType.Overlap):
+                    break;
+                case (UIPanelType.Window):
+                    if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), OnWindowBgClicked); }
+                    else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
+                    break;
+            }
         }
 
         #region 子类生命周期
         protected virtual void OnFocusChanged(bool got) { }
 
-        protected virtual void OnEscButtonClicked() { }
+        protected virtual void OnWindowBgClicked() { CloseSelf(null); }
 
-        protected virtual void OnWindowBgClicked() { }
+        protected virtual void OnEscButtonClicked() { }
 
         #endregion
     }
