@@ -14,16 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enable: 1
   useGlobalIl2cpp: 0
-  cloneFromGitee: 1
+  cloneHomeURL: https://gitee.com/focus-creative-games
   hotUpdateAssemblyDefinitions:
   - {fileID: 5897886265953266890, guid: be8d865d59cbec548ad937d62d251d21, type: 3}
   hotUpdateAssemblies:
   - Game
   preserveHotUpdateAssemblies: []
+  hotUpdateDllCompileOutputRootDir: HybridCLRData/HotUpdateDlls
+  strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
   patchAOTAssemblies:
   - mscorlib
   - System
   - System.Core
+  differentialHybridAssemblies: []
+  differentialHybridOptionOutputDir: Assets/StreamingAssets
   collectAssetReferenceTypes: 0
   outputLinkFile: Scripts/Main/HybridCLRData/Generated/link.xml
   outputAOTGenericReferenceFile: Scripts/Main/HybridCLRData/Generated/AOTGenericReferences.cs
