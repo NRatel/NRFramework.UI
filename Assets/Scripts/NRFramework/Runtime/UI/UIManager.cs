@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace NRFramework
@@ -41,6 +42,11 @@ namespace NRFramework
             return uiRoot;
         }
 
+        public UIRoot GetUIRoot(string rootId)
+        {
+            return rootDict[rootId];
+        }
+
         public List<UIPanel> GetPanels(Func<UIPanel, bool> filterFunc)
         {
             List<UIPanel> panels = new List<UIPanel>();
@@ -56,6 +62,43 @@ namespace NRFramework
                 }
             }
             return panels;
+        }
+
+        public T FindPanelComponent<T>(string rootId, string panelId, string compDefine) where T : Component
+        {
+            UIRoot root = GetUIRoot(rootId);
+            UIPanel panel = root.GetPanel(panelId);
+
+            return panel.FindComponent<T>(compDefine);
+        }
+
+        public T FindPanelComponent<T>(string path, string compDefine) where T : Component
+        {
+            string[] strs = path.Split("/");
+            string rootId = strs[0];
+            string panelId = strs[1];
+
+            return FindPanelComponent<T>(rootId, panelId, compDefine);
+        }
+
+        public T FindWidgetComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine) where T : Component
+        {
+            UIRoot root = GetUIRoot(rootId);
+            UIPanel panel = root.GetPanel(panelId);
+
+            return panel.FindWidgetComponent<T>(widgetIds, compDefine);
+        }
+
+        public T FindWidgetComponent<T>(string path, string compDefine) where T : Component
+        {
+            string[] strs = path.Split("/");
+            string rootId = strs[0];
+            string panelId = strs[1];
+            string[] widgetIds = new string[strs.Length - 2];
+            for (int i = 0; i < strs.Length - 2; i++) 
+            { widgetIds[i] = strs[i]; }
+
+            return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine);
         }
 
         public List<UIPanel> GetFocusingPanels()

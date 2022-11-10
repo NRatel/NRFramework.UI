@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,7 +70,7 @@ namespace NRFramework
         }
         #endregion
 
-        #region Widget相关接口
+        #region Widget操作相关接口
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
         {
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
@@ -128,6 +129,30 @@ namespace NRFramework
         public UIWidget GetWidget<T>() where T : UIWidget
         {
             return GetWidget(typeof(T).Name);
+        }
+        #endregion
+
+        #region 反射获取组件相关接口
+        public T FindComponent<T>(string compDefine) where T : Component
+        {
+            FieldInfo fieldInfo = this.GetType().GetField(compDefine);
+            return fieldInfo.GetValue(null) as T;
+        }
+
+        public T FindWidgetComponent<T>(string[] widgetIds, string compDefine) where T : Component
+        {
+            UIView view = this;
+            for (int i = 0; i < widgetIds.Length; i++)
+            {
+                view = view.GetWidget(widgetIds[i]);
+            }
+            return view.FindComponent<T>(compDefine);
+        }
+
+        public T FindWidgetComponent<T>(string widgetPath, string compDefine) where T : Component
+        {
+            string[] widgetIds = widgetPath.Split("/");
+            return FindWidgetComponent<T>(widgetIds, compDefine);
         }
         #endregion
 
