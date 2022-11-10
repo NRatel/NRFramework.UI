@@ -76,7 +76,7 @@ MonoBehaviour:
   - m_Target: {fileID: 7725476399256495120}
     m_ComponentList:
     - {fileID: 5928708088415093435}
-  m_PanelType: 2
+  m_PanelType: 0
   m_CanGetFocus: 1
   m_ColseWhenClickBg: 0
   m_Thickness: 10

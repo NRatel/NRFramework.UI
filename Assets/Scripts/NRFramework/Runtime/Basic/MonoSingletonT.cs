@@ -50,22 +50,23 @@ namespace NRFramework
         {
             get
             {
-                Debug.Assert(!sm_AppQuitted, "单例已销毁，仍然尝试访问");
-                //if (sm_AppQuitted) { return null; }
+#if UNITY_EDITOR
+                Debug.Assert(!sm_AppQuitted, "单例已销毁，仍尝试访问");
+#endif
                 return sm_Instance;
             }
         }
 
         protected virtual void OnDestroy()
         {
-            //Debug.Log("xxxxxxxx OnDestroy");
-            //Debug.Assert(sm_AppQuitted, "MonoSingleton 被意外销毁！");
+//#if UNITY_EDITOR
+//            Debug.Assert(sm_AppQuitted, "MonoSingleton 可能被意外销毁了"); //不准确，todo
+//#endif
             sm_Instance = null;
         }
 
         protected virtual void OnApplicationQuit()
         {
-            //Debug.Log("xxxxxxxx OnApplicationQuit");
             sm_AppQuitted = true;
         }
     }
