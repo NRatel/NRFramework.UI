@@ -135,8 +135,8 @@ namespace NRFramework
         #region 反射获取组件相关接口
         public T FindComponent<T>(string compDefine) where T : Component
         {
-            FieldInfo fieldInfo = this.GetType().GetField(compDefine);
-            return fieldInfo.GetValue(null) as T;
+            FieldInfo fieldInfo = this.GetType().GetField(compDefine, BindingFlags.NonPublic | BindingFlags.Instance);
+            return (T)fieldInfo.GetValue(this);
         }
 
         public T FindWidgetComponent<T>(string[] widgetIds, string compDefine) where T : Component

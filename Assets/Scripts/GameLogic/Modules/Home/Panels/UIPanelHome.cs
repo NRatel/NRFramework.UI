@@ -22,21 +22,28 @@ public class UIPanelHome : UIPanelHomeBase
     {
         Debug.Log("UIPanelHome Custom Init");
 
-        m_desc_TextMeshProUGUI.text = "Hello NRatel!";
+        m_Desc_TextMeshProUGUI.text = "Hello NRatel!";
         m_IconCount = 0;
     }
 
     protected override void OnClicked(Button button) 
     {
-        Debug.Log("UIPanelHome OnClicked" + button);
+        if (button == m_BtnAddIcon_Button)
+        {
+            string widgetId = "MyIcon" + m_IconCount;
+            UIPanelHome_MyIcon myIcon = CreateWidget<UIPanelHome_MyIcon>(widgetId, m_IconRoot_RectTransform, "Assets/GameRes/GUI/Prefabs/Home/Widgets/UIPanelHome_MyIcon.prefab");
+            myIcon.Init(m_IconCount);
+            myIcon.rectTransform.anchoredPosition = new Vector2(UnityEngine.Random.Range(0, 200), UnityEngine.Random.Range(0, 200));
+            m_IconCount += 1;
+        }
 
-        string widgetId = "MyIcon" + m_IconCount;
-        UIPanelHome_MyIcon myIcon = CreateWidget<UIPanelHome_MyIcon>(widgetId, m_iconRoot_RectTransform, "Assets/GameRes/GUI/Prefabs/Home/Widgets/UIPanelHome_MyIcon.prefab");
-        myIcon.Init(m_IconCount);
-        myIcon.rectTransform.anchoredPosition = new Vector2(UnityEngine.Random.Range(0, 200), UnityEngine.Random.Range(0, 200));
-        m_IconCount += 1;
+        else if (button == m_BtnTestFindComp_Button)
+        {
+            TextMeshProUGUI indexText = UIManager.Instance.FindWidgetComponent<TextMeshProUGUI>("normalRoot/UIPanelHome/MyIcon0", "m_Index_TextMeshProUGUI");
+            Debug.Log(indexText.text);
+        }
     }
-    
+
     protected override void OnFocusChanged(bool got) 
     {
         Debug.Log("UIPanelHome OnFocusChanged" + got);

@@ -96,7 +96,7 @@ namespace NRFramework
             string panelId = strs[1];
             string[] widgetIds = new string[strs.Length - 2];
             for (int i = 0; i < strs.Length - 2; i++) 
-            { widgetIds[i] = strs[i]; }
+            { widgetIds[i] = strs[i+2]; }
 
             return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine);
         }

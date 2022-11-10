@@ -13,6 +13,8 @@ public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
     public void Init(int thisCount)
     {
         Debug.Log("UIPanelHome_MyIcon Custom Init " + thisCount);
+
+        m_Index_TextMeshProUGUI.text = "Index: " + thisCount;
     }
 
     protected override void OnClicked(Button button)

@@ -85,13 +85,14 @@ public class ${ClassName} : ${BaseClassName}
         }
 
         /// <summary>
-        /// 保留字母数字下划线
+        /// 保留字母数字下划线、首字母大写
         /// </summary>
         /// <param name="goName"></param>
         /// <returns></returns>
         static public string GetFormatedGoName(string goName)
         {
             goName = Regex.Replace(goName, @"[^a-zA-Z0-9_]", "");
+            goName = Regex.Replace(goName, @"^\w", t => t.Value.ToUpper());
             return goName;
         }
 

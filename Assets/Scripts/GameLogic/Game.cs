@@ -1,25 +1,26 @@
 ﻿using NRFramework;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Game
 {
-    public UIRoot bottomUIRoot { get; private set; }
-    public UIRoot normalUIRoot { get; private set; }
-    public UIRoot topUIRoot { get; private set; }
-    public UIRoot guideUIRoot { get; private set; }
+    public UIRoot bottomRoot { get; private set; }
+    public UIRoot normalRoot { get; private set; }
+    public UIRoot topRoot { get; private set; }
+    public UIRoot guideRoot { get; private set; }
 
     public Game()
     {
-        bottomUIRoot = UIManager.Instance.CreateUIRoot("bottom", 0, 999);
-        normalUIRoot = UIManager.Instance.CreateUIRoot("normal", 1000, 1999);
-        topUIRoot = UIManager.Instance.CreateUIRoot("top", 2000, 2999);
-        guideUIRoot = UIManager.Instance.CreateUIRoot("guide", 3000, 3999);
+        bottomRoot = UIManager.Instance.CreateUIRoot("bottomRoot", 0, 999);
+        normalRoot = UIManager.Instance.CreateUIRoot("normalRoot", 1000, 1999);
+        topRoot = UIManager.Instance.CreateUIRoot("topRoot", 2000, 2999);
+        guideRoot = UIManager.Instance.CreateUIRoot("guideRoot", 3000, 3999);
     }
 
     public void StartGame()
     {
-        UIPanelHome uiPanelHome = normalUIRoot.CreatePanel<UIPanelHome>("Assets/GameRes/GUI/Prefabs/Home/Panels/UIPanelHome.prefab");
+        UIPanelHome uiPanelHome = normalRoot.CreatePanel<UIPanelHome>("Assets/GameRes/GUI/Prefabs/Home/Panels/UIPanelHome.prefab");
         uiPanelHome.Init();
     }
 }
