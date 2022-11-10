@@ -18,14 +18,14 @@ MonoBehaviour:
   hotUpdateAssemblyDefinitions:
   - {fileID: 5897886265953266890, guid: be8d865d59cbec548ad937d62d251d21, type: 3}
   hotUpdateAssemblies:
-  - 
+  - Game
   preserveHotUpdateAssemblies: []
   patchAOTAssemblies:
   - mscorlib
   - System
   - System.Core
   collectAssetReferenceTypes: 0
-  outputLinkFile: HybridCLRData/Generated/link.xml
-  outputAOTGenericReferenceFile: HybridCLRData/Generated/AOTGenericReferences.cs
+  outputLinkFile: Scripts/Main/HybridCLRData/Generated/link.xml
+  outputAOTGenericReferenceFile: Scripts/Main/HybridCLRData/Generated/AOTGenericReferences.cs
   maxGenericReferenceIteration: 10
   maxMethodBridgeGenericIteration: 10
