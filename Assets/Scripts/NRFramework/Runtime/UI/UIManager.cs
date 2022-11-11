@@ -106,7 +106,7 @@ namespace NRFramework
             List<UIPanel> vaildPanels = new List<UIPanel>();
             foreach (UIPanel panel in m_FocusingPanels)
             {
-                if (panel != null) { vaildPanels.Add(panel); }
+                if (panel != null && panel.panelBehaviour.canGetFocus) { vaildPanels.Add(panel); }
             }
             return vaildPanels;
         }

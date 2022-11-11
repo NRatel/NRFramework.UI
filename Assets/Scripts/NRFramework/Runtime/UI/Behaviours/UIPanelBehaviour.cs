@@ -38,6 +38,7 @@ namespace NRFramework
     {
         [SerializeField]
         private UIPanelType m_PanelType;
+
         [SerializeField]
         private bool m_CanGetFocus;        //可获得焦点？（仅Overlay界面可选，默认true）
 
