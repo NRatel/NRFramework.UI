@@ -7,34 +7,25 @@ namespace NRFramework
     public enum UIPanelType
     {
         /// <summary>
-        /// 场景，内容占满全屏甚至超出（如，2D场景）。
-        /// 特性：
-        /// 1、有背景？：是（固定）（即使内容含空白区域，也可完全阻挡下方交互事件）。
-        ///    ①、固定纯色透明；
-        ///    ②、点击背景关闭界面？：否（固定）。
-        /// 2、可获得焦点？是（固定）。
-        /// （“获得焦点”：某时刻，可交互的最上层界面。主要用于打开上层界面或关闭上层界面时，下层界面对自身的处理）
+        /// 场景（铺衬在底）。内容通常占满全屏甚至超出。
+        /// 1、背景：自带透明背景，完全阻挡下方交互事件（即使内容含空白区域），点击背景无任何响应。
+        /// 2、焦点：可独立获得焦点。
         /// </summary>
         Scene,
 
         /// <summary>
-        /// 覆盖（浮动在上），内容未占满全屏（如：底部切换菜单、主界面菜单（活动图标+状态栏）、非模态功能界面、聊天气泡、toast等）。
-        /// 注意，它是一个单独界面，并非其他界面的一部分，否则应该使用UIWidget。
-        /// 特性：
-        /// 1、有背景？：否（固定）（空白部分不阻挡下方交互事件）。
-        /// 2、可获得焦点？：是/否（可选）。
-        /// （若为是，逐层向下检查，与其下方“可获得焦点的界面”共同获得焦点）。
+        /// 叠加。内容通常未占屏局部。非模态的，可同时与下层界面交互。
+        /// 1、背景：无背景，空白部分无法阻挡下方交互事件。
+        /// 2、焦点：可选获得焦点（若可获得，与其下方“可获得焦点的界面”共同获得焦点）。
+        /// 如：主界面切换菜单（可获得焦点）、主界面浮动功能气泡（不可获得焦点）、toast（不可获得焦点）。
         /// </summary>
-        Overlap,
+        Overlay,
 
         /// <summary>
-        /// 窗口（模态），内容未占满全屏（如，部分二级功能界面、确认框等）。
-        /// 特性：
-        /// 可控制变量：
-        /// 1、有背景？：是（固定）（即使内容含空白区域，也可完全阻挡下方交互事件）。
-        ///     ①、可设置样式。todo
-        ///     ②、点击背景关闭界面？：是/否（可选，但建议项目中一致）。
-        /// 2、可获得焦点？是（固定）。
+        /// 窗体。内容通常未占屏局部。模态地，要求用户必须首先对该界面进行响应。
+        /// 1、背景：自带黑色半透背景，完全阻挡下方交互事件（即使内容含空白区域），点击背景默认关闭自身。
+        /// 2、焦点：可独立获得焦点。
+        /// 如，部分二级功能界面、确认框等。
         /// </summary>
         Window,
     }
@@ -48,9 +39,7 @@ namespace NRFramework
         [SerializeField]
         private UIPanelType m_PanelType;
         [SerializeField]
-        private bool m_CanGetFocus;        //可获得焦点？（仅Overlap界面可选）
-        [SerializeField]
-        private bool m_ColseWhenClickBg;    //点击背景关闭界面？（建议项目中一致）。（仅Window界面可选）
+        private bool m_CanGetFocus;        //可获得焦点？（仅Overlay界面可选，默认true）
 
         //层级相关
         [SerializeField]
@@ -67,7 +56,6 @@ namespace NRFramework
         private UIPanelCloseAnimPlayMode m_CloseAnimPlayMode; //界面关闭动画
 
         public UIPanelType panelType { get { return m_PanelType; } }
-        public bool colseWhenClickBg { get { return m_ColseWhenClickBg; } }
         public bool canGetFocus { get { return m_CanGetFocus; } }
         public int thickness { get { return m_Thickness; } }
         public bool inSafeArea { get { return m_InSafeArea; } }
@@ -82,8 +70,7 @@ namespace NRFramework
             base.Reset();
 
             m_PanelType = UIPanelType.Scene;
-            m_CanGetFocus = false;
-            m_ColseWhenClickBg = true;
+            m_CanGetFocus = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
@@ -108,9 +95,15 @@ namespace NRFramework
         static private Color sm_BlackBgColor = new Color(0, 0, 0, 0.5f);
         internal Color GetBgColor()
         {
-            if (panelType == UIPanelType.Scene) { return sm_AlphaBgColor; }
-            else if (panelType == UIPanelType.Window) { return sm_BlackBgColor; }
-            else { throw new Exception(); }
+            switch (panelType)
+            {
+                case UIPanelType.Scene:
+                    return sm_AlphaBgColor;
+                case UIPanelType.Window:
+                    return sm_BlackBgColor;
+                default:
+                    throw new Exception();
+            }
         }
 
         internal void PlayOpenAnim(Action onFinish)

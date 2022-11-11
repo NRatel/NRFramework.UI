@@ -12,8 +12,7 @@ namespace NRFramework
         public enum NoValidAnimatorEnumForDisplay { NoValidAnimator }
 
         private SerializedProperty m_PanelTypeSP;
-        private SerializedProperty m_CanGetFocusSP;    //（仅Float界面可选）
-        private SerializedProperty m_ColseWhenClickBgSP; //（仅Window界面可选）
+        private SerializedProperty m_CanGetFocusSP;    //（仅Overlay界面可选）
         private SerializedProperty m_ThicknessSP;
         private SerializedProperty m_InSafeAreaSP;
         private SerializedProperty m_OpenAnimPlayModeSP;
@@ -24,8 +23,7 @@ namespace NRFramework
             base.OnEnable();
 
             m_PanelTypeSP = serializedObject.FindProperty("m_PanelType");
-            m_CanGetFocusSP = serializedObject.FindProperty("m_CanGetFocus");    //（仅Float界面可选）
-            m_ColseWhenClickBgSP = serializedObject.FindProperty("m_ColseWhenClickBg"); //（仅Window界面可选）
+            m_CanGetFocusSP = serializedObject.FindProperty("m_CanGetFocus");
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
             m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
             m_OpenAnimPlayModeSP = serializedObject.FindProperty("m_OpenAnimPlayMode");
@@ -53,27 +51,17 @@ namespace NRFramework
 
             EditorGUI.indentLevel++;
             {
-                if (panelType == UIPanelType.Scene)
+                switch (panelType)
                 {
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", true); //固定可获得焦点
-                        m_ColseWhenClickBgSP.boolValue = EditorGUILayout.Toggle("ColseWhenClickBg", false);    //固定为false
-                    }
-                }
-                else if (panelType == UIPanelType.Overlap)
-                {
-                    m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", m_CanGetFocusSP.boolValue); //可选
-                    //无背景，不显示背景相关设置。
-                    m_ColseWhenClickBgSP.boolValue = false;
-                }
-                else //if (panelType == UIPanelType.Window)
-                {
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", true); //固定可获得焦点
-                    }
-                    m_ColseWhenClickBgSP.boolValue = EditorGUILayout.Toggle("ColseWhenClickBg", m_ColseWhenClickBgSP.boolValue); //可选
+                    case UIPanelType.Scene:
+                        m_CanGetFocusSP.boolValue = true;   //固定
+                        break;
+                    case UIPanelType.Overlay:
+                        m_CanGetFocusSP.boolValue = EditorGUILayout.Toggle("CanGetFocus", m_CanGetFocusSP.boolValue); //可选
+                        break;
+                    case UIPanelType.Window:
+                        m_CanGetFocusSP.boolValue = true;   //固定
+                        break;
                 }
             }
             EditorGUI.indentLevel--;

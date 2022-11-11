@@ -132,7 +132,7 @@ namespace NRFramework
                 case (UIPanelType.Scene):
                     if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
                     break;
-                case (UIPanelType.Overlap):
+                case (UIPanelType.Overlay):
                     break;
                 case (UIPanelType.Window):
                     if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
@@ -160,7 +160,7 @@ namespace NRFramework
                     if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), null); }
                     else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
                     break;
-                case (UIPanelType.Overlap):
+                case (UIPanelType.Overlay):
                     break;
                 case (UIPanelType.Window):
                     if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), OnWindowBgClicked); }

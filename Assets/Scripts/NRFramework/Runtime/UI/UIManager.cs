@@ -121,7 +121,7 @@ namespace NRFramework
             for (int i = panels.Count - 1; i >= 0; i--)
             {
                 UIPanel panel = panels[i];
-                if (panel.panelBehaviour.panelType == UIPanelType.Overlap)
+                if (panel.panelBehaviour.panelType == UIPanelType.Overlay)
                 {
                     m_TempNewFocusingPanels.Add(panel); continue;
                 }
@@ -145,7 +145,7 @@ namespace NRFramework
             for (int i = 0; i < m_TempNewFocusingPanels.Count; i++)
             {
                 UIPanel panel = m_TempNewFocusingPanels[i];
-                if (!m_FocusingPanels.Contains(panel))
+                if (!m_FocusingPanels.Contains(panel) && panel.panelBehaviour.canGetFocus)
                 {
                     panel.ChangeFocus(true);
                 }
