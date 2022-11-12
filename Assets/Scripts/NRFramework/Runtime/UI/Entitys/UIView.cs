@@ -25,7 +25,7 @@ namespace NRFramework
         {
             GameObject prefab;
 #if UNITY_EDITOR
-            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/" + prefabPath);
+            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 #else
             prefab = null;  //todo，改用自封装的资源加载接口
 #endif
@@ -246,8 +246,6 @@ namespace NRFramework
             rectTransform.localPosition = Vector3.zero;
             rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
             rectTransform.localScale = Vector3.one;
-
-            subscribeProxy = new SubscribeProxy(UIManager.Instance.eventDispatcher);
         }
 
         protected internal virtual void OnInternalCreated() { }

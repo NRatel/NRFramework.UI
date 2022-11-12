@@ -15,4 +15,4 @@ MonoBehaviour:
   enableOpElementHierarchy: 1
   uiPrefabRootDir: GameRes/GUI/Prefabs
   generatedBaseUIRootDir: Scripts/GameLogic/GeneratedBaseUI
-  generatedTempUIDir: Scripts/GameLogic/Modules
+  generatedTempUIRootDir: Scripts/GameLogic/Modules
