@@ -14,8 +14,6 @@ namespace NRFramework
         public RectTransform rectTransform;
         public GameObject gameObject;
 
-        public SubscribeProxy subscribeProxy;
-
         public Dictionary<string, UIWidget> widgetDict { private set; get; }
 
         static public event Action<Button> onButtonClickedGlobalEvent;
@@ -256,9 +254,6 @@ namespace NRFramework
 
         protected internal virtual void OnInternalClosing()
         {
-            subscribeProxy.UnsubscribeAll();
-            subscribeProxy = null;
-
             GameObject.Destroy(gameObject);
 
             gameObject = null;
