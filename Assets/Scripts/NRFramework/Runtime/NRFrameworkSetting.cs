@@ -7,7 +7,6 @@
         public const string kUICameraPath = "UICamera";
         public const int kDefaultPanelThickness = 10;
 
-        //Asset
         //...
     }
 }

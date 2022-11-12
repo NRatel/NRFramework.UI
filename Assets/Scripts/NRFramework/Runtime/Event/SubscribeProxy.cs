@@ -7,7 +7,7 @@ namespace NRFramework
     public class SubscribeProxy : ISubscribable
     {
         private ISubscribable m_Subject;
-        private Dictionary<string, Subscriber> m_SubscriberDict { get; set; }
+        private Dictionary<string, Subscriber> m_SubscriberDict;
 
         public SubscribeProxy(ISubscribable subject)
         {

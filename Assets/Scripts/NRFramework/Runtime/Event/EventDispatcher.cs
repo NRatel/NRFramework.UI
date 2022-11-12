@@ -25,7 +25,7 @@ namespace NRFramework
 
     public class EventDispatcher : ISubscribable, IPublishable
     {
-        private Dictionary<string, Event> m_EventDict { get; set; }
+        private Dictionary<string, Event> m_EventDict;
 
         public EventDispatcher()
         {
