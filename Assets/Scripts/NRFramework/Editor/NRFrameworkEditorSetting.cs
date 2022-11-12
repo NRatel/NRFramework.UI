@@ -24,7 +24,7 @@ namespace NRFramework
         // 将在相对路径下创建对应基类。
         // 将在相对路径下创建快捷类。创建后应自行改名（避免覆盖）。
         public string generatedBaseUIRootDir = "Scripts/GameLogic/GeneratedBaseUI";
-        public string generatedTempUIDir = "Scripts/GameLogic/Modules";
+        public string generatedTempUIRootDir = "Scripts/GameLogic/Modules";
 
         private static NRFrameworkEditorSetting sm_Instance = null;
         public static NRFrameworkEditorSetting Instance

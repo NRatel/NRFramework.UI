@@ -4,6 +4,6 @@ public class Main : MonoBehaviour
 {
     private void Start()
     {
-        new Game().StartGame(); //todo
+        new Game().StartGame();
     }
 }

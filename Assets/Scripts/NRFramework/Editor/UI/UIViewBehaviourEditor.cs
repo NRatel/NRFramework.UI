@@ -337,7 +337,7 @@ namespace NRFramework
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
             string className = Path.GetFileNameWithoutExtension(subPath);
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
-            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIDir, subSavePath));
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIRootDir, subSavePath));
 
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
             content = content.Replace("${BaseClassName}", className + "Base");

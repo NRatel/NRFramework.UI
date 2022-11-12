@@ -14,6 +14,8 @@ namespace NRFramework
         public RectTransform rectTransform;
         public GameObject gameObject;
 
+        public SubscribeProxy subscribeProxy;
+
         public Dictionary<string, UIWidget> widgetDict { private set; get; }
 
         static public event Action<Button> onButtonClickedGlobalEvent;
@@ -25,9 +27,9 @@ namespace NRFramework
         {
             GameObject prefab;
 #if UNITY_EDITOR
-            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/" + prefabPath);
 #else
-            prefab = null;  //todo，改用资源管理接口加载
+            prefab = null;  //todo，改用自封装的资源加载接口
 #endif
             GameObject go = GameObject.Instantiate<GameObject>(prefab);
             UIViewBehaviour viewBehaviour = go.GetComponent<UIViewBehaviour>();
@@ -246,12 +248,17 @@ namespace NRFramework
             rectTransform.localPosition = Vector3.zero;
             rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
             rectTransform.localScale = Vector3.one;
+
+            subscribeProxy = new SubscribeProxy(UIManager.Instance.eventDispatcher);
         }
 
         protected internal virtual void OnInternalCreated() { }
 
         protected internal virtual void OnInternalClosing()
         {
+            subscribeProxy.UnsubscribeAll();
+            subscribeProxy = null;
+
             GameObject.Destroy(gameObject);
 
             gameObject = null;

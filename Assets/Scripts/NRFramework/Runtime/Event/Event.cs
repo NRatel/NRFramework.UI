@@ -3,24 +3,28 @@ using System.Collections.Generic;
 
 namespace NRFramework
 {
+    public class EventArgument { }
+
     public class Event
     {
-        private string m_EventName { get; set; }
-        private List<Action<object>> m_HandlerList { get; set; }
+        private string m_EventName;
+
+        private List<Action<EventArgument>> m_HandlerList;
+
         public int handlerCount { get { return m_HandlerList.Count; } }
 
         public Event(string eventName)
         {
             m_EventName = eventName;
-            m_HandlerList = new List<Action<object>>();
+            m_HandlerList = new List<Action<EventArgument>>();
         }
 
-        public void AddListener(Action<object> handler)
+        public void AddListener(Action<EventArgument> handler)
         {
             m_HandlerList.Add(handler);
         }
 
-        public bool RemoveListener(Action<object> handler)
+        public bool RemoveListener(Action<EventArgument> handler)
         {
             return m_HandlerList.Remove(handler);
         }
@@ -30,15 +34,15 @@ namespace NRFramework
             m_HandlerList.Clear();
         }
 
-        public void Invoke(object eventParameter)
+        public void Invoke(EventArgument eventArgument)
         {
-            foreach (Action<object> handler in m_HandlerList)
+            foreach (Action<EventArgument> handler in m_HandlerList)
             {
-                handler(eventParameter);
+                handler(eventArgument);
             }
         }
 
-        public bool Has(Action<object> handler)
+        public bool Has(Action<EventArgument> handler)
         {
             return m_HandlerList.Contains(handler);
         }

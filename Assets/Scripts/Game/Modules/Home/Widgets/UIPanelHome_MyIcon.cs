@@ -10,11 +10,11 @@ public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
 
     protected override void OnCreated() { }
 
-    public void Init(int thisCount)
+    public void Init(int count)
     {
-        Debug.Log("UIPanelHome_MyIcon Custom Init " + thisCount);
+        Debug.Log("UIPanelHome_MyIcon Custom Init " + count);
 
-        m_Index_TextMeshProUGUI.text = "Index: " + thisCount;
+        m_Index_TextMeshProUGUI.text = "Index: " + count;
     }
 
     protected override void OnClicked(Button button)

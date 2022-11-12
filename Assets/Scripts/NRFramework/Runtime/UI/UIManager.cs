@@ -13,6 +13,9 @@ namespace NRFramework
 
         public Dictionary<string, UIRoot> rootDict { private set; get; }
 
+        public EventDispatcher eventDispatcher { get; private set; }
+
+
         private List<UIPanel> m_FocusingPanels;     //关闭界面时无需清理，由ChangeFocus覆盖。
         private List<UIPanel> m_TempNewFocusingPanels;
 
@@ -21,6 +24,8 @@ namespace NRFramework
             uiCanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
             uiCamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
             rootDict = new Dictionary<string, UIRoot>();
+            eventDispatcher = new EventDispatcher();
+
             m_FocusingPanels = new List<UIPanel>();
             m_TempNewFocusingPanels = new List<UIPanel>();
         }
