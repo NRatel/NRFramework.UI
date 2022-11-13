@@ -7,17 +7,17 @@ namespace NRFramework
     public enum UIPanelType
     {
         /// <summary>
-        /// 场景（铺衬在底）。内容通常占满全屏甚至超出。
+        /// 衬底。内容通常占满全屏甚至超出。
         /// 1、背景：自带透明背景，完全阻挡下方交互事件（即使内容含空白区域），点击背景无任何响应。
         /// 2、焦点：可独立获得焦点。
         /// </summary>
-        Scene,
+        Underlay,
 
         /// <summary>
         /// 叠加。内容通常未占屏局部。非模态的，可同时与下层界面交互。
         /// 1、背景：无背景，空白部分无法阻挡下方交互事件。
         /// 2、焦点：可选获得焦点（若可获得，与其下方“可获得焦点的界面”共同获得焦点）。
-        /// 如：主界面切换菜单（可获得焦点）、主界面浮动功能气泡（不可获得焦点）、toast（不可获得焦点）。
+        /// 如：主界面切换菜单（可获得焦点）、主界面浮动功能气泡（不可获得焦点）、等待响应转圈（不可获得焦点）、toast（不可获得焦点）。
         /// </summary>
         Overlay,
 
@@ -70,7 +70,7 @@ namespace NRFramework
         {
             base.Reset();
 
-            m_PanelType = UIPanelType.Scene;
+            m_PanelType = UIPanelType.Underlay;
             m_CanGetFocus = true;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
@@ -98,7 +98,7 @@ namespace NRFramework
         {
             switch (panelType)
             {
-                case UIPanelType.Scene:
+                case UIPanelType.Underlay:
                     return sm_AlphaBgColor;
                 case UIPanelType.Window:
                     return sm_BlackBgColor;

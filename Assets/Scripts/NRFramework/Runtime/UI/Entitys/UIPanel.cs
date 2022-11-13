@@ -129,7 +129,7 @@ namespace NRFramework
         {
             switch (panelBehaviour.panelType)
             {
-                case (UIPanelType.Scene):
+                case (UIPanelType.Underlay):
                     if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
                     break;
                 case (UIPanelType.Overlay):
@@ -156,7 +156,7 @@ namespace NRFramework
         {
             switch (panelBehaviour.panelType)
             {
-                case (UIPanelType.Scene):
+                case (UIPanelType.Underlay):
                     if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), null); }
                     else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
                     break;

@@ -53,7 +53,7 @@ namespace NRFramework
             {
                 switch (panelType)
                 {
-                    case UIPanelType.Scene:
+                    case UIPanelType.Underlay:
                         m_CanGetFocusSP.boolValue = true;   //固定
                         break;
                     case UIPanelType.Overlay:
