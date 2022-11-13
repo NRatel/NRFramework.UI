@@ -14,11 +14,13 @@ namespace NRFramework
         Custom
     }
 
-    public enum UIPanelBgColorType
+    public enum UIPanelBgShowType
     {
         Alpha,
         HalfAlphaBlack,
-        Custom,
+        CustomColor,
+        //CustomTexture,
+        //BlurryScreenshot
     }
 
     public enum UIPanelBgClickEventType
@@ -51,7 +53,7 @@ namespace NRFramework
         private bool m_HasBg;
 
         [SerializeField]
-        private UIPanelBgColorType m_BgColorType;
+        private UIPanelBgShowType m_BgShowType;
 
         [SerializeField]
         private Color m_CustomBgColor;
@@ -80,17 +82,23 @@ namespace NRFramework
 
         static private Color sm_BgColor_Alpha = new Color(0, 0, 0, 0);
         static private Color sm_BgColor_HalfAlphaBlack = new Color(0, 0, 0, 0.7f);
+
+        public Texture bgTexture
+        {
+            get { return null; }
+        }
+
         public Color bgColor 
         { 
             get 
             {
                 Debug.Assert(hasBg);
-                return m_BgColorType switch
+                return m_BgShowType switch
                 {
-                    UIPanelBgColorType.Alpha => sm_BgColor_Alpha,
-                    UIPanelBgColorType.HalfAlphaBlack => sm_BgColor_HalfAlphaBlack,
-                    UIPanelBgColorType.Custom => m_CustomBgColor,
-                    _ => m_CustomBgColor,
+                    UIPanelBgShowType.Alpha => sm_BgColor_Alpha,
+                    UIPanelBgShowType.HalfAlphaBlack => sm_BgColor_HalfAlphaBlack,
+                    UIPanelBgShowType.CustomColor => m_CustomBgColor,
+                    _ => Color.white,
                 };
             }
         }
@@ -114,7 +122,7 @@ namespace NRFramework
 
             m_PanelType = UIPanelType.Underlay;
             m_HasBg = false;
-            m_BgColorType = UIPanelBgColorType.Custom;
+            m_BgShowType = UIPanelBgShowType.CustomColor;
             m_CustomBgColor = Color.white;
             m_BgClickEventType = UIPanelBgClickEventType.Custom;
             m_GetFocusType = UIPanelGetFocusType.Get;

@@ -66,16 +66,16 @@ namespace NRFramework
             switch (panelBehaviour.bgClickEventType)
             {
                 case (UIPanelBgClickEventType.PassThrough):
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, true, null);
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, true, null);
                     break;
                 case (UIPanelBgClickEventType.DontRespone):
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, null);
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, null);
                     break;
                 case (UIPanelBgClickEventType.CloseSelf):
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, ()=> { CloseSelf(null); });
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, ()=> { CloseSelf(null); });
                     break;
                 case (UIPanelBgClickEventType.Custom):
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, OnBackgroundClicked);
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, OnBackgroundClicked);
                     break;
             }
         }

@@ -13,7 +13,7 @@ namespace NRFramework
 
         private SerializedProperty m_PanelTypeSP;
         private SerializedProperty m_HasBgSP;
-        private SerializedProperty m_BgColorTypeSP;
+        private SerializedProperty m_BgShowTypeSP;
         private SerializedProperty m_CustomBgColorSP;
         private SerializedProperty m_BgClickEventTypeSP;
         private SerializedProperty m_GetFocusTypeSP;
@@ -28,7 +28,7 @@ namespace NRFramework
 
             m_PanelTypeSP = serializedObject.FindProperty("m_PanelType");
             m_HasBgSP = serializedObject.FindProperty("m_HasBg");
-            m_BgColorTypeSP = serializedObject.FindProperty("m_BgColorType");
+            m_BgShowTypeSP = serializedObject.FindProperty("m_BgShowType");
             m_CustomBgColorSP = serializedObject.FindProperty("m_CustomBgColor");
             m_BgClickEventTypeSP = serializedObject.FindProperty("m_BgClickEventType");
             m_GetFocusTypeSP = serializedObject.FindProperty("m_GetFocusType");
@@ -65,7 +65,7 @@ namespace NRFramework
                     case UIPanelType.Underlay:
                         disableScope = true;
                         m_HasBgSP.boolValue = true;
-                        m_BgColorTypeSP.enumValueIndex = (int)UIPanelBgColorType.Alpha;
+                        m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.Alpha;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
                         break;
@@ -79,7 +79,7 @@ namespace NRFramework
                     case UIPanelType.Window:
                         disableScope = true;
                         m_HasBgSP.boolValue = true;
-                        m_BgColorTypeSP.enumValueIndex = (int)UIPanelBgColorType.HalfAlphaBlack;
+                        m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.CloseSelf;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
                         break;
@@ -93,7 +93,7 @@ namespace NRFramework
                     case UIPanelType.System:
                         disableScope = true;
                         m_HasBgSP.boolValue = true;
-                        m_BgColorTypeSP.enumValueIndex = (int)UIPanelBgColorType.HalfAlphaBlack;
+                        m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
                         break;
@@ -109,9 +109,9 @@ namespace NRFramework
                     if (m_HasBgSP.boolValue)
                     {
                         EditorGUI.indentLevel++;
-                        Enum bgColorTypeEnum = EditorGUILayout.EnumPopup("BgColorType", (UIPanelBgColorType)m_BgColorTypeSP.enumValueIndex);
-                        m_BgColorTypeSP.enumValueIndex = (int)(UIPanelBgColorType)bgColorTypeEnum;
-                        if (m_BgColorTypeSP.enumValueIndex == (int)UIPanelBgColorType.Custom)
+                        Enum bgShowTypeEnum = EditorGUILayout.EnumPopup("BgShowType", (UIPanelBgShowType)m_BgShowTypeSP.enumValueIndex);
+                        m_BgShowTypeSP.enumValueIndex = (int)(UIPanelBgShowType)bgShowTypeEnum;
+                        if (m_BgShowTypeSP.enumValueIndex == (int)UIPanelBgShowType.CustomColor)
                         {
                             EditorGUI.indentLevel++;
                             m_CustomBgColorSP.colorValue = EditorGUILayout.ColorField(m_CustomBgColorSP.colorValue);

@@ -24,7 +24,7 @@ namespace NRFramework
             gameObject.SetActive(false);
         }
 
-        internal void Bind(RectTransform parent, Color color, bool passThrough, Action onClick = null)
+        internal void Bind(RectTransform parent, Texture texture, Color color, bool passThrough, Action onClick = null)
         {
             if (transform.parent == parent) { return; }
 
@@ -41,6 +41,7 @@ namespace NRFramework
             m_RectTrransform.anchorMax = Vector2.one;
             m_RectTrransform.sizeDelta = Vector2.zero;
 
+            m_RawImage.texture = texture;
             m_RawImage.color = color;
             m_RawImage.raycastTarget = !passThrough;
 
