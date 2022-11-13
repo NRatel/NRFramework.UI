@@ -21,7 +21,7 @@ public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
     {
         if (button == m_BtnCover_Button) 
         {
-            CloseSelf();
+            DestroySelf();
         }
     }
 
@@ -41,7 +41,7 @@ public class UIPanelHome_MyIcon : UIPanelHome_MyIconBase
 
     protected override void OnValueChanged(ScrollRect scrollRect, Vector2 value) { }
     
-    protected override void OnClosing() { }
+    protected override void OnDestroying() { }
 
-    protected override void OnClosed() { }
+    protected override void OnDestroyed() { }
 }

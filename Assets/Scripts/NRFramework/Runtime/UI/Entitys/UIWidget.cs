@@ -20,16 +20,16 @@ namespace NRFramework
             base.Create(widgetId, parentRectTransform, widgetBehaviour);
         }
 
-        protected void CloseSelf()
+        protected void DestroySelf()
         {
-            parentView.CloseWidget(widgetId);
+            parentView.DestroyWidget(widgetId);
         }
 
-        protected internal override void OnInternalClosing()
+        protected internal override void OnInternalDestroying()
         {
             parentView = null;
 
-            base.OnInternalClosing();
+            base.OnInternalDestroying();
         }
     }
 }

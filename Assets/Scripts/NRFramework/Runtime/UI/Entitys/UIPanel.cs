@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIPanelShowState { Initing, Idle, Refreshing, Closed }
+    public enum UIPanelShowState { Initing, Idle, Refreshing, Destroyed }
 
     public enum UIPanelAnimState { Opening, Idle, Closing, Closed }
 
@@ -41,14 +41,14 @@ namespace NRFramework
         {
             PlayCloseAnim(() =>
             {
-                base.Close();
+                base.Destroy();
                 onFinish?.Invoke();
             });
         }
 
-        internal void CloseWithoutAnim()
-        {
-            base.Close();
+        internal new void Destroy()
+        { 
+            base.Destroy();
         }
 
         internal void SetSortingOrder(int sortingOrder)
@@ -66,12 +66,12 @@ namespace NRFramework
 
         protected void CloseSelf(Action onFinish = null)
         {
-            parentUIRoot.ClosePanel(panelId);
+            parentUIRoot.ClosePanel(panelId, onFinish);
         }
 
-        protected void CloseSelfWithoutAnim()
+        protected void DestroySelf()
         {
-            parentUIRoot.ClosePanelWithoutAnim(panelId);
+            parentUIRoot.DestroyPanel(panelId);
         }
 
         #endregion
@@ -125,7 +125,7 @@ namespace NRFramework
             animState = UIPanelAnimState.Idle;
         }
 
-        protected internal override void OnInternalClosing()
+        protected internal override void OnInternalDestroying()
         {
             switch (panelBehaviour.panelType)
             {
@@ -144,12 +144,12 @@ namespace NRFramework
             canvas = null;
             parentUIRoot = null;
 
-            base.OnInternalClosing();
+            base.OnInternalDestroying();
         }
 
-        protected internal override void OnInternalClosed()
+        protected internal override void OnInternalDestroyed()
         {
-            showState = UIPanelShowState.Closed;
+            showState = UIPanelShowState.Destroyed;
         }
 
         protected internal void OnInternalFocusChanged(bool got)

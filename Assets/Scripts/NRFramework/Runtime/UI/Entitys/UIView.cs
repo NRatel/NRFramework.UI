@@ -51,22 +51,22 @@ namespace NRFramework
             OnCreated();
         }
 
-        protected void Close()
+        protected void Destroy()
         {
             if (widgetDict != null && widgetDict.Count > 0)
             {
                 foreach (KeyValuePair<string, UIWidget> kvPair in widgetDict)
                 {
-                    kvPair.Value.Close();
+                    kvPair.Value.Destroy();
                 }
             }
 
-            OnClosing();
+            OnDestroying();
             OnUnbindCompsAndEvents();
-            OnInternalClosing();
+            OnInternalDestroying();
 
-            OnInternalClosed();
-            OnClosed();
+            OnInternalDestroyed();
+            OnDestroyed();
         }
         #endregion
 
@@ -107,18 +107,18 @@ namespace NRFramework
             return CreateWidget<T>(typeof(T).Name, parentRectTransform, prefabPath);
         }
 
-        public void CloseWidget(string widgetId)
+        public void DestroyWidget(string widgetId)
         {
             Debug.Assert(widgetDict.ContainsKey(widgetId), "widget不存在");
 
             UIWidget widget = widgetDict[widgetId];
             widgetDict.Remove(widgetId);
-            widget.Close();
+            widget.Destroy();
         }
 
-        public void CloseWidget<T>()
+        public void DestroyWidget<T>()
         {
-            CloseWidget(typeof(T).Name);
+            DestroyWidget(typeof(T).Name);
         }
 
         public UIWidget GetWidget(string widgetId)
@@ -250,7 +250,7 @@ namespace NRFramework
 
         protected internal virtual void OnInternalCreated() { }
 
-        protected internal virtual void OnInternalClosing()
+        protected internal virtual void OnInternalDestroying()
         {
             GameObject.Destroy(gameObject);
 
@@ -263,7 +263,7 @@ namespace NRFramework
             widgetDict = null;
         }
 
-        protected internal virtual void OnInternalClosed() { }
+        protected internal virtual void OnInternalDestroyed() { }
 
         #endregion
 
@@ -300,7 +300,7 @@ namespace NRFramework
         /// <summary>
         /// 子类在此完成自身特有关闭（清理）内容
         /// </summary>
-        protected virtual void OnClosing() { }
+        protected virtual void OnDestroying() { }
 
         /// <summary>
         /// 解除组件变量和事件（自动生成）
@@ -310,7 +310,7 @@ namespace NRFramework
         /// <summary>
         /// 关闭完成
         /// </summary>
-        protected virtual void OnClosed() { }
+        protected virtual void OnDestroyed() { }
         #endregion
     }
 }

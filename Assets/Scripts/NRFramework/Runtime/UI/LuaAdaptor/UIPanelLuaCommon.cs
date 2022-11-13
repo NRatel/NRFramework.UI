@@ -13,8 +13,8 @@ namespace NRFramework
 
         private Action<LuaTable> m_LuaOnCreating;
         private Action<LuaTable> m_LuaOnCreated;
-        private Action<LuaTable> m_LuaOnClosing;
-        private Action<LuaTable> m_LuaOnClosed;
+        private Action<LuaTable> m_LuaOnDestroying;
+        private Action<LuaTable> m_LuaOnDestroyed;
 
         public void Create(string panelId, Canvas parentCanvas, string prefabPath, LuaTable luaTable)
         {
@@ -44,8 +44,8 @@ namespace NRFramework
 
             GetMember("OnCreating", out m_LuaOnCreating);
             GetMember("OnCreated", out m_LuaOnCreated);
-            GetMember("OnClosing", out m_LuaOnClosing);
-            GetMember("OnClosed", out m_LuaOnClosed);
+            GetMember("OnDestroying", out m_LuaOnDestroying);
+            GetMember("OnDestroyed", out m_LuaOnDestroyed);
 
             m_LuaOnCreating?.Invoke(@this);
 
@@ -57,23 +57,23 @@ namespace NRFramework
             m_LuaOnCreated?.Invoke(@this);
         }
 
-        protected override void OnClosing()
+        protected override void OnDestroying()
         {
-            m_LuaOnClosing?.Invoke(@this);
+            m_LuaOnDestroying?.Invoke(@this);
 
             m_LuaOnCreating = null;
             m_LuaOnCreated = null;
-            m_LuaOnClosing = null;
+            m_LuaOnDestroying = null;
 
-            base.OnClosing();
+            base.OnDestroying();
         }
 
-        protected override void OnClosed()
+        protected override void OnDestroyed()
         {
-            base.OnClosed();
-            m_LuaOnClosed?.Invoke(@this);
+            base.OnDestroyed();
+            m_LuaOnDestroyed?.Invoke(@this);
 
-            m_LuaOnClosed = null;
+            m_LuaOnDestroyed = null;
         }
 
         //设置成员 供Lua调C#

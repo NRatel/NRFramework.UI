@@ -57,9 +57,9 @@ public class ${ClassName} : ${BaseClassName}
 
     protected override void OnValueChanged(ScrollRect scrollRect, Vector2 value) { }
     ${PanelLifeCycleCode}
-    protected override void OnClosing() { }
+    protected override void OnDestroying() { }
 
-    protected override void OnClosed() { }
+    protected override void OnDestroyed() { }
 }";
 
         public const string kPanelLifeCycleCode = @"

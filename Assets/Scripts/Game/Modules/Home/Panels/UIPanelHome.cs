@@ -52,13 +52,13 @@ public class UIPanelHome : UIPanelHomeBase
     
     //protected override void OnEscButtonClicked() { }
 
-    protected override void OnClosing() 
+    protected override void OnDestroying() 
     {
-        Debug.Log("UIPanelHome OnClosing");
+        Debug.Log("UIPanelHome OnDestroying");
     }
 
-    protected override void OnClosed()
+    protected override void OnDestroyed()
     {
-        Debug.Log("UIPanelHome OnClosed");
+        Debug.Log("UIPanelHome OnDestroyed");
     }
 }

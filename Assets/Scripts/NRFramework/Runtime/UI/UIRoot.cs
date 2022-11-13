@@ -68,13 +68,13 @@ namespace NRFramework
             UIManager.Instance.ChangeFocus();
         }
 
-        public void ClosePanelWithoutAnim(string panelId)
+        public void DestroyPanel(string panelId)
         {
             Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
 
             UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
-            panel.CloseWithoutAnim();
+            panel.Destroy();
 
             UIManager.Instance.ChangeFocus();
         }
@@ -84,9 +84,9 @@ namespace NRFramework
             ClosePanel(typeof(T).Name, onFinish);
         }
 
-        public void ClosePanelWithoutAnim<T>()
+        public void DestroyPanel<T>()
         {
-            ClosePanelWithoutAnim(typeof(T).Name);
+            DestroyPanel(typeof(T).Name);
         }
 
         public UIPanel GetPanel(string panelId)
