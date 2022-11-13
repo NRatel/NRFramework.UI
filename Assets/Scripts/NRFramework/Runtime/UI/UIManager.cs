@@ -48,7 +48,7 @@ namespace NRFramework
             return rootDict[rootId];
         }
 
-        public List<UIPanel> GetPanels(Func<UIPanel, bool> filterFunc)
+        public List<UIPanel> FilterPanels(Func<UIPanel, bool> filterFunc)
         {
             List<UIPanel> panels = new List<UIPanel>();
 
@@ -96,8 +96,8 @@ namespace NRFramework
             string rootId = strs[0];
             string panelId = strs[1];
             string[] widgetIds = new string[strs.Length - 2];
-            for (int i = 0; i < strs.Length - 2; i++) 
-            { widgetIds[i] = strs[i+2]; }
+            for (int i = 0; i < strs.Length - 2; i++)
+            { widgetIds[i] = strs[i + 2]; }
 
             return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine);
         }
@@ -107,30 +107,44 @@ namespace NRFramework
             List<UIPanel> vaildPanels = new List<UIPanel>();
             foreach (UIPanel panel in m_FocusingPanels)
             {
-                if (panel != null && panel.panelBehaviour.canGetFocus) { vaildPanels.Add(panel); }
+                if (panel != null) { vaildPanels.Add(panel); }
             }
             return vaildPanels;
         }
 
-        internal void ChangeFocus()
+        internal void SetBackgroundAndFocus()
         {
-            List<UIPanel> panels = GetPanels((panel) => { return true; });
+            List<UIPanel> panels = FilterPanels((panel) => { return true; });
             panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
 
-            m_TempNewFocusingPanels.Clear();
+            UIPanel needBgPanel = null;
+            bool collectFocusCanBreak = false;
 
             for (int i = panels.Count - 1; i >= 0; i--)
             {
                 UIPanel panel = panels[i];
-                if (panel.panelBehaviour.panelType == UIPanelType.Overlay)
+
+                if (needBgPanel == null && panel.panelBehaviour.hasBg)
                 {
-                    m_TempNewFocusingPanels.Add(panel); continue;
+                    needBgPanel = panel;
                 }
-                else
+
+                if (panel.panelBehaviour.getFocusType == UIPanelGetFocusType.GetWithOthers)
                 {
-                    m_TempNewFocusingPanels.Add(panel); break;
+                    m_TempNewFocusingPanels.Add(panel);
                 }
+                else if (panel.panelBehaviour.getFocusType == UIPanelGetFocusType.Get)
+                {
+                    m_TempNewFocusingPanels.Add(panel);
+                    collectFocusCanBreak = true;
+                }
+
+                if (needBgPanel != null && collectFocusCanBreak) { break; }
             }
+
+            //设置/移除背景
+            if (needBgPanel != null) { needBgPanel.SetBackground(); }
+            else { UIBlocker.Instance.Unbind(); }
 
             //丢失焦点时，由顶至下
             for (int i = m_FocusingPanels.Count - 1; i >= 0; i--)
@@ -138,7 +152,7 @@ namespace NRFramework
                 UIPanel panel = m_FocusingPanels[i];
                 if (panel.panelId != null && !m_TempNewFocusingPanels.Contains(panel))
                 {
-                    panel.ChangeFocus(false);
+                    panel.SetFocus(false);
                 }
             }
 
@@ -146,16 +160,16 @@ namespace NRFramework
             for (int i = 0; i < m_TempNewFocusingPanels.Count; i++)
             {
                 UIPanel panel = m_TempNewFocusingPanels[i];
-                if (!m_FocusingPanels.Contains(panel) && panel.panelBehaviour.canGetFocus)
+                if (!m_FocusingPanels.Contains(panel))
                 {
-                    panel.ChangeFocus(true);
+                    panel.SetFocus(true);
                 }
             }
 
             List<UIPanel> t = m_FocusingPanels;
             m_FocusingPanels = m_TempNewFocusingPanels;
             m_TempNewFocusingPanels = t;
-            m_FocusingPanels.Clear();
+            m_TempNewFocusingPanels.Clear();
             t = null;
         }
     }

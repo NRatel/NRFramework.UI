@@ -25,9 +25,10 @@ namespace NRFramework
             panel.Create(panelId, this, prefabPath);
             int targetSortingOrder = GetTargetSortingOrder();
             panel.SetSortingOrder(targetSortingOrder);
-            panel.rectTransform.SetSiblingIndex(GetTargetSiblingIndex(targetSortingOrder));
+            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
+            panel.SetSiblingIndex(targetSiblingIndex);
             panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.ChangeFocus();
+            UIManager.Instance.SetBackgroundAndFocus();
 
             return panel;
         }
@@ -40,9 +41,10 @@ namespace NRFramework
             panel.Create(panelId, this, panelBehaviour);
             int targetSortingOrder = GetTargetSortingOrder();
             panel.SetSortingOrder(targetSortingOrder);
-            panel.rectTransform.SetSiblingIndex(GetTargetSiblingIndex(targetSortingOrder));
+            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
+            panel.SetSiblingIndex(targetSiblingIndex);
             panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.ChangeFocus();
+            UIManager.Instance.SetBackgroundAndFocus();
 
             return panel;
         }
@@ -65,7 +67,7 @@ namespace NRFramework
             panelDict.Remove(panelId);
             panel.Close(onFinish);
 
-            UIManager.Instance.ChangeFocus();
+            UIManager.Instance.SetBackgroundAndFocus();
         }
 
         public void DestroyPanel(string panelId)
@@ -76,7 +78,7 @@ namespace NRFramework
             panelDict.Remove(panelId);
             panel.Destroy();
 
-            UIManager.Instance.ChangeFocus();
+            UIManager.Instance.SetBackgroundAndFocus();
         }
 
         public void ClosePanel<T>(Action onFinish = null)
@@ -120,7 +122,7 @@ namespace NRFramework
 
         private int GetTargetSiblingIndex(int sortingOrder)
         {
-            List<UIPanel> panels = UIManager.Instance.GetPanels((panel) => 
+            List<UIPanel> panels = UIManager.Instance.FilterPanels((panel) => 
             {
                 return sortingOrder > panel.canvas.sortingOrder;
             });

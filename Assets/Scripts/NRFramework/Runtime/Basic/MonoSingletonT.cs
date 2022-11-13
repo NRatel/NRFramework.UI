@@ -35,8 +35,8 @@ namespace NRFramework
             {
                 if (attributes[i] is MonoSingletonSetting mss)
                 {
-                    hideFlags = mss.HideFlags;
-                    name = !string.IsNullOrEmpty(mss.NameInHierarchy) ? mss.NameInHierarchy : name;
+                    hideFlags = mss.hideFlags;
+                    name = !string.IsNullOrEmpty(mss.nameInHierarchy) ? mss.nameInHierarchy : name;
                     break;
                 }
             }
@@ -83,12 +83,12 @@ namespace NRFramework
             m_NameInHierarchy = nameInHierarchy;
         }
 
-        public string NameInHierarchy
+        public string nameInHierarchy
         {
             get { return m_NameInHierarchy; }
         }
 
-        public HideFlags HideFlags
+        public HideFlags hideFlags
         {
             get { return m_HideFlags; }
         }

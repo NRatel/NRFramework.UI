@@ -24,8 +24,10 @@ namespace NRFramework
             gameObject.SetActive(false);
         }
 
-        public void Bind(RectTransform parent, Color color, Action onClick = null)
+        internal void Bind(RectTransform parent, Color color, bool passThrough, Action onClick = null)
         {
+            if (transform.parent == parent) { return; }
+
             gameObject.SetActive(true);
 
             m_RectTrransform.SetParent(parent);
@@ -40,13 +42,16 @@ namespace NRFramework
             m_RectTrransform.sizeDelta = Vector2.zero;
 
             m_RawImage.color = color;
+            m_RawImage.raycastTarget = !passThrough;
 
             m_Btn.onClick.RemoveAllListeners();
-            if (onClick != null) { m_Btn.onClick.AddListener(() => { onClick(); }); }
+            if (!passThrough && onClick != null) { m_Btn.onClick.AddListener(() => { onClick(); }); }
         }
 
-        public void Unbind()
+        internal void Unbind()
         {
+            if (transform.parent == UIBlocker.commonRoot) { return; }
+
             m_Btn.onClick.RemoveAllListeners();
             m_RectTrransform.SetParent(UIBlocker.commonRoot);
             gameObject.SetActive(false);

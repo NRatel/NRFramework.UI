@@ -6,29 +6,34 @@ namespace NRFramework
 {
     public enum UIPanelType
     {
-        /// <summary>
-        /// 衬底。
-        /// 1、背景：自带透明背景，完全阻挡下方交互事件（即使内容含空白区域），点击背景无任何响应。
-        /// 2、焦点：可独立获得焦点。
-        /// 如：游戏Home界面、功能一级界面等。
-        /// </summary>
         Underlay,
-
-        /// <summary>
-        /// 叠加。非模态的，可同时与下层界面交互。
-        /// 1、背景：无背景，空白部分无法阻挡下方交互事件。
-        /// 2、焦点：可选获得焦点（若可获得，与其下方“可获得焦点的界面”共同获得焦点）。
-        /// 如：主界面切换菜单（可获得焦点）、主界面浮动功能气泡（不可获得焦点）、toast（不可获得焦点）。
-        /// </summary>
-        Overlay,
-
-        /// <summary>
-        /// 窗体。模态地，要求用户必须首先对该界面进行响应。
-        /// 1、背景：自带黑色半透背景，完全阻挡下方交互事件（即使内容含空白区域），点击背景默认关闭自身。
-        /// 2、焦点：可独立获得焦点。
-        /// 如：部分二级功能界面、确认框、等待响应转圈（点击背景不关闭自身）、引导界面（点击背景不关闭自身）等。
-        /// </summary>
+        Part,
         Window,
+        Float,
+        System,
+        Custom
+    }
+
+    public enum UIPanelBgColorType
+    {
+        Alpha,
+        HalfAlphaBlack,
+        Custom,
+    }
+
+    public enum UIPanelBgClickEventType
+    {
+        PassThrough,
+        DontRespone,
+        CloseSelf,
+        Custom,
+    }
+
+    public enum UIPanelGetFocusType
+    {
+        DontGet,
+        Get,
+        GetWithOthers,
     }
 
     public enum UIPanelOpenAnimPlayMode { AutoPlay, ControlBySelf }
@@ -37,29 +42,65 @@ namespace NRFramework
 
     public class UIPanelBehaviour: UIViewBehaviour
     {
+#pragma warning disable 414 //禁用 warning CS0414
         [SerializeField]
         private UIPanelType m_PanelType;
+#pragma warning restore 414
 
         [SerializeField]
-        private bool m_CanGetFocus;        //可获得焦点？（仅Overlay界面可选，默认true）
+        private bool m_HasBg;
+
+        [SerializeField]
+        private UIPanelBgColorType m_BgColorType;
+
+        [SerializeField]
+        private Color m_CustomBgColor;
+
+        [SerializeField]
+        private UIPanelBgClickEventType m_BgClickEventType;
+
+        [SerializeField]
+        private UIPanelGetFocusType m_GetFocusType;
 
         //层级相关
         [SerializeField]
-        private int m_Thickness;            //厚度
+        private int m_Thickness;
 
         //适配相关
         [SerializeField]
-        private bool m_InSafeArea;          //是否在安全区域内打开
+        private bool m_InSafeArea;
 
         [SerializeField]
-        private UIPanelOpenAnimPlayMode m_OpenAnimPlayMode;   //界面打开动画
+        private UIPanelOpenAnimPlayMode m_OpenAnimPlayMode;
 
         [SerializeField]
-        private UIPanelCloseAnimPlayMode m_CloseAnimPlayMode; //界面关闭动画
+        private UIPanelCloseAnimPlayMode m_CloseAnimPlayMode;
 
-        public UIPanelType panelType { get { return m_PanelType; } }
-        public bool canGetFocus { get { return m_CanGetFocus; } }
+        public bool hasBg { get { return m_HasBg; } }
+
+        static private Color sm_BgColor_Alpha = new Color(0, 0, 0, 0);
+        static private Color sm_BgColor_HalfAlphaBlack = new Color(0, 0, 0, 0.7f);
+        public Color bgColor 
+        { 
+            get 
+            {
+                Debug.Assert(hasBg);
+                return m_BgColorType switch
+                {
+                    UIPanelBgColorType.Alpha => sm_BgColor_Alpha,
+                    UIPanelBgColorType.HalfAlphaBlack => sm_BgColor_HalfAlphaBlack,
+                    UIPanelBgColorType.Custom => m_CustomBgColor,
+                    _ => m_CustomBgColor,
+                };
+            }
+        }
+
+        public UIPanelBgClickEventType bgClickEventType { get { return m_BgClickEventType; } }
+
+        public UIPanelGetFocusType getFocusType { get { return m_GetFocusType; } }
+
         public int thickness { get { return m_Thickness; } }
+
         public bool inSafeArea { get { return m_InSafeArea; } }
 
         public UIPanelOpenAnimPlayMode openAnimPlayMode { get { return m_OpenAnimPlayMode; } }
@@ -72,7 +113,11 @@ namespace NRFramework
             base.Reset();
 
             m_PanelType = UIPanelType.Underlay;
-            m_CanGetFocus = true;
+            m_HasBg = false;
+            m_BgColorType = UIPanelBgColorType.Custom;
+            m_CustomBgColor = Color.white;
+            m_BgClickEventType = UIPanelBgClickEventType.Custom;
+            m_GetFocusType = UIPanelGetFocusType.Get;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
@@ -85,27 +130,12 @@ namespace NRFramework
             Animator animator;
             bool exsistAimator = TryGetComponent<Animator>(out animator);
 
-            //todo
+            //todo 可以添加更复杂的检查
             //Animator组件存在、启用、有Controller资源、且内容符合要求(有open、close动画，有跳转条件...)
             //return isAimatorExsist && animator.enabled && animator.runtimeAnimatorController != null && ...;
 
             //暂时简单检查
             return exsistAimator && animator.enabled;
-        }
-
-        static private Color sm_AlphaBgColor = new Color(0, 0, 0, 0);
-        static private Color sm_BlackBgColor = new Color(0, 0, 0, 0.5f);
-        internal Color GetBgColor()
-        {
-            switch (panelType)
-            {
-                case UIPanelType.Underlay:
-                    return sm_AlphaBgColor;
-                case UIPanelType.Window:
-                    return sm_BlackBgColor;
-                default:
-                    throw new Exception();
-            }
         }
 
         internal void PlayOpenAnim(Action onFinish)

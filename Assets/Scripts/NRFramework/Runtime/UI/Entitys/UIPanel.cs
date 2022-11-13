@@ -56,9 +56,32 @@ namespace NRFramework
             canvas.sortingOrder = sortingOrder;
         }
 
-        internal void ChangeFocus(bool got)
+        internal void SetSiblingIndex(int siblingIndex)
         {
-            OnInternalFocusChanged(got);
+            rectTransform.SetSiblingIndex(siblingIndex);
+        }
+
+        internal void SetBackground()
+        {
+            switch (panelBehaviour.bgClickEventType)
+            {
+                case (UIPanelBgClickEventType.PassThrough):
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, true, null);
+                    break;
+                case (UIPanelBgClickEventType.DontRespone):
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, null);
+                    break;
+                case (UIPanelBgClickEventType.CloseSelf):
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, ()=> { CloseSelf(null); });
+                    break;
+                case (UIPanelBgClickEventType.Custom):
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgColor, false, OnBackgroundClicked);
+                    break;
+            }
+        }
+
+        internal void SetFocus(bool got)
+        {
             OnFocusChanged(got);
         }
 
@@ -127,17 +150,7 @@ namespace NRFramework
 
         protected internal override void OnInternalDestroying()
         {
-            switch (panelBehaviour.panelType)
-            {
-                case (UIPanelType.Underlay):
-                    if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
-                    break;
-                case (UIPanelType.Overlay):
-                    break;
-                case (UIPanelType.Window):
-                    if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); }
-                    break;
-            }
+            UIBlocker.Instance.Unbind();
 
             //组件引用解除即可, 实例会随gameObject销毁
             gaphicRaycaster = null;
@@ -152,29 +165,12 @@ namespace NRFramework
             showState = UIPanelShowState.Destroyed;
         }
 
-        protected internal void OnInternalFocusChanged(bool got)
-        {
-            switch (panelBehaviour.panelType)
-            {
-                case (UIPanelType.Underlay):
-                    if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), null); }
-                    else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
-                    break;
-                case (UIPanelType.Overlay):
-                    break;
-                case (UIPanelType.Window):
-                    if (got) { UIBlocker.Instance.Bind(rectTransform, panelBehaviour.GetBgColor(), OnWindowBgClicked); }
-                    else { if (UIBlocker.Instance.transform.parent == rectTransform) { UIBlocker.Instance.Unbind(); } }
-                    break;
-            }
-        }
-
         #region 子类生命周期
         protected virtual void OnFocusChanged(bool got) { }
 
-        protected virtual void OnWindowBgClicked() { CloseSelf(null); }
+        protected virtual void OnBackgroundClicked() { }
 
-        protected virtual void OnEscButtonClicked() { }
+        protected virtual void OnEscButtonPressed() { }
 
         #endregion
     }

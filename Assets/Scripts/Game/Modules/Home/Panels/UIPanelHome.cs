@@ -48,9 +48,6 @@ public class UIPanelHome : UIPanelHomeBase
     {
         Debug.Log("UIPanelHome OnFocusChanged" + got);
     }
-    //protected override void OnWindowBgClicked() { }
-    
-    //protected override void OnEscButtonClicked() { }
 
     protected override void OnDestroying() 
     {

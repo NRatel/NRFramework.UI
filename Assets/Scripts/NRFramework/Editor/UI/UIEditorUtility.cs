@@ -65,9 +65,9 @@ public class ${ClassName} : ${BaseClassName}
         public const string kPanelLifeCycleCode = @"
     protected override void OnFocusChanged(bool got) { }
 
-    //protected override void OnEscButtonClicked() { }
+    //protected override void OnBackgroundClicked() { }
 
-    //protected override void OnWindowBgClicked() { }
+    //protected override void OnEscButtonPressed() { }
 ";
 
         static public void GenerateCode(string savePath, string content)

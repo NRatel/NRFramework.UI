@@ -81,7 +81,11 @@ MonoBehaviour:
     m_ComponentList:
     - {fileID: 7616234969118387778}
   m_PanelType: 0
-  m_CanGetFocus: 1
+  m_HasBg: 1
+  m_BgColorType: 0
+  m_CustomBgColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BgClickEventType: 1
+  m_GetFocusType: 1
   m_Thickness: 10
   m_InSafeArea: 1
   m_OpenAnimPlayMode: 0

@@ -1,5 +1,6 @@
 ﻿using NRFramework;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,5 +23,8 @@ public class Game
     {
         UIPanelHome uiPanelHome = normalRoot.CreatePanel<UIPanelHome>("Assets/GameRes/GUI/Prefabs/Home/Panels/UIPanelHome.prefab");
         uiPanelHome.Init();
+
+        List<UIPanel> focusingPanels = UIManager.Instance.GetFocusingPanels();
+        Debug.Log("focusingPanels.Count: " + focusingPanels.Count);
     }
 }
