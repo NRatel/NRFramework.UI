@@ -7,7 +7,7 @@ using XLua;
 
 namespace NRFramework
 {
-    public class UIPanelLuaCommon : UIPanel
+    public class UIWidgetLuaCommon : UIWidget
     {
         public LuaTable @this;
 
@@ -16,30 +16,29 @@ namespace NRFramework
         private Action<LuaTable> m_LuaOnDestroying;
         private Action<LuaTable> m_LuaOnDestroyed;
 
-        public void Create(string panelId, Canvas parentCanvas, string prefabPath, LuaTable luaTable)
+        public void Create(string widgetId, UIView parentView, RectTransform parentRectTransform, string prefabPath, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
+            base.Create(widgetId, parentView, parentRectTransform.GetComponent<RectTransform>(), prefabPath);
         }
 
-        public void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour, LuaTable luaTable)
+        public void Create(string panelId, UIView parentView, RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+            base.Create(panelId, parentView, parentRectTransform.GetComponent<RectTransform>(), widgetBehaviour);
         }
 
         protected override void OnCreating()
         {
             base.OnCreating();
 
-            SetMember("csPanel", this);
-            SetMember("panelId", panelId);
-            SetMember("behaviour", panelBehaviour);
+            SetMember("csWidget", this);
+            SetMember("widgetId", widgetId);
+            SetMember("behaviour", widgetBehaviour);
             SetMember("rectTransform", rectTransform);
             SetMember("gameObject", gameObject);
             SetMember("parentRectTransform", parentRectTransform);
-            SetMember("parentUIRoot", parentUIRoot);
-            SetMember("canvas", canvas);
+            SetMember("parentView", parentView);
 
             GetMember("OnCreating", out m_LuaOnCreating);
             GetMember("OnCreated", out m_LuaOnCreated);
