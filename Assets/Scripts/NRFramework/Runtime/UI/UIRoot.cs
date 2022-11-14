@@ -91,7 +91,7 @@ namespace NRFramework
             UIManager.Instance.SetBackgroundAndFocus();
         }
 
-        public void ClosePanel<T>(Action onFinish = null)
+        public void ClosePanel<T>(Action onFinish = null) where T : UIPanel
         {
             ClosePanel(typeof(T).Name, onFinish);
         }
@@ -107,9 +107,23 @@ namespace NRFramework
             UIManager.Instance.SetBackgroundAndFocus();
         }
 
-        public void DestroyPanel<T>()
+        public void DestroyPanel<T>() where T : UIPanel
         {
             DestroyPanel(typeof(T).Name);
+        }
+
+        public void SetPanelVisible(string panelId, bool visible)
+        {
+            Debug.Assert(panelDict.ContainsKey(panelId));
+            UIPanel panel = panelDict[panelId];
+            panel.SetVisible(visible);
+
+            UIManager.Instance.SetBackgroundAndFocus();
+        }
+
+        public void SetPanelVisible<T>(bool visible) where T : UIPanel
+        {
+            SetPanelVisible(typeof(T).Name, visible);
         }
 
         public UIPanel GetPanel(string panelId)

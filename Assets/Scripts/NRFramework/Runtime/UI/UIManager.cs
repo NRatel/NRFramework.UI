@@ -109,7 +109,10 @@ namespace NRFramework
 
         internal void SetBackgroundAndFocus()
         {
-            List<UIPanel> panels = FilterPanels((panel) => { return true; });
+            List<UIPanel> panels = FilterPanels((panel) => 
+            { 
+                return panel.showState != UIPanelShowState.Hidden && panel.showState != UIPanelShowState.Destroyed; 
+            });
             panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
 
             UIPanel needBgPanel = null;

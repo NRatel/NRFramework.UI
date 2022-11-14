@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    public enum UIPanelShowState { Initing, Idle, Refreshing, Destroyed }
+    public enum UIPanelShowState { Initing, Refreshing, Idle, Hidden, Destroyed }
 
     public enum UIPanelAnimState { Opening, Idle, Closing, Closed }
 
@@ -13,9 +13,9 @@ namespace NRFramework
         public string panelId { get { return viewId; } }
         public UIPanelBehaviour panelBehaviour { get { return (UIPanelBehaviour)viewBehaviour; } }
 
-        public UIRoot parentUIRoot;
-        public Canvas canvas;
-        public GraphicRaycaster gaphicRaycaster;
+        public UIRoot parentUIRoot { private set; get; }
+        public Canvas canvas { private set; get; }
+        public CanvasGroup canvasGroup { private set; get; }
 
         public UIPanelShowState showState { protected set; get; }
 
@@ -80,12 +80,27 @@ namespace NRFramework
             }
         }
 
+        internal void SetVisible(bool visible)
+        {
+            if (canvasGroup == null)
+            {
+                canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
+            }
+            canvasGroup.alpha = visible ? 1 : 0;
+            canvasGroup.interactable = visible;
+            canvasGroup.blocksRaycasts = visible;
+
+            showState = visible ? UIPanelShowState.Idle : UIPanelShowState.Hidden;
+
+            OnVisibleChanged(visible);
+        }
+
         internal void SetFocus(bool got)
         {
             OnFocusChanged(got);
         }
 
-        #region 关闭自身接口
+        #region 操作自身接口
 
         protected void CloseSelf(Action onFinish = null)
         {
@@ -95,6 +110,11 @@ namespace NRFramework
         protected void DestroySelf()
         {
             parentUIRoot.DestroyPanel(panelId);
+        }
+
+        protected void SetSelfVisible(bool visible)
+        {
+            parentUIRoot.SetPanelVisible(panelId, visible);
         }
 
         #endregion
@@ -137,9 +157,8 @@ namespace NRFramework
         {
             base.OnInternalCreating();
 
-            canvas = panelBehaviour.gameObject.AddComponent<Canvas>();
+            canvas = panelBehaviour.gameObject.GetOrAddComponent<Canvas>();
             canvas.overrideSorting = true;
-            gaphicRaycaster = panelBehaviour.gameObject.AddComponent<GraphicRaycaster>();
         }
 
         protected internal override void OnInternalCreated()
@@ -153,7 +172,7 @@ namespace NRFramework
             UIBlocker.Instance.Unbind();
 
             //组件引用解除即可, 实例会随gameObject销毁
-            gaphicRaycaster = null;
+            canvasGroup = null;
             canvas = null;
             parentUIRoot = null;
 
@@ -166,12 +185,13 @@ namespace NRFramework
         }
 
         #region 子类生命周期
+        protected virtual void OnVisibleChanged(bool got) { }
+
         protected virtual void OnFocusChanged(bool got) { }
 
         protected virtual void OnBackgroundClicked() { }
 
         protected virtual void OnEscButtonPressed() { }
-
         #endregion
     }
 }
