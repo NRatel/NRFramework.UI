@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace NRFramework
@@ -60,12 +59,20 @@ namespace NRFramework
             return panels;
         }
 
+        public List<UIPanel> GetFocusingPanels()
+        {
+            List<UIPanel> vaildPanels = new List<UIPanel>();
+            foreach (UIPanel panel in m_FocusingPanels)
+            {
+                if (panel != null) { vaildPanels.Add(panel); }
+            }
+            return vaildPanels;
+        }
+
         public T FindPanelComponent<T>(string rootId, string panelId, string compDefine) where T : Component
         {
             UIRoot root = GetUIRoot(rootId);
-            UIPanel panel = root.GetPanel(panelId);
-
-            return panel.FindComponent<T>(compDefine);
+            return root.FindPanelComponent<T>(panelId, compDefine);
         }
 
         public T FindPanelComponent<T>(string path, string compDefine) where T : Component
@@ -80,9 +87,7 @@ namespace NRFramework
         public T FindWidgetComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine) where T : Component
         {
             UIRoot root = GetUIRoot(rootId);
-            UIPanel panel = root.GetPanel(panelId);
-
-            return panel.FindWidgetComponent<T>(widgetIds, compDefine);
+            return root.FindWidgetComponent<T>(panelId, widgetIds, compDefine);
         }
 
         public T FindWidgetComponent<T>(string path, string compDefine) where T : Component
@@ -95,16 +100,6 @@ namespace NRFramework
             { widgetIds[i] = strs[i + 2]; }
 
             return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine);
-        }
-
-        public List<UIPanel> GetFocusingPanels()
-        {
-            List<UIPanel> vaildPanels = new List<UIPanel>();
-            foreach (UIPanel panel in m_FocusingPanels)
-            {
-                if (panel != null) { vaildPanels.Add(panel); }
-            }
-            return vaildPanels;
         }
 
         internal void SetBackgroundAndFocus()

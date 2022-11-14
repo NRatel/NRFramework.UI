@@ -1,10 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEditorInternal;
-using System;
-using System.Text;
-using System.Collections.Generic;
-using System.IO;
+using UnityEngine;
 
 namespace NRFramework
 {

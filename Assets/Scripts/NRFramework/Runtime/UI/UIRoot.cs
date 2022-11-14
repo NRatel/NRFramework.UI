@@ -136,6 +136,29 @@ namespace NRFramework
             return GetPanel(typeof(T).Name);
         }
 
+        public T FindPanelComponent<T>(string panelId, string compDefine) where T : Component
+        {
+            UIPanel panel = GetPanel(panelId);
+            return panel.FindComponent<T>(compDefine);
+        }
+
+        public T FindWidgetComponent<T>(string panelId, string[] widgetIds, string compDefine) where T : Component
+        {
+            UIPanel panel = GetPanel(panelId);
+            return panel.FindWidgetComponent<T>(widgetIds, compDefine);
+        }
+
+        public T FindWidgetComponent<T>(string path, string compDefine) where T : Component
+        {
+            string[] strs = path.Split("/");
+            string panelId = strs[0];
+            string[] widgetIds = new string[strs.Length - 1];
+            for (int i = 0; i < strs.Length - 1; i++)
+            { widgetIds[i] = strs[i + 1]; }
+
+            return FindWidgetComponent<T>(panelId, widgetIds, compDefine);
+        }
+
         private int GetIncrementedSortingOrder()
         {
             UIPanel topestPanel = null;
