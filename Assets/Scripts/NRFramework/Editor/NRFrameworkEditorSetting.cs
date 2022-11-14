@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using UnityEngine;
 using UnityEditor;
 
 namespace NRFramework
 {
-    //路径相对 Application.dataPath
     public class NRFrameworkEditorSetting : ScriptableObject
     {
         public bool enableOpElementHierarchy = true;

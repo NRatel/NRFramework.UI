@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using UnityEditor;
 
 namespace NRFramework
 {

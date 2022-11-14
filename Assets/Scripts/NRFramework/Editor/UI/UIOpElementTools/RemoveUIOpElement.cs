@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.EventSystems;
-using UnityEngine.Playables;
-using UnityEngine.UI;
 
 namespace NRFramework
 {

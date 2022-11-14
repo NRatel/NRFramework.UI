@@ -1,4 +1,6 @@
-﻿using System;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;

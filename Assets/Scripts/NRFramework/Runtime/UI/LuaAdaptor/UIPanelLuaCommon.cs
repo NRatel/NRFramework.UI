@@ -1,4 +1,6 @@
-﻿#if USE_LUA
+﻿// https://github.com/NRatel/NRFramework.UI
+
+#if USE_LUA
 using System;
 using System.Collections;
 using System.Collections.Generic;

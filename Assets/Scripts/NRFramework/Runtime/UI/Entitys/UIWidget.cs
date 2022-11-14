@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using UnityEngine;
 
 namespace NRFramework
 {

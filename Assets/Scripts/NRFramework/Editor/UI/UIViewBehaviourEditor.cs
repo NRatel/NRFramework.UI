@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// https://github.com/NRatel/NRFramework.UI
+
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
