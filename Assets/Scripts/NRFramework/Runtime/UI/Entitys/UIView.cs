@@ -74,7 +74,7 @@ namespace NRFramework
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, string prefabPath) where T : UIWidget
         {
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
-            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour), "必须以当前UIView的元素作为UIWidget的根节点");
+            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour));    //必须以当前UIView的元素作为UIWidget的根节点
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, prefabPath);
@@ -87,7 +87,7 @@ namespace NRFramework
         public T CreateWidget<T>(string widgetId, RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour) where T : UIWidget
         {
             UIViewBehaviour parentViewBehaviour = parentRectTransform.GetComponentInParent<UIViewBehaviour>();
-            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour), "必须以当前UIView的元素作为UIWidget的根节点");
+            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour));    //必须以当前UIView的元素作为UIWidget的根节点
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentRectTransform, widgetBehaviour);
@@ -109,7 +109,7 @@ namespace NRFramework
 
         public void DestroyWidget(string widgetId)
         {
-            Debug.Assert(widgetDict.ContainsKey(widgetId), "widget不存在");
+            Debug.Assert(widgetDict.ContainsKey(widgetId)); //widget不存在
 
             UIWidget widget = widgetDict[widgetId];
             widgetDict.Remove(widgetId);

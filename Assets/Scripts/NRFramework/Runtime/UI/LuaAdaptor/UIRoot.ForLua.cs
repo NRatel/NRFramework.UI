@@ -11,7 +11,7 @@ namespace NRFramework
     {
         public UIPanelLuaCommon CreatePanel(string panelId, string prefabPath, LuaTable luaPanel)
         {
-            Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
+            Debug.Assert(!panelDict.ContainsKey(panelId));  //panel已存在
 
             UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, prefabPath, luaPanel);
@@ -26,7 +26,7 @@ namespace NRFramework
 
         public UIPanelLuaCommon CreatePanel(string panelId, UIPanelBehaviour panelBehaviour, LuaTable luaPanel)
         {
-            Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
+            Debug.Assert(!panelDict.ContainsKey(panelId));    //panel已存在
 
             UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, panelBehaviour, luaPanel);

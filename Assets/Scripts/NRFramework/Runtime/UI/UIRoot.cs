@@ -19,7 +19,8 @@ namespace NRFramework
 
         public T CreatePanel<T>(string panelId, string prefabPath, int sortingOrder) where T : UIPanel
         {
-            Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
+            Debug.Assert(!panelDict.ContainsKey(panelId));
+            Debug.Assert(sortingOrder >= startOrder && sortingOrder <= endOrder);
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, prefabPath);
@@ -34,7 +35,8 @@ namespace NRFramework
 
         public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, int sortingOrder) where T : UIPanel
         {
-            Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
+            Debug.Assert(!panelDict.ContainsKey(panelId));
+            Debug.Assert(sortingOrder >= startOrder && sortingOrder <= endOrder);
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, panelBehaviour);
@@ -80,7 +82,7 @@ namespace NRFramework
 
         public void ClosePanel(string panelId, Action onFinish = null)
         {
-            Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
+            Debug.Assert(panelDict.ContainsKey(panelId));
 
             UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
@@ -96,7 +98,7 @@ namespace NRFramework
 
         public void DestroyPanel(string panelId)
         {
-            Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
+            Debug.Assert(panelDict.ContainsKey(panelId));
 
             UIPanel panel = panelDict[panelId];
             panelDict.Remove(panelId);
@@ -132,11 +134,7 @@ namespace NRFramework
                 }
             }
 
-            int targetOrder = topestPanel != null ? (topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1) : startOrder;
-
-            Debug.Assert(targetOrder <= endOrder, "targetOrder 越界了");
-
-            return targetOrder;
+            return topestPanel != null ? (topestPanel.canvas.sortingOrder + topestPanel.panelBehaviour.thickness + 1) : startOrder;
         }
 
         private int GetCurrentSiblingIndex(int sortingOrder)

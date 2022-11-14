@@ -28,14 +28,9 @@ namespace NRFramework
 
         public UIRoot CreateUIRoot(string rootId, int startOrder, int endOrder)
         {
-            Debug.Assert(!rootDict.ContainsKey(rootId), "uiRoot已存在" + rootId);
-            Debug.Assert(startOrder >= 0, "必须使startOrder >= 0");
-            Debug.Assert(endOrder >= startOrder, "必须使endOrder >= startOrder");
-
-            foreach (UIRoot root in rootDict.Values)
-            {
-                Debug.Assert(startOrder > root.endOrder || endOrder < root.startOrder, "sortingOrder范围不允许与其他uiRoot交叉");
-            }
+            Debug.Assert(!rootDict.ContainsKey(rootId));    //uiRoot已存在
+            Debug.Assert(startOrder >= 0);                  //必须使startOrder >= 0
+            Debug.Assert(endOrder >= startOrder);           //必须使endOrder >= startOrder
 
             UIRoot uiRoot = new UIRoot() { rootId = rootId, startOrder = startOrder, endOrder = endOrder };
             rootDict.Add(rootId, uiRoot);

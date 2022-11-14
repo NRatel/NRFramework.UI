@@ -51,7 +51,7 @@ namespace NRFramework
             get
             {
 #if UNITY_EDITOR
-                Debug.Assert(!sm_AppQuitted, "单例已销毁，仍尝试访问");
+                Debug.Assert(!sm_AppQuitted);
 #endif
                 return sm_Instance;
             }
@@ -59,9 +59,9 @@ namespace NRFramework
 
         protected virtual void OnDestroy()
         {
-//#if UNITY_EDITOR
-//            Debug.Assert(sm_AppQuitted, "MonoSingleton 可能被意外销毁了"); //不准确，todo
-//#endif
+            //#if UNITY_EDITOR
+            //            Debug.Assert(sm_AppQuitted); //MonoSingleton 可能被意外销毁了, 不准确，todo
+            //#endif
             sm_Instance = null;
         }
 
