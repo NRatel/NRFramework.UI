@@ -61,6 +61,21 @@ namespace NRFramework
             rectTransform.SetSiblingIndex(siblingIndex);
         }
 
+        internal void SetVisible(bool visible)
+        {
+            if (canvasGroup == null)
+            {
+                canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
+            }
+            canvasGroup.alpha = visible ? 1 : 0;
+            canvasGroup.interactable = visible;
+            canvasGroup.blocksRaycasts = visible;
+
+            showState = visible ? UIPanelShowState.Idle : UIPanelShowState.Hidden;
+
+            OnVisibleChanged(visible);
+        }
+
         internal void SetBackground()
         {
             switch (panelBehaviour.bgClickEventType)
@@ -78,21 +93,6 @@ namespace NRFramework
                     UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, OnBackgroundClicked);
                     break;
             }
-        }
-
-        internal void SetVisible(bool visible)
-        {
-            if (canvasGroup == null)
-            {
-                canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
-            }
-            canvasGroup.alpha = visible ? 1 : 0;
-            canvasGroup.interactable = visible;
-            canvasGroup.blocksRaycasts = visible;
-
-            showState = visible ? UIPanelShowState.Idle : UIPanelShowState.Hidden;
-
-            OnVisibleChanged(visible);
         }
 
         internal void SetFocus(bool got)
@@ -185,7 +185,7 @@ namespace NRFramework
         }
 
         #region 子类生命周期
-        protected virtual void OnVisibleChanged(bool got) { }
+        protected virtual void OnVisibleChanged(bool visible) { }
 
         protected virtual void OnFocusChanged(bool got) { }
 

@@ -63,6 +63,8 @@ public class ${ClassName} : ${BaseClassName}
 }";
 
         public const string kPanelLifeCycleCode = @"
+    protected override void OnVisibleChanged(bool visible) { }
+    
     protected override void OnFocusChanged(bool got) { }
 
     //protected override void OnBackgroundClicked() { }
