@@ -14,7 +14,7 @@ namespace NRFramework
 
         public Dictionary<string, UIRoot> rootDict { private set; get; }
 
-        private List<UIPanel> m_FocusingPanels;     //关闭界面时无需清理，由ChangeFocus覆盖。
+        private List<UIPanel> m_FocusingPanels;
         private List<UIPanel> m_TempNewFocusingPanels;
 
         private UIManager()
