@@ -17,36 +17,55 @@ namespace NRFramework
             panelDict = new Dictionary<string, UIPanel>();
         }
 
-        public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
+        public T CreatePanel<T>(string panelId, string prefabPath, int sortingOrder) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, prefabPath);
-            int targetSortingOrder = GetTargetSortingOrder();
-            panel.SetSortingOrder(targetSortingOrder);
-            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
-            panel.SetSiblingIndex(targetSiblingIndex);
+            panel.SetSortingOrder(sortingOrder);
+            int siblingIndex = GetCurrentSiblingIndex(sortingOrder);
+            panel.SetSiblingIndex(siblingIndex);
             panelDict.Add(panel.panelId, panel);
             UIManager.Instance.SetBackgroundAndFocus();
 
             return panel;
         }
 
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour) where T : UIPanel
+        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, int sortingOrder) where T : UIPanel
         {
             Debug.Assert(!panelDict.ContainsKey(panelId), "panel已存在");
 
             T panel = Activator.CreateInstance(typeof(T)) as T;
             panel.Create(panelId, this, panelBehaviour);
-            int targetSortingOrder = GetTargetSortingOrder();
-            panel.SetSortingOrder(targetSortingOrder);
-            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
-            panel.SetSiblingIndex(targetSiblingIndex);
+            panel.SetSortingOrder(sortingOrder);
+            int siblingIndex = GetCurrentSiblingIndex(sortingOrder);
+            panel.SetSiblingIndex(siblingIndex);
             panelDict.Add(panel.panelId, panel);
             UIManager.Instance.SetBackgroundAndFocus();
 
             return panel;
+        }
+
+        public T CreatePanel<T>(string prefabPath, int sortingOrder) where T : UIPanel
+        {
+            return CreatePanel<T>(typeof(T).Name, prefabPath, sortingOrder);
+        }
+
+        public T CreatePanel<T>(UIPanelBehaviour panelBehaviour, int sortingOrder) where T : UIPanel
+        {
+            return CreatePanel<T>(typeof(T).Name, panelBehaviour, sortingOrder);
+        }
+
+        public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
+        {
+            return CreatePanel<T>(panelId, prefabPath, GetIncrementedSortingOrder());
+        }
+
+        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour) where T : UIPanel
+        {
+            return CreatePanel<T>(panelId, panelBehaviour, GetIncrementedSortingOrder());
+
         }
 
         public T CreatePanel<T>(string prefabPath) where T : UIPanel
@@ -70,6 +89,11 @@ namespace NRFramework
             UIManager.Instance.SetBackgroundAndFocus();
         }
 
+        public void ClosePanel<T>(Action onFinish = null)
+        {
+            ClosePanel(typeof(T).Name, onFinish);
+        }
+
         public void DestroyPanel(string panelId)
         {
             Debug.Assert(panelDict.ContainsKey(panelId), "panel不存在");
@@ -79,11 +103,6 @@ namespace NRFramework
             panel.Destroy();
 
             UIManager.Instance.SetBackgroundAndFocus();
-        }
-
-        public void ClosePanel<T>(Action onFinish = null)
-        {
-            ClosePanel(typeof(T).Name, onFinish);
         }
 
         public void DestroyPanel<T>()
@@ -101,7 +120,7 @@ namespace NRFramework
             return GetPanel(typeof(T).Name);
         }
 
-        private int GetTargetSortingOrder()
+        private int GetIncrementedSortingOrder()
         {
             UIPanel topestPanel = null;
             foreach (KeyValuePair<string, UIPanel> kvPair in panelDict)
@@ -120,7 +139,7 @@ namespace NRFramework
             return targetOrder;
         }
 
-        private int GetTargetSiblingIndex(int sortingOrder)
+        private int GetCurrentSiblingIndex(int sortingOrder)
         {
             List<UIPanel> panels = UIManager.Instance.FilterPanels((panel) => 
             {

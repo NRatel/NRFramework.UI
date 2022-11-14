@@ -15,9 +15,9 @@ namespace NRFramework
 
             UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, prefabPath, luaPanel);
-            int targetSortingOrder = GetTargetSortingOrder();
+            int targetSortingOrder = GetIncrementedSortingOrder();
             panel.SetSortingOrder(targetSortingOrder);
-            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
+            int targetSiblingIndex = GetCurrentSiblingIndex(targetSortingOrder);
             panel.SetSiblingIndex(targetSiblingIndex);
             UIManager.Instance.SetBackgroundAndFocus();
 
@@ -30,9 +30,9 @@ namespace NRFramework
 
             UIPanelLuaCommon panel = new UIPanelLuaCommon();
             panel.Create(panelId, this, panelBehaviour, luaPanel);
-            int targetSortingOrder = GetTargetSortingOrder();
+            int targetSortingOrder = GetIncrementedSortingOrder();
             panel.SetSortingOrder(targetSortingOrder);
-            int targetSiblingIndex = GetTargetSiblingIndex(targetSortingOrder);
+            int targetSiblingIndex = GetCurrentSiblingIndex(targetSortingOrder);
             panel.SetSiblingIndex(targetSiblingIndex);
             panelDict.Add(panel.panelId, panel);
             UIManager.Instance.SetBackgroundAndFocus();
