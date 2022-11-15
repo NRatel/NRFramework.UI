@@ -6,45 +6,21 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public enum UIPanelType
-    {
-        Underlay,
-        Part,
-        Window,
-        Float,
-        System,
-        Custom
-    }
+    public enum UIPanelType { Underlay, Part, Window, Float, System, Custom }
 
-    public enum UIPanelBgShowType
-    {
-        Alpha,
-        HalfAlphaBlack,
-        CustomColor,
-        //CustomTexture,
-        //BlurryScreenshot
-    }
+    public enum UIPanelBgShowType { Alpha, HalfAlphaBlack, CustomColor, /* CustomTexture, BlurryScreenshot */ }
 
-    public enum UIPanelBgClickEventType
-    {
-        PassThrough,
-        DontRespone,
-        CloseSelf,
-        Custom,
-    }
+    public enum UIPanelBgClickEventType { PassThrough, DontRespone, CloseSelf, Custom, }
 
-    public enum UIPanelGetFocusType
-    {
-        DontGet,
-        Get,
-        GetWithOthers,
-    }
+    public enum UIPanelGetFocusType { DontGet, Get, GetWithOthers, }
+
+    public enum UIPanelEscPressEventType { DontCheck, DontRespone, CloseSelf, Custom, }
 
     public enum UIPanelOpenAnimPlayMode { AutoPlay, ControlBySelf }
 
     public enum UIPanelCloseAnimPlayMode { AutoPlay, ControlBySelf }
 
-    public class UIPanelBehaviour: UIViewBehaviour
+    public class UIPanelBehaviour : UIViewBehaviour
     {
 #pragma warning disable 414 //禁用 warning CS0414
         [SerializeField]
@@ -65,6 +41,9 @@ namespace NRFramework
 
         [SerializeField]
         private UIPanelGetFocusType m_GetFocusType;
+
+        [SerializeField]
+        UIPanelEscPressEventType m_EscPressEventType;
 
         //层级相关
         [SerializeField]
@@ -90,9 +69,9 @@ namespace NRFramework
             get { return null; }
         }
 
-        public Color bgColor 
-        { 
-            get 
+        public Color bgColor
+        {
+            get
             {
                 Debug.Assert(hasBg);
                 return m_BgShowType switch
@@ -109,6 +88,8 @@ namespace NRFramework
 
         public UIPanelGetFocusType getFocusType { get { return m_GetFocusType; } }
 
+        public UIPanelEscPressEventType escPressEventType { get { return m_EscPressEventType; } }
+        
         public int thickness { get { return m_Thickness; } }
 
         public bool inSafeArea { get { return m_InSafeArea; } }
@@ -128,6 +109,7 @@ namespace NRFramework
             m_CustomBgColor = Color.white;
             m_BgClickEventType = UIPanelBgClickEventType.Custom;
             m_GetFocusType = UIPanelGetFocusType.Get;
+            m_EscPressEventType = UIPanelEscPressEventType.Custom;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
             m_InSafeArea = true;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
