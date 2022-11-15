@@ -16,6 +16,7 @@ namespace NRFramework
         private SerializedProperty m_CustomBgColorSP;
         private SerializedProperty m_BgClickEventTypeSP;
         private SerializedProperty m_GetFocusTypeSP;
+        private SerializedProperty m_EscPressEventTypeSP;
         private SerializedProperty m_ThicknessSP;
         private SerializedProperty m_InSafeAreaSP;
         private SerializedProperty m_OpenAnimPlayModeSP;
@@ -31,6 +32,7 @@ namespace NRFramework
             m_CustomBgColorSP = serializedObject.FindProperty("m_CustomBgColor");
             m_BgClickEventTypeSP = serializedObject.FindProperty("m_BgClickEventType");
             m_GetFocusTypeSP = serializedObject.FindProperty("m_GetFocusType");
+            m_EscPressEventTypeSP = serializedObject.FindProperty("m_EscPressEventType");
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
             m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
             m_OpenAnimPlayModeSP = serializedObject.FindProperty("m_OpenAnimPlayMode");
@@ -58,51 +60,56 @@ namespace NRFramework
 
             EditorGUI.indentLevel++;
             {
-                bool disableScope = false;
+                bool disableFocusAndFocusScope = false;
                 switch (panelType)
                 {
                     case UIPanelType.Underlay:
-                        disableScope = true;
+                        disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = true;
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.Alpha;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
+                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf;   //默认关闭自身
                         break;
 
-                    case UIPanelType.Part:
-                        disableScope = true;
+                    case UIPanelType.Overlay:
+                        disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = false;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.GetWithOthers;
+                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck;   //默认不检测
                         break;
 
                     case UIPanelType.Window:
-                        disableScope = true;
+                        disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = true;
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.CloseSelf;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
+                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf;   //默认关闭自身
                         break;
 
                     case UIPanelType.Float:
-                        disableScope = true;
+                        disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = false;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
+                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck;   //默认不检测
                         break;
 
                     case UIPanelType.System:
-                        disableScope = true;
+                        disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = true;
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
+                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontRespone;   //默认不响应
                         break;
 
                     case UIPanelType.Custom:
-                        disableScope = false;
+                        disableFocusAndFocusScope = false;
                         break;
                 }
 
-                using (new EditorGUI.DisabledScope(disableScope))
+                using (new EditorGUI.DisabledScope(disableFocusAndFocusScope))
                 {
                     m_HasBgSP.boolValue = EditorGUILayout.Toggle("HasBg", m_HasBgSP.boolValue);
                     if (m_HasBgSP.boolValue)
@@ -120,9 +127,13 @@ namespace NRFramework
                         m_BgClickEventTypeSP.enumValueIndex = (int)(UIPanelBgClickEventType)bgClickEventTypeEnum;
                         EditorGUI.indentLevel--;
                     }
+
                     Enum getFocusTypeEnum = EditorGUILayout.EnumPopup("GetFocusType", (UIPanelGetFocusType)m_GetFocusTypeSP.enumValueIndex);
                     m_GetFocusTypeSP.enumValueIndex = (int)(UIPanelGetFocusType)getFocusTypeEnum;
                 }
+
+                Enum escPressEventTypeEnum = EditorGUILayout.EnumPopup("EscPressEventType", (UIPanelEscPressEventType)m_EscPressEventTypeSP.enumValueIndex);
+                m_EscPressEventTypeSP.enumValueIndex = (int)(UIPanelEscPressEventType)escPressEventTypeEnum;
             }
             EditorGUI.indentLevel--;
 

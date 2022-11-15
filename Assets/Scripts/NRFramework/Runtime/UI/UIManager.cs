@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public class UIManager : Singleton<UIManager>
+    [MonoSingletonSetting(HideFlags.NotEditable, "# UIManager #")]
+    public class UIManager : MonoSingleton<UIManager>
     {
         public Canvas uiCanvas { private set; get; }
 
@@ -44,7 +45,7 @@ namespace NRFramework
             return rootDict[rootId];
         }
 
-        public List<UIPanel> FilterPanels(Func<UIPanel, bool> filterFunc)
+        public List<UIPanel> FilterPanels(Func<UIPanel, bool> filterFunc = null)
         {
             List<UIPanel> panels = new List<UIPanel>();
 
@@ -52,13 +53,27 @@ namespace NRFramework
             {
                 foreach (KeyValuePair<string, UIPanel> kvPair2 in kvPair.Value.panelDict)
                 {
-                    if (filterFunc(kvPair2.Value))
+                    if (filterFunc == null || filterFunc(kvPair2.Value))
                     {
                         panels.Add(kvPair2.Value);
                     }
                 }
             }
             return panels;
+        }
+
+        public UIPanel FilterTopestPanel(Func<UIPanel, bool> filterFunc = null)
+        {
+            List<UIPanel> panels = FilterPanels(filterFunc);
+
+            panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
+
+            return panels.Count > 0 ? panels[panels.Count - 1] : null;
+        }
+
+        public UIPanel GetTopestPanel()
+        {
+            return FilterTopestPanel((panel)=> { return panel.showState != UIPanelShowState.Hidden; });
         }
 
         public List<UIPanel> GetFocusingPanels()
@@ -106,10 +121,8 @@ namespace NRFramework
 
         internal void SetBackgroundAndFocus()
         {
-            List<UIPanel> panels = FilterPanels((panel) => 
-            { 
-                return panel.showState != UIPanelShowState.Hidden && panel.showState != UIPanelShowState.Destroyed; 
-            });
+            List<UIPanel> panels = FilterPanels((panel) =>
+            { return panel.showState != UIPanelShowState.Hidden; });
             panels.Sort((a, b) => { return a.canvas.sortingOrder - b.canvas.sortingOrder; });
 
             UIPanel needBgPanel = null;
@@ -166,6 +179,17 @@ namespace NRFramework
             m_TempNewFocusingPanels = t;
             m_TempNewFocusingPanels.Clear();
             t = null;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                UIPanel topestPanel = FilterTopestPanel((panel) => 
+                { return panel.showState != UIPanelShowState.Hidden && panel.panelBehaviour.escPressEventType != UIPanelEscPressEventType.DontCheck; });
+
+                topestPanel.DoEscPress();
+            }
         }
     }
 }

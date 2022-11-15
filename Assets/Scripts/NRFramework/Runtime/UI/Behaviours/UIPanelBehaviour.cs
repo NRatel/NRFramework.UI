@@ -6,15 +6,15 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public enum UIPanelType { Underlay, Part, Window, Float, System, Custom }
+    public enum UIPanelType { Underlay, Overlay, Window, Float, System, Custom }
 
     public enum UIPanelBgShowType { Alpha, HalfAlphaBlack, CustomColor, /* CustomTexture, BlurryScreenshot */ }
 
-    public enum UIPanelBgClickEventType { PassThrough, DontRespone, CloseSelf, Custom, }
+    public enum UIPanelBgClickEventType { PassThrough, DontRespone, CloseSelf, DestorySelf, Custom, }
 
     public enum UIPanelGetFocusType { DontGet, Get, GetWithOthers, }
 
-    public enum UIPanelEscPressEventType { DontCheck, DontRespone, CloseSelf, Custom, }
+    public enum UIPanelEscPressEventType { DontCheck, DontRespone, CloseSelf, DestorySelf, Custom, }
 
     public enum UIPanelOpenAnimPlayMode { AutoPlay, ControlBySelf }
 

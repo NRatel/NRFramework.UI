@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public enum UIPanelShowState { Initing, Refreshing, Idle, Hidden, Destroyed }
+    public enum UIPanelShowState { Initing, Refreshing, Idle, Hidden, /* Destroyed */ }
 
     public enum UIPanelAnimState { Opening, Idle, Closing, Closed }
 
@@ -81,16 +81,19 @@ namespace NRFramework
         {
             switch (panelBehaviour.bgClickEventType)
             {
-                case (UIPanelBgClickEventType.PassThrough):
+                case UIPanelBgClickEventType.PassThrough:
                     UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, true, null);
                     break;
-                case (UIPanelBgClickEventType.DontRespone):
+                case UIPanelBgClickEventType.DontRespone:
                     UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, null);
                     break;
-                case (UIPanelBgClickEventType.CloseSelf):
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, ()=> { CloseSelf(null); });
+                case UIPanelBgClickEventType.CloseSelf:
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => { CloseSelf(null); });
                     break;
-                case (UIPanelBgClickEventType.Custom):
+                case UIPanelBgClickEventType.DestorySelf:
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => { DestroySelf(); });
+                    break;
+                case UIPanelBgClickEventType.Custom:
                     UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, OnBackgroundClicked);
                     break;
             }
@@ -99,6 +102,27 @@ namespace NRFramework
         internal void SetFocus(bool got)
         {
             OnFocusChanged(got);
+        }
+
+        internal void DoEscPress()
+        {
+            Debug.Assert(panelBehaviour.escPressEventType != UIPanelEscPressEventType.DontCheck);
+
+            switch (panelBehaviour.escPressEventType)
+            {
+                case UIPanelEscPressEventType.DontRespone:
+                    //do nothing
+                    break;
+                case UIPanelEscPressEventType.CloseSelf:
+                    CloseSelf(null);
+                    break;
+                case UIPanelEscPressEventType.DestorySelf:
+                    DestroySelf();
+                    break;
+                case UIPanelEscPressEventType.Custom:
+                    OnEscButtonPressed();
+                    break;
+            }
         }
 
         #region 操作自身接口
@@ -182,7 +206,7 @@ namespace NRFramework
 
         protected internal override void OnInternalDestroyed()
         {
-            showState = UIPanelShowState.Destroyed;
+            //showState = UIPanelShowState.Destroyed;
         }
 
         #region 子类生命周期

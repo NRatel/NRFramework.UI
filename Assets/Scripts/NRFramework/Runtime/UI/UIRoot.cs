@@ -178,10 +178,9 @@ namespace NRFramework
 
         private int GetCurrentSiblingIndex(int sortingOrder)
         {
-            List<UIPanel> panels = UIManager.Instance.FilterPanels((panel) => 
-            {
-                return sortingOrder > panel.canvas.sortingOrder;
-            });
+            List<UIPanel> panels = UIManager.Instance.FilterPanels((panel) =>
+            { return sortingOrder > panel.canvas.sortingOrder; });
+
             return panels.Count;
         }
     }
