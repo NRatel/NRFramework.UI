@@ -183,7 +183,7 @@ namespace NRFramework
 
         private void Update()
         {
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 UIPanel topestPanel = FilterTopestPanel((panel) => 
                 { return panel.showState != UIPanelShowState.Hidden && panel.panelBehaviour.escPressEventType != UIPanelEscPressEventType.DontCheck; });

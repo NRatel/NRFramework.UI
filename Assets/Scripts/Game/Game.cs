@@ -21,10 +21,7 @@ public class Game: Singleton<Game>
 
     public void StartGame()
     {
-        UIPanelHome uiPanelHome = normalRoot.CreatePanel<UIPanelHome>("Assets/GameRes/GUI/Prefabs/Home/Panels/UIPanelHome.prefab");
-        uiPanelHome.Init();
-
-        List<UIPanel> focusingPanels = UIManager.Instance.GetFocusingPanels();
-        Debug.Log("focusingPanels.Count: " + focusingPanels.Count);
+        UIPanelHome panelHome = normalRoot.CreatePanel<UIPanelHome>("Assets/GameRes/GUI/Prefabs/Home/Panels/UIPanelHome.prefab");
+        panelHome.Init();
     }
 }
