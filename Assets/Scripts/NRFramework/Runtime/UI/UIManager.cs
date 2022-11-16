@@ -18,7 +18,7 @@ namespace NRFramework
         private List<UIPanel> m_FocusingPanels;
         private List<UIPanel> m_TempNewFocusingPanels;
 
-        private UIManager()
+        private void Awake()
         {
             uiCanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
             uiCamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
@@ -187,6 +187,9 @@ namespace NRFramework
             {
                 UIPanel topestPanel = FilterTopestPanel((panel) => 
                 { return panel.showState != UIPanelShowState.Hidden && panel.panelBehaviour.escPressEventType != UIPanelEscPressEventType.DontCheck; });
+
+                if (topestPanel == null) { return; }
+                if (topestPanel.showState != UIPanelShowState.Idle) { return; }
 
                 topestPanel.DoEscPress();
             }

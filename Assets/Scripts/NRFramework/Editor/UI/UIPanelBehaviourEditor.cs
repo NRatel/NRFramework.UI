@@ -2,6 +2,7 @@
 
 using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace NRFramework
 {
@@ -131,6 +132,8 @@ namespace NRFramework
                     Enum getFocusTypeEnum = EditorGUILayout.EnumPopup("GetFocusType", (UIPanelGetFocusType)m_GetFocusTypeSP.enumValueIndex);
                     m_GetFocusTypeSP.enumValueIndex = (int)(UIPanelGetFocusType)getFocusTypeEnum;
                 }
+
+                //Debug.Log("m_EscPressEventTypeSP.enumValueIndex: " + m_EscPressEventTypeSP.enumValueIndex);
 
                 Enum escPressEventTypeEnum = EditorGUILayout.EnumPopup("EscPressEventType", (UIPanelEscPressEventType)m_EscPressEventTypeSP.enumValueIndex);
                 m_EscPressEventTypeSP.enumValueIndex = (int)(UIPanelEscPressEventType)escPressEventTypeEnum;

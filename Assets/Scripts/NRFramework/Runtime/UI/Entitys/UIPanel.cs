@@ -64,6 +64,9 @@ namespace NRFramework
 
         internal void SetVisible(bool visible)
         {
+            if (showState != UIPanelShowState.Hidden && visible) { return; }
+            if (showState == UIPanelShowState.Hidden && !visible) { return; }
+
             if (canvasGroup == null)
             {
                 canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
@@ -88,13 +91,25 @@ namespace NRFramework
                     UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, null);
                     break;
                 case UIPanelBgClickEventType.CloseSelf:
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => { CloseSelf(null); });
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => 
+                    {
+                        if (showState != UIPanelShowState.Idle) { return; }
+                        CloseSelf(null); 
+                    });
                     break;
                 case UIPanelBgClickEventType.DestorySelf:
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => { DestroySelf(); });
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () => 
+                    {
+                        if (showState != UIPanelShowState.Idle) { return; }
+                        DestroySelf(); 
+                    });
                     break;
                 case UIPanelBgClickEventType.Custom:
-                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, OnBackgroundClicked);
+                    UIBlocker.Instance.Bind(rectTransform, panelBehaviour.bgTexture, panelBehaviour.bgColor, false, () =>
+                    {
+                        if (showState != UIPanelShowState.Idle) { return; }
+                        OnBackgroundClicked();
+                    });
                     break;
             }
         }
@@ -220,5 +235,3 @@ namespace NRFramework
         #endregion
     }
 }
-
-
