@@ -8,25 +8,23 @@ public class UIPanelHome : UIPanelHomeBase
 {
     private int m_IconCount;
 
-    protected override void OnCreating() 
+    protected override void OnCreating()
     {
         Debug.Log("UIPanelHome OnCreating");
     }
 
-    protected override void OnCreated() 
+    protected override void OnCreated()
     {
         Debug.Log("UIPanelHome OnCreated");
     }
 
     public void Init()
     {
-        Debug.Log("UIPanelHome Custom Init");
-
         m_Desc_TMPText.text = "Hello NRatel!";
         m_IconCount = 0;
     }
 
-    protected override void OnClicked(Button button) 
+    protected override void OnClicked(Button button)
     {
         if (button == m_BtnAddIcon_Button)
         {
@@ -39,17 +37,23 @@ public class UIPanelHome : UIPanelHomeBase
 
         else if (button == m_BtnTestFindComp_Button)
         {
-            TextMeshProUGUI indexText = UIManager.Instance.FindWidgetComponent<TextMeshProUGUI>("normalRoot/UIPanelHome/MyIcon0", "m_Index_TextMeshProUGUI");
-            Debug.Log(indexText.text);
+            UIPanelAlert panelAlert = Game.Instance.topRoot.CreatePanel<UIPanelAlert>("Assets/GameRes/GUI/Prefabs/Alert/Panels/UIPanelAlert.prefab");
+
+            string content = "please confirm the \"m_Index_TMPText\" exist in \"normalRoot/UIPanelHome/MyIcon0\".";
+            panelAlert.Init(content, () =>
+            {
+                TextMeshProUGUI indexText = UIManager.Instance.FindWidgetComponent<TextMeshProUGUI>("normalRoot/UIPanelHome/MyIcon0", "m_Index_TMPText");
+                Debug.Log("result：" + indexText);
+            }, null);
         }
     }
 
-    protected override void OnFocusChanged(bool got) 
+    protected override void OnFocusChanged(bool got)
     {
-        Debug.Log("UIPanelHome OnFocusChanged" + got);
+        Debug.Log("UIPanelHome OnFocusChanged：" + got);
     }
 
-    protected override void OnDestroying() 
+    protected override void OnDestroying()
     {
         Debug.Log("UIPanelHome OnDestroying");
     }

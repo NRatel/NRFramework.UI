@@ -111,6 +111,7 @@ namespace NRFramework
 
         public void DestroyWidget(string widgetId)
         {
+            Debug.Assert(widgetDict != null); //widgetDict未创建
             Debug.Assert(widgetDict.ContainsKey(widgetId)); //widget不存在
 
             UIWidget widget = widgetDict[widgetId];
@@ -125,6 +126,7 @@ namespace NRFramework
 
         public UIWidget GetWidget(string widgetId)
         {
+            Debug.Assert(widgetDict != null); //widgetDict未创建
             return widgetDict[widgetId];
         }
 

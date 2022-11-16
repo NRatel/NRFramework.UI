@@ -280,9 +280,14 @@ namespace NRFramework
 
         private void GenerateUIBaseCode()
         {
-            UIViewBehaviour uwb = (UIViewBehaviour)target;
-
             string prefabPath = GetPrefabPath();
+
+            if (string.IsNullOrEmpty(prefabPath))
+            {
+                Debug.LogError("非预设不可导出");
+                return;
+            }
+
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
             string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
 
@@ -301,7 +306,7 @@ namespace NRFramework
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
             string content = UIEditorUtility.kUIBaseCode.Replace("${ClassName}", className + "Base");
-            content = content.Replace("${BaseClassName}", uwb is UIPanelBehaviour ? "UIPanel" : "UIWidget");
+            content = content.Replace("${BaseClassName}", target is UIPanelBehaviour ? "UIPanel" : "UIWidget");
 
             string variantsDefineStr, bindCompsStr, bindEventsStr, unbindEventsStr, unbindCompsStr;
             int retCode = GetExportBaseCodeStrs(out variantsDefineStr, out bindCompsStr, out bindEventsStr, out unbindEventsStr, out unbindCompsStr);
@@ -320,9 +325,14 @@ namespace NRFramework
 
         private void GenerateUITempCode()
         {
-            UIViewBehaviour uwb = (UIViewBehaviour)target;
-
             string prefabPath = GetPrefabPath();
+
+            if (string.IsNullOrEmpty(prefabPath))
+            {
+                Debug.LogError("非预设不可导出");
+                return;
+            }
+
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
             string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
 
@@ -342,7 +352,7 @@ namespace NRFramework
 
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
             content = content.Replace("${BaseClassName}", className + "Base");
-            content = content.Replace("${PanelLifeCycleCode}", uwb is UIPanelBehaviour ? UIEditorUtility.kPanelLifeCycleCode : "");
+            content = content.Replace("${PanelLifeCycleCode}", target is UIPanelBehaviour ? UIEditorUtility.kPanelLifeCycleCode : "");
             content = content.Trim();
 
             UIEditorUtility.GenerateCode(savePath, content);

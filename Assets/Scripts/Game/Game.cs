@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Game
+public class Game: Singleton<Game>
 {
     public UIRoot bottomRoot { get; private set; }
     public UIRoot normalRoot { get; private set; }
     public UIRoot topRoot { get; private set; }
     public UIRoot guideRoot { get; private set; }
 
-    public Game()
+    private Game()
     {
         bottomRoot = UIManager.Instance.CreateUIRoot("bottomRoot", 0, 999);
         normalRoot = UIManager.Instance.CreateUIRoot("normalRoot", 1000, 1999);
