@@ -19,9 +19,10 @@ namespace NRFramework
         private SerializedProperty m_GetFocusTypeSP;
         private SerializedProperty m_EscPressEventTypeSP;
         private SerializedProperty m_ThicknessSP;
-        private SerializedProperty m_InSafeAreaSP;
         private SerializedProperty m_OpenAnimPlayModeSP;
         private SerializedProperty m_CloseAnimPlayModeSP;
+
+        private int m_LastPanelTypeIndex = -1;
 
         protected override void OnEnable()
         {
@@ -35,7 +36,6 @@ namespace NRFramework
             m_GetFocusTypeSP = serializedObject.FindProperty("m_GetFocusType");
             m_EscPressEventTypeSP = serializedObject.FindProperty("m_EscPressEventType");
             m_ThicknessSP = serializedObject.FindProperty("m_Thickness");
-            m_InSafeAreaSP = serializedObject.FindProperty("m_InSafeArea");
             m_OpenAnimPlayModeSP = serializedObject.FindProperty("m_OpenAnimPlayMode");
             m_CloseAnimPlayModeSP = serializedObject.FindProperty("m_CloseAnimPlayMode");
         }
@@ -70,14 +70,16 @@ namespace NRFramework
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.Alpha;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
-                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf;   //默认关闭自身
+                        if (m_LastPanelTypeIndex < 0 || m_LastPanelTypeIndex != m_PanelTypeSP.enumValueIndex)
+                        { m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontRespone; }  //默认不响应
                         break;
 
                     case UIPanelType.Overlay:
                         disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = false;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.GetWithOthers;
-                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck;   //默认不检测
+                        if (m_LastPanelTypeIndex < 0 || m_LastPanelTypeIndex != m_PanelTypeSP.enumValueIndex)
+                        { m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck; } //默认不检测
                         break;
 
                     case UIPanelType.Window:
@@ -86,14 +88,16 @@ namespace NRFramework
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.CloseSelf;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
-                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf;   //默认关闭自身
+                        if (m_LastPanelTypeIndex < 0 || m_LastPanelTypeIndex != m_PanelTypeSP.enumValueIndex)
+                        { m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf; }   //默认关闭自身
                         break;
 
                     case UIPanelType.Float:
                         disableFocusAndFocusScope = true;
                         m_HasBgSP.boolValue = false;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
-                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck;   //默认不检测
+                        if (m_LastPanelTypeIndex < 0 || m_LastPanelTypeIndex != m_PanelTypeSP.enumValueIndex)
+                        { m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontCheck; } //默认不检测
                         break;
 
                     case UIPanelType.System:
@@ -102,7 +106,8 @@ namespace NRFramework
                         m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
                         m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
                         m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
-                        m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontRespone;   //默认不响应
+                        if (m_LastPanelTypeIndex < 0 || m_LastPanelTypeIndex != m_PanelTypeSP.enumValueIndex)
+                        { m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontRespone; } //默认不响应
                         break;
 
                     case UIPanelType.Custom:
@@ -137,11 +142,12 @@ namespace NRFramework
 
                 Enum escPressEventTypeEnum = EditorGUILayout.EnumPopup("EscPressEventType", (UIPanelEscPressEventType)m_EscPressEventTypeSP.enumValueIndex);
                 m_EscPressEventTypeSP.enumValueIndex = (int)(UIPanelEscPressEventType)escPressEventTypeEnum;
+
+                m_LastPanelTypeIndex = m_PanelTypeSP.enumValueIndex;
             }
             EditorGUI.indentLevel--;
 
             m_ThicknessSP.intValue = EditorGUILayout.IntField("Thickness", m_ThicknessSP.intValue);
-            m_InSafeAreaSP.boolValue = EditorGUILayout.Toggle("InSafeArea", m_InSafeAreaSP.boolValue);
 
             bool existValidAnimator = ((UIPanelBehaviour)target).ExistValidAnimator();
             if (existValidAnimator)

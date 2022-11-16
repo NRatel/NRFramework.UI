@@ -39,6 +39,7 @@ namespace NRFramework
 
         public event Action onEnable;
         public event Action onStart;
+        //public event Action onUpdate;
         public event Action onDisable;
         public event Action onDestroy;
 
@@ -92,29 +93,29 @@ namespace NRFramework
         }
 
 #if UNITY_EDITOR
-        // todo 验证 添加的Go是否是本UIViewBehaviour所在Go的子物体
-        //protected virtual void OnValidate()
-        //{
-        //    Debug.Log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + m_OpElementList.Count);
-        //    for (int i = 0; i < m_OpElementList.Count; i++)
-        //    {
-        //        GameObject target = m_OpElementList[i].target;
-        //        //if (target != null && !this.Equals(target.GetComponentInParent<UIViewBehaviour>()))
-        //        //{
-        //        //    m_OpElementList[i].target == null;
-        //        //}
+        protected virtual void OnValidate()
+        {
+            //// todo
+            //// 添加的 GameObject 必须是本 UIViewBehaviour 所在 GameObject 的子物体
+            //for (int i = 0; i < m_OpElementList.Count; i++)
+            //{
+            //    GameObject target = m_OpElementList[i].target;
+            //    if (target != null)
+            //    {
+            //        UIViewBehaviour parentBehaviour = target.GetComponentInParent<UIViewBehaviour>();
 
-        //        if (target != null)
-        //        {
-        //            Debug.Log("000000000, " + target);
-        //            Debug.Log("111111111, " + this);
-        //            UIViewBehaviour behaviour = target.GetComponentInParent<UIViewBehaviour>();
-        //            Debug.Log("222222222, " + behaviour);
+            //        //Debug.Log("xxx0: " + target);
+            //        //Debug.Log("xxx1: " + parentBehaviour);
 
-        //            Debug.Log(this.Equals(target.GetComponentInParent<UIViewBehaviour>()));
-        //        }
-        //    }
-        //}
+            //        //Debug.Log("sss2: " + (parentBehaviour == null));
+            //        //Debug.Log("sss3: " + (parentBehaviour is UIViewBehaviour));
+            //        //Debug.Log("sss4: " + parentBehaviour.GetInstanceID());
+
+            //        // 似乎有bug，parentBehaviour 有时为 null。
+            //        Debug.Assert(this.Equals(parentBehaviour));
+            //    }
+            //}
+        }
 
         protected virtual void Reset()
         {
@@ -129,6 +130,8 @@ namespace NRFramework
         private void OnEnable() { onEnable?.Invoke(); }   //View创建时，不会被调用
 
         private void Start() { onStart?.Invoke(); }       //View创建时，后期绑定的UIViewBehaviour，不会被调用
+
+        //private void Update() { onUpdate?.Invoke(); }
 
         private void OnDisable() { onDisable?.Invoke(); }
 

@@ -80,15 +80,14 @@ MonoBehaviour:
   - m_Target: {fileID: 5944494341295399805}
     m_ComponentList:
     - {fileID: 7616234969118387778}
-  m_PanelType: 5
+  m_PanelType: 0
   m_HasBg: 1
-  m_BgShowType: 1
+  m_BgShowType: 0
   m_CustomBgColor: {r: 1, g: 1, b: 1, a: 1}
   m_BgClickEventType: 1
   m_GetFocusType: 1
-  m_EscPressEventType: 0
+  m_EscPressEventType: 1
   m_Thickness: 10
-  m_InSafeArea: 1
   m_OpenAnimPlayMode: 0
   m_CloseAnimPlayMode: 0
 --- !u!1 &1537610612515864436

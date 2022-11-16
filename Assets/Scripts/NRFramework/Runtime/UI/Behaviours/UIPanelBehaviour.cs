@@ -22,7 +22,7 @@ namespace NRFramework
 
     public class UIPanelBehaviour : UIViewBehaviour
     {
-#pragma warning disable 414 //禁用 warning CS0414
+#pragma warning disable 414
         [SerializeField]
         private UIPanelType m_PanelType;
 #pragma warning restore 414
@@ -49,9 +49,9 @@ namespace NRFramework
         [SerializeField]
         private int m_Thickness;
 
-        //适配相关
-        [SerializeField]
-        private bool m_InSafeArea;
+        ////适配相关
+        //[SerializeField]
+        //private bool m_InSafeArea;
 
         [SerializeField]
         private UIPanelOpenAnimPlayMode m_OpenAnimPlayMode;
@@ -92,8 +92,6 @@ namespace NRFramework
         
         public int thickness { get { return m_Thickness; } }
 
-        public bool inSafeArea { get { return m_InSafeArea; } }
-
         public UIPanelOpenAnimPlayMode openAnimPlayMode { get { return m_OpenAnimPlayMode; } }
 
         public UIPanelCloseAnimPlayMode closeAnimPlayMode { get { return m_CloseAnimPlayMode; } }
@@ -111,7 +109,6 @@ namespace NRFramework
             m_GetFocusType = UIPanelGetFocusType.Get;
             m_EscPressEventType = UIPanelEscPressEventType.Custom;
             m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
-            m_InSafeArea = true;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
             m_CloseAnimPlayMode = UIPanelCloseAnimPlayMode.AutoPlay;
         }

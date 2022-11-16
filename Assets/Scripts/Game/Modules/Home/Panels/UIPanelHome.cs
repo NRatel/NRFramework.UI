@@ -22,7 +22,7 @@ public class UIPanelHome : UIPanelHomeBase
     {
         Debug.Log("UIPanelHome Custom Init");
 
-        m_Desc_TextMeshProUGUI.text = "Hello NRatel!";
+        m_Desc_TMPText.text = "Hello NRatel!";
         m_IconCount = 0;
     }
 

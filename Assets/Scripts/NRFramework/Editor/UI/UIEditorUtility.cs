@@ -113,6 +113,7 @@ public class ${ClassName} : ${BaseClassName}
                 {"HorizontalLayoutGroup","HLayoutGroup"},
                 {"GridLayoutGroup", "GLayoutGroup"},
 
+                {"TextMeshProUGUI", "TMPText"},
                 {"TMP_Dropdown", "TMPDropdown"},
                 {"TMP_InputField", "TMPInputField"},
             };
