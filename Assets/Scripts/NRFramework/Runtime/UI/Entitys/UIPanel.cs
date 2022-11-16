@@ -2,6 +2,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NRFramework
 {
@@ -16,6 +17,7 @@ namespace NRFramework
 
         public UIRoot parentUIRoot { private set; get; }
         public Canvas canvas { private set; get; }
+        public GraphicRaycaster graphicRaycaster { private set; get; }
         public CanvasGroup canvasGroup { private set; get; }
 
         public UIPanelShowState showState { protected set; get; }
@@ -198,6 +200,7 @@ namespace NRFramework
             base.OnInternalCreating();
 
             canvas = panelBehaviour.gameObject.GetOrAddComponent<Canvas>();
+            graphicRaycaster = gameObject.GetOrAddComponent<GraphicRaycaster>();
             canvas.overrideSorting = true;
         }
 
@@ -213,6 +216,7 @@ namespace NRFramework
 
             //组件引用解除即可, 实例会随gameObject销毁
             canvasGroup = null;
+            graphicRaycaster = null;
             canvas = null;
             parentUIRoot = null;
 
