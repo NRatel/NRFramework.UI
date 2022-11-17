@@ -126,7 +126,6 @@ namespace NRFramework
 
         public UIWidget GetWidget(string widgetId)
         {
-            Debug.Assert(widgetDict != null); //widgetDict未创建
             return widgetDict[widgetId];
         }
 
@@ -134,29 +133,56 @@ namespace NRFramework
         {
             return GetWidget(typeof(T).Name);
         }
+
+        public bool ExistWidget(string widgetId)
+        {
+            return widgetDict.ContainsKey(widgetId);
+        }
+
         #endregion
 
         #region 反射获取组件相关接口
-        public T FindComponent<T>(string compDefine) where T : Component
+        public int GetComponent<T>(string compDefine, out T comp) where T : Component
         {
+            comp = null;
+            if (string.IsNullOrEmpty(compDefine)) { return FindCompErrorCode.COMP_DEFINE_IS_NULL_OR_EMPTY; }
+
             FieldInfo fieldInfo = this.GetType().GetField(compDefine, BindingFlags.NonPublic | BindingFlags.Instance);
-            return (T)fieldInfo.GetValue(this);
+            if (fieldInfo == null) { return FindCompErrorCode.NOT_EXIST_THIS_COMPONENT; }
+
+            T value = fieldInfo.GetValue(this) as T;
+            if (value == null) { return FindCompErrorCode.ERROR_CAST_TYPE; }
+
+            comp = value;
+            return FindCompErrorCode.OK;
         }
 
-        public T FindWidgetComponent<T>(string[] widgetIds, string compDefine) where T : Component
+        public int FindComponent<T>(string[] widgetIds, string compDefine, out T comp) where T : Component
         {
+            comp = null;
+
             UIView view = this;
-            for (int i = 0; i < widgetIds.Length; i++)
+            if (widgetIds != null)
             {
-                view = view.GetWidget(widgetIds[i]);
+                for (int i = 0; i < widgetIds.Length; i++)
+                {
+                    if (view.widgetDict == null) { return FindCompErrorCode.NOT_EXIST_ANY_CHILD_WIDGET; }
+
+                    string widgetId = widgetIds[i];
+                    if (string.IsNullOrEmpty(widgetId)) { return FindCompErrorCode.WIDGET_ID_IS_NULL_OR_EMPTY; }
+                    if (!view.ExistWidget(widgetId)) { return FindCompErrorCode.NOT_EXIST_THIS_CHILD_WIDGET; }
+
+                    view = view.GetWidget(widgetId);
+                }
             }
-            return view.FindComponent<T>(compDefine);
+
+            return view.GetComponent<T>(compDefine, out comp);
         }
 
-        public T FindWidgetComponent<T>(string widgetPath, string compDefine) where T : Component
+        public int FindComponent<T>(string widgetPath, string compDefine, out T comp) where T : Component
         {
-            string[] widgetIds = widgetPath.Split("/");
-            return FindWidgetComponent<T>(widgetIds, compDefine);
+            string[] widgetIds = !string.IsNullOrEmpty(widgetPath) ? widgetPath.Split("/") : null;
+            return FindComponent<T>(widgetIds, compDefine, out comp);
         }
         #endregion
 

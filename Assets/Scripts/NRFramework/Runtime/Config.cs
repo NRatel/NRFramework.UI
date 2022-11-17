@@ -2,7 +2,7 @@
 
 namespace NRFramework
 {
-    public class NRFrameworkSetting
+    public class Config
     {
         public const string kUICanvasPath = "UICanvas";
         public const string kUICameraPath = "UICamera";

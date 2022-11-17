@@ -42,7 +42,7 @@ public class UIPanelHome : UIPanelHomeBase
             string content = "please confirm the \"m_Index_TMPText\" exist in \"normalRoot/UIPanelHome/MyIcon0\".";
             panelAlert.Init(content, () =>
             {
-                TextMeshProUGUI indexText = UIManager.Instance.FindWidgetComponent<TextMeshProUGUI>("normalRoot/UIPanelHome/MyIcon0", "m_Index_TMPText");
+                int retCode = UIManager.Instance.FindComponent<TextMeshProUGUI>("normalRoot/UIPanelHome/MyIcon0", "m_Index_TMPText", out TextMeshProUGUI indexText);
                 Debug.Log("result：" + indexText);
             }, null);
         }

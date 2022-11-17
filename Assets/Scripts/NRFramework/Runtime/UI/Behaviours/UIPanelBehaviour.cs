@@ -108,7 +108,7 @@ namespace NRFramework
             m_BgClickEventType = UIPanelBgClickEventType.Custom;
             m_GetFocusType = UIPanelGetFocusType.Get;
             m_EscPressEventType = UIPanelEscPressEventType.Custom;
-            m_Thickness = NRFrameworkSetting.kDefaultPanelThickness;
+            m_Thickness = Config.kDefaultPanelThickness;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
             m_CloseAnimPlayMode = UIPanelCloseAnimPlayMode.AutoPlay;
         }

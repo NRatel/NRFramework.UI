@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace NRFramework
 {
-    public class NRFrameworkEditorSetting : ScriptableObject
+    public class EditorSetting : ScriptableObject
     {
         public bool enableOpElementHierarchy = true;
 
@@ -17,18 +17,18 @@ namespace NRFramework
         public string generatedBaseUIRootDir = "Scripts/Game/GeneratedBaseUI";
         public string generatedTempUIRootDir = "Scripts/Game/Modules";
 
-        private static NRFrameworkEditorSetting sm_Instance = null;
-        public static NRFrameworkEditorSetting Instance
+        private static EditorSetting sm_Instance = null;
+        public static EditorSetting Instance
         {
             get
             {
                 if (sm_Instance == null)
                 {
-                    sm_Instance = AssetDatabase.LoadAssetAtPath<NRFrameworkEditorSetting>("NRFrameworkEditorSetting");
+                    sm_Instance = AssetDatabase.LoadAssetAtPath<EditorSetting>("NRFrameworkEditorSetting");
 #if UNITY_EDITOR
                     if (sm_Instance == null)
                     {
-                        sm_Instance = CreateInstance<NRFrameworkEditorSetting>();
+                        sm_Instance = CreateInstance<EditorSetting>();
                         AssetDatabase.CreateAsset(sm_Instance, "Assets/Scripts/NRFramework/Editor/NRFrameworkEditorSetting.asset");
                     }
 #else
@@ -40,7 +40,7 @@ namespace NRFramework
         }
 
 #if UNITY_EDITOR
-        [MenuItem("NRFramework/Setting", false, 999)]
+        [MenuItem("NRFramework/EditorSetting", false, 999)]
         public static void Select()
         {
             Debug.Log("Application.dataPath: " + Application.dataPath);

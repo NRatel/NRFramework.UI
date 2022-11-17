@@ -138,27 +138,36 @@ namespace NRFramework
             return GetPanel(typeof(T).Name);
         }
 
-        public T FindPanelComponent<T>(string panelId, string compDefine) where T : Component
+        public bool ExistPanel(string panelId)
         {
-            UIPanel panel = GetPanel(panelId);
-            return panel.FindComponent<T>(compDefine);
+            return panelDict.ContainsKey(panelId);
         }
 
-        public T FindWidgetComponent<T>(string panelId, string[] widgetIds, string compDefine) where T : Component
+        public bool ExistPanel<T>()
         {
-            UIPanel panel = GetPanel(panelId);
-            return panel.FindWidgetComponent<T>(widgetIds, compDefine);
+            return ExistPanel(typeof(T).Name);
         }
 
-        public T FindWidgetComponent<T>(string path, string compDefine) where T : Component
+        public int FindComponent<T>(string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
         {
-            string[] strs = path.Split("/");
+            comp = null;
+            if (string.IsNullOrEmpty(panelId)) { return FindCompErrorCode.PANEL_ID_IS_NULL_OR_EMPTY; }
+            if (!ExistPanel(panelId)) { return FindCompErrorCode.NOT_EXIST_THIS_PANEL; }
+            UIPanel panel = GetPanel(panelId);
+            return panel.FindComponent<T>(widgetIds, compDefine, out comp);
+        }
+
+        public int FindComponent<T>(string viewPath, string compDefine, out T comp) where T : Component
+        {
+            comp = null;
+            if (string.IsNullOrEmpty(viewPath)) { return FindCompErrorCode.VIEW_PATH_IS_NULL_OR_EMPTY; }
+            string[] strs = viewPath.Split("/");
             string panelId = strs[0];
             string[] widgetIds = new string[strs.Length - 1];
             for (int i = 0; i < strs.Length - 1; i++)
             { widgetIds[i] = strs[i + 1]; }
 
-            return FindWidgetComponent<T>(panelId, widgetIds, compDefine);
+            return FindComponent<T>(panelId, widgetIds, compDefine, out comp);
         }
 
         private int GetIncrementedSortingOrder()

@@ -13,10 +13,10 @@ public class Game: Singleton<Game>
 
     private Game()
     {
-        bottomRoot = UIManager.Instance.CreateUIRoot("bottomRoot", 0, 999);
-        normalRoot = UIManager.Instance.CreateUIRoot("normalRoot", 1000, 1999);
-        topRoot = UIManager.Instance.CreateUIRoot("topRoot", 2000, 2999);
-        guideRoot = UIManager.Instance.CreateUIRoot("guideRoot", 3000, 3999);
+        bottomRoot = UIManager.Instance.CreateRoot("bottomRoot", 0, 999);
+        normalRoot = UIManager.Instance.CreateRoot("normalRoot", 1000, 1999);
+        topRoot = UIManager.Instance.CreateRoot("topRoot", 2000, 2999);
+        guideRoot = UIManager.Instance.CreateRoot("guideRoot", 3000, 3999);
     }
 
     public void StartGame()

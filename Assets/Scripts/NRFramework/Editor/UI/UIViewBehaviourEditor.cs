@@ -289,7 +289,7 @@ namespace NRFramework
             }
 
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
-            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, EditorSetting.Instance.uiPrefabRootDir));
 
             //Debug.Log("fullPrefabPath: " + fullPrefabPath);
             //Debug.Log("uiPrefabRootDir: " + fullRootDir);
@@ -303,7 +303,7 @@ namespace NRFramework
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
             string className = Path.GetFileNameWithoutExtension(subPath);
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "Base.cs");
-            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, EditorSetting.Instance.generatedBaseUIRootDir, subSavePath));
 
             string content = UIEditorUtility.kUIBaseCode.Replace("${ClassName}", className + "Base");
             content = content.Replace("${BaseClassName}", target is UIPanelBehaviour ? "UIPanel" : "UIWidget");
@@ -334,7 +334,7 @@ namespace NRFramework
             }
 
             string fullPrefabPath = Path.GetFullPath(Path.Combine(Application.dataPath, Path.GetRelativePath("Assets", prefabPath)));
-            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.uiPrefabRootDir));
+            string fullRootDir = Path.GetFullPath(Path.Combine(Application.dataPath, EditorSetting.Instance.uiPrefabRootDir));
 
             //Debug.Log("fullPrefabPath: " + fullPrefabPath);
             //Debug.Log("uiPrefabRootDir: " + fullRootDir);
@@ -348,7 +348,7 @@ namespace NRFramework
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
             string className = Path.GetFileNameWithoutExtension(subPath);
             string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
-            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, NRFrameworkEditorSetting.Instance.generatedTempUIRootDir, subSavePath));
+            string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, EditorSetting.Instance.generatedTempUIRootDir, subSavePath));
 
             string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
             content = content.Replace("${BaseClassName}", className + "Base");

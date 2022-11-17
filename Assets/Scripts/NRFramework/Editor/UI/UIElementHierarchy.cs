@@ -15,7 +15,7 @@ namespace NRFramework
 
         static private void HierarchyWindowItemOnGUI(int instanceId, Rect selectRect)
         {
-            if (!NRFrameworkEditorSetting.Instance.enableOpElementHierarchy) { return; }
+            if (!EditorSetting.Instance.enableOpElementHierarchy) { return; }
             if (EditorApplication.isPlayingOrWillChangePlaymode) { return; }
 
             GameObject go = EditorUtility.InstanceIDToObject(instanceId) as GameObject;

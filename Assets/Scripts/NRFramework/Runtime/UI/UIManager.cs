@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    [MonoSingletonSetting(HideFlags.NotEditable, "# UIManager #")]
+    [MonoSingletonSetting(HideFlags.NotEditable, "#UIManager#")]
     public class UIManager : MonoSingleton<UIManager>
     {
         public Canvas uiCanvas { private set; get; }
@@ -20,15 +20,15 @@ namespace NRFramework
 
         private void Awake()
         {
-            uiCanvas = GameObject.Find(NRFrameworkSetting.kUICanvasPath).GetComponent<Canvas>();
-            uiCamera = GameObject.Find(NRFrameworkSetting.kUICameraPath).GetComponent<Camera>();
+            uiCanvas = GameObject.Find(Config.kUICanvasPath).GetComponent<Canvas>();
+            uiCamera = GameObject.Find(Config.kUICameraPath).GetComponent<Camera>();
             rootDict = new Dictionary<string, UIRoot>();
 
             m_FocusingPanels = new List<UIPanel>();
             m_TempNewFocusingPanels = new List<UIPanel>();
         }
 
-        public UIRoot CreateUIRoot(string rootId, int startOrder, int endOrder)
+        public UIRoot CreateRoot(string rootId, int startOrder, int endOrder)
         {
             Debug.Assert(!rootDict.ContainsKey(rootId));    //uiRoot已存在
             Debug.Assert(startOrder >= 0);                  //必须使startOrder >= 0
@@ -40,9 +40,14 @@ namespace NRFramework
             return uiRoot;
         }
 
-        public UIRoot GetUIRoot(string rootId)
+        public UIRoot GetRoot(string rootId)
         {
             return rootDict[rootId];
+        }
+
+        public bool ExistRoot(string rootId)
+        {
+            return rootDict.ContainsKey(rootId);
         }
 
         public List<UIPanel> FilterPanels(Func<UIPanel, bool> filterFunc = null)
@@ -86,37 +91,28 @@ namespace NRFramework
             return vaildPanels;
         }
 
-        public T FindPanelComponent<T>(string rootId, string panelId, string compDefine) where T : Component
+        public int FindComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
         {
-            UIRoot root = GetUIRoot(rootId);
-            return root.FindPanelComponent<T>(panelId, compDefine);
+            comp = null;
+            if (!ExistRoot(rootId)) { return FindCompErrorCode.NOT_EXIST_THIS_ROOT; }
+
+            UIRoot root = GetRoot(rootId);
+            return root.FindComponent<T>(panelId, widgetIds, compDefine, out comp);
         }
 
-        public T FindPanelComponent<T>(string path, string compDefine) where T : Component
+        public int FindComponent<T>(string viewPath, string compDefine, out T comp) where T : Component
         {
-            string[] strs = path.Split("/");
-            string rootId = strs[0];
-            string panelId = strs[1];
-
-            return FindPanelComponent<T>(rootId, panelId, compDefine);
-        }
-
-        public T FindWidgetComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine) where T : Component
-        {
-            UIRoot root = GetUIRoot(rootId);
-            return root.FindWidgetComponent<T>(panelId, widgetIds, compDefine);
-        }
-
-        public T FindWidgetComponent<T>(string path, string compDefine) where T : Component
-        {
-            string[] strs = path.Split("/");
+            comp = null;
+            if (string.IsNullOrEmpty(viewPath)) { return FindCompErrorCode.VIEW_PATH_IS_NULL_OR_EMPTY; }
+            string[] strs = viewPath.Split("/");
+            if (strs.Length < 2) { return FindCompErrorCode.VIEW_PATH_IS_TOO_SHORT; }
             string rootId = strs[0];
             string panelId = strs[1];
             string[] widgetIds = new string[strs.Length - 2];
             for (int i = 0; i < strs.Length - 2; i++)
             { widgetIds[i] = strs[i + 2]; }
 
-            return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine);
+            return FindComponent<T>(rootId, panelId, widgetIds, compDefine, out comp);
         }
 
         internal void SetBackgroundAndFocus()

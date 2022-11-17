@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace NRFramework
 {
-    [MonoSingletonSetting(HideFlags.NotEditable, "# UIBlocker #")]
+    [MonoSingletonSetting(HideFlags.NotEditable, "#UIBlocker#")]
     internal class UIBlocker : MonoSingleton<UIBlocker>
     {
         private RectTransform m_RectTrransform;
