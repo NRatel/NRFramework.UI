@@ -8,8 +8,7 @@ namespace NRFramework
     {
         public static T GetOrAddComponent<T>(this GameObject go) where T: Component
         {
-            T comp;
-            bool has = go.TryGetComponent<T>(out comp);
+            bool has = go.TryGetComponent<T>(out T comp);
             if (!has)
             {
                 comp = go.AddComponent<T>();
