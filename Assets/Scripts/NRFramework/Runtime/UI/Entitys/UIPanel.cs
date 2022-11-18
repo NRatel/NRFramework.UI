@@ -191,6 +191,14 @@ namespace NRFramework
         {
             base.OnInternalCreating();
 
+            rectTransform.localPosition = Vector3.zero;
+            rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
+            rectTransform.localScale = Vector3.one;
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.sizeDelta = Vector2.zero;
+
             canvas = panelBehaviour.gameObject.GetOrAddComponent<Canvas>();
             graphicRaycaster = gameObject.GetOrAddComponent<GraphicRaycaster>();
             canvas.overrideSorting = true;

@@ -36,13 +36,15 @@ namespace NRFramework
 
             Debug.Assert(viewBehaviour != null, "UIViewBehaviour组件不存在");
 
-            Create(viewId, parentTransform, viewBehaviour);
+            viewBehaviour.transform.SetParent(parentTransform, false);
+
+            Create(viewId, viewBehaviour);
         }
 
-        protected void Create(string viewId, Transform parentTransform, UIViewBehaviour viewBehaviour)
+        protected void Create(string viewId, UIViewBehaviour viewBehaviour)
         {
             this.viewId = viewId;
-            this.parentTransform = parentTransform;
+            this.parentTransform = viewBehaviour.transform;
             this.viewBehaviour = viewBehaviour;
 
             OnInternalCreating();
@@ -76,7 +78,7 @@ namespace NRFramework
         public T CreateWidget<T>(string widgetId, RectTransform parentTransform, string prefabPath) where T : UIWidget
         {
             UIViewBehaviour parentViewBehaviour = parentTransform.GetComponentInParent<UIViewBehaviour>();
-            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour));    //必须以当前UIView的元素作为UIWidget的根节点
+            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour));    //必须以当前UIView的元素作为UIWidget的父节点
 
             T widget = Activator.CreateInstance(typeof(T)) as T;
             widget.Create(widgetId, this, parentTransform, prefabPath);
@@ -86,27 +88,24 @@ namespace NRFramework
             return widget;
         }
 
-        public T CreateWidget<T>(string widgetId, RectTransform parentTransform, UIWidgetBehaviour widgetBehaviour) where T : UIWidget
+        public T CreateWidget<T>(string widgetId, UIWidgetBehaviour widgetBehaviour) where T : UIWidget
         {
-            UIViewBehaviour parentViewBehaviour = parentTransform.GetComponentInParent<UIViewBehaviour>();
-            Debug.Assert(viewBehaviour.Equals(parentViewBehaviour));    //必须以当前UIView的元素作为UIWidget的根节点
-
             T widget = Activator.CreateInstance(typeof(T)) as T;
-            widget.Create(widgetId, this, parentTransform, widgetBehaviour);
+            widget.Create(widgetId, this, widgetBehaviour);
 
             if (widgetDict == null) { widgetDict = new Dictionary<string, UIWidget>(); }
             widgetDict.Add(widgetId, widget);
             return widget;
         }
 
-        public T CreateWidget<T>(RectTransform parentTransform, UIWidgetBehaviour widgetBehaviour) where T : UIWidget
-        {
-            return CreateWidget<T>(typeof(T).Name, parentTransform, widgetBehaviour);
-        }
-
         public T CreateWidget<T>(RectTransform parentTransform, string prefabPath) where T : UIWidget
         {
             return CreateWidget<T>(typeof(T).Name, parentTransform, prefabPath);
+        }
+
+        public T CreateWidget<T>(UIWidgetBehaviour widgetBehaviour) where T : UIWidget
+        {
+            return CreateWidget<T>(typeof(T).Name, widgetBehaviour);
         }
 
         public void DestroyWidget(string widgetId)
@@ -258,13 +257,7 @@ namespace NRFramework
         protected internal virtual void OnInternalCreating()
         {
             this.rectTransform = viewBehaviour.gameObject.GetComponent<RectTransform>();
-            this.gameObject = rectTransform.gameObject;
-
-            viewBehaviour.transform.SetParent(this.parentTransform, false);
-
-            rectTransform.localPosition = Vector3.zero;
-            rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
-            rectTransform.localScale = Vector3.one;
+            this.gameObject = viewBehaviour.gameObject;
         }
 
         protected internal virtual void OnInternalCreated() { }

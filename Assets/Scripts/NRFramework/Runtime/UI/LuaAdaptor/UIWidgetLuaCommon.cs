@@ -22,10 +22,10 @@ namespace NRFramework
             base.Create(widgetId, parentView, parentTransform, prefabPath);
         }
 
-        public void Create(string panelId, UIView parentView, Transform parentTransform, UIWidgetBehaviour widgetBehaviour, LuaTable luaTable)
+        public void Create(string panelId, UIView parentView, UIWidgetBehaviour widgetBehaviour, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentView, parentTransform, widgetBehaviour);
+            base.Create(panelId, parentView, widgetBehaviour);
         }
 
         protected override void OnCreating()
