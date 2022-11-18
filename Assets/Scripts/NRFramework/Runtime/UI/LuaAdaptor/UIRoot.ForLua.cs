@@ -25,22 +25,6 @@ namespace NRFramework
 
             return panel;
         }
-
-        public UIPanelLuaCommon CreatePanel(string panelId, UIPanelBehaviour panelBehaviour, LuaTable luaPanel)
-        {
-            Debug.Assert(!panelDict.ContainsKey(panelId));    //panel已存在
-
-            UIPanelLuaCommon panel = new UIPanelLuaCommon();
-            panel.Create(panelId, this, panelBehaviour, luaPanel);
-            int targetSortingOrder = GetIncrementedSortingOrder();
-            panel.SetSortingOrder(targetSortingOrder);
-            int targetSiblingIndex = GetCurrentSiblingIndex(targetSortingOrder);
-            panel.SetSiblingIndex(targetSiblingIndex);
-            panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.SetBackgroundAndFocus();
-
-            return panel;
-        }
     }
 }
 # endif

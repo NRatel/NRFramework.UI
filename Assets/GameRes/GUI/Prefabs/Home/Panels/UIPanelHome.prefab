@@ -80,6 +80,8 @@ MonoBehaviour:
   - m_Target: {fileID: 5944494341295399805}
     m_ComponentList:
     - {fileID: 7616234969118387778}
+  - m_Target: {fileID: 0}
+    m_ComponentList: []
   m_PanelType: 0
   m_HasBg: 1
   m_BgShowType: 0

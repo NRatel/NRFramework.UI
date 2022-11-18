@@ -16,16 +16,16 @@ namespace NRFramework
         private Action<LuaTable> m_LuaOnDestroying;
         private Action<LuaTable> m_LuaOnDestroyed;
 
-        public void Create(string widgetId, UIView parentView, RectTransform parentRectTransform, string prefabPath, LuaTable luaTable)
+        public void Create(string widgetId, UIView parentView, Transform parentTransform, string prefabPath, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(widgetId, parentView, parentRectTransform.GetComponent<RectTransform>(), prefabPath);
+            base.Create(widgetId, parentView, parentTransform, prefabPath);
         }
 
-        public void Create(string panelId, UIView parentView, RectTransform parentRectTransform, UIWidgetBehaviour widgetBehaviour, LuaTable luaTable)
+        public void Create(string panelId, UIView parentView, Transform parentTransform, UIWidgetBehaviour widgetBehaviour, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentView, parentRectTransform.GetComponent<RectTransform>(), widgetBehaviour);
+            base.Create(panelId, parentView, parentTransform, widgetBehaviour);
         }
 
         protected override void OnCreating()
@@ -37,7 +37,7 @@ namespace NRFramework
             SetMember("behaviour", widgetBehaviour);
             SetMember("rectTransform", rectTransform);
             SetMember("gameObject", gameObject);
-            SetMember("parentRectTransform", parentRectTransform);
+            SetMember("parentTransform", parentTransform);
             SetMember("parentView", parentView);
 
             GetMember("OnCreating", out m_LuaOnCreating);

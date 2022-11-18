@@ -91,28 +91,44 @@ namespace NRFramework
             return vaildPanels;
         }
 
-        public int FindComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
+        public int FindPanelComponent<T>(string rootId, string panelId, string compDefine, out T comp) where T : Component
         {
             comp = null;
             if (!ExistRoot(rootId)) { return FindCompErrorCode.NOT_EXIST_THIS_ROOT; }
 
             UIRoot root = GetRoot(rootId);
-            return root.FindComponent<T>(panelId, widgetIds, compDefine, out comp);
+            return root.FindPanelComponent<T>(panelId, compDefine, out comp);
         }
 
-        public int FindComponent<T>(string viewPath, string compDefine, out T comp) where T : Component
+        public int FindWidgetComponent<T>(string rootId, string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
         {
             comp = null;
-            if (string.IsNullOrEmpty(viewPath)) { return FindCompErrorCode.VIEW_PATH_IS_NULL_OR_EMPTY; }
-            string[] strs = viewPath.Split("/");
+            if (!ExistRoot(rootId)) { return FindCompErrorCode.NOT_EXIST_THIS_ROOT; }
+
+            UIRoot root = GetRoot(rootId);
+            return root.FindWidgetComponent<T>(panelId, widgetIds, compDefine, out comp);
+        }
+
+        public int FindComponentByPath<T>(string path, string compDefine, out T comp) where T : Component
+        {
+            comp = null;
+            if (string.IsNullOrEmpty(path)) { return FindCompErrorCode.VIEW_PATH_IS_NULL_OR_EMPTY; }
+            string[] strs = path.Split("/");
             if (strs.Length < 2) { return FindCompErrorCode.VIEW_PATH_IS_TOO_SHORT; }
             string rootId = strs[0];
             string panelId = strs[1];
-            string[] widgetIds = new string[strs.Length - 2];
-            for (int i = 0; i < strs.Length - 2; i++)
-            { widgetIds[i] = strs[i + 2]; }
 
-            return FindComponent<T>(rootId, panelId, widgetIds, compDefine, out comp);
+            if (strs.Length > 2)
+            {
+                string[] widgetIds = new string[strs.Length - 2];
+                for (int i = 0; i < strs.Length - 2; i++)
+                { widgetIds[i] = strs[i + 2]; }
+                return FindWidgetComponent<T>(rootId, panelId, widgetIds, compDefine, out comp);
+            }
+            else
+            {
+                return FindPanelComponent<T>(rootId, panelId, compDefine, out comp);
+            }
         }
 
         internal void SetBackgroundAndFocus()

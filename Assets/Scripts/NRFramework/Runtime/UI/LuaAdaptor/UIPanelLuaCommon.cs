@@ -19,13 +19,13 @@ namespace NRFramework
         public void Create(string panelId, Canvas parentCanvas, string prefabPath, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), prefabPath);
+            base.Create(panelId, parentCanvas.transform, prefabPath);
         }
 
         public void Create(string panelId, Canvas parentCanvas, UIPanelBehaviour panelBehaviour, LuaTable luaTable)
         {
             @this = luaTable;
-            base.Create(panelId, parentCanvas.GetComponent<RectTransform>(), panelBehaviour);
+            base.Create(panelId, parentCanvas.transform, panelBehaviour);
         }
 
         protected override void OnCreating()
@@ -37,7 +37,7 @@ namespace NRFramework
             SetMember("behaviour", panelBehaviour);
             SetMember("rectTransform", rectTransform);
             SetMember("gameObject", gameObject);
-            SetMember("parentRectTransform", parentRectTransform);
+            SetMember("parentTransform", parentTransform);
             SetMember("parentUIRoot", parentUIRoot);
             SetMember("canvas", canvas);
 

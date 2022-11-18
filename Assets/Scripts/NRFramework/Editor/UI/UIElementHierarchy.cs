@@ -37,7 +37,7 @@ namespace NRFramework
                     posIndex++;
                 }
             }
-            ////gameObject图标 (废弃了，似乎没必要)
+            ////gameObject图标 (废弃了)
             //if (behaviour.HasSavedGameObject(go))
             //{
             //    Texture icon = UIEditorUtility.GetIconByType(go.GetType());

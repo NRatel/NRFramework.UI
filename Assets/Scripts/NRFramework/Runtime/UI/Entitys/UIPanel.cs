@@ -27,15 +27,7 @@ namespace NRFramework
         internal void Create(string panelId, UIRoot uiRoot, string prefabPath)
         {
             this.parentUIRoot = uiRoot;
-            base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), prefabPath);
-
-            PlayOpenAnim(null);
-        }
-
-        internal void Create(string panelId, UIRoot uiRoot, UIPanelBehaviour panelBehaviour)
-        {
-            this.parentUIRoot = uiRoot;
-            base.Create(panelId, UIManager.Instance.uiCanvas.GetComponent<RectTransform>(), panelBehaviour);
+            base.Create(panelId, UIManager.Instance.uiCanvas.transform, prefabPath);
 
             PlayOpenAnim(null);
         }

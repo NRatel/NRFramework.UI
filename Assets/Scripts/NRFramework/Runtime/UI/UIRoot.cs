@@ -35,20 +35,9 @@ namespace NRFramework
             return panel;
         }
 
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour, int sortingOrder) where T : UIPanel
+        public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
         {
-            Debug.Assert(!panelDict.ContainsKey(panelId));
-            Debug.Assert(sortingOrder >= startOrder && sortingOrder <= endOrder);
-
-            T panel = Activator.CreateInstance(typeof(T)) as T;
-            panel.Create(panelId, this, panelBehaviour);
-            panel.SetSortingOrder(sortingOrder);
-            int siblingIndex = GetCurrentSiblingIndex(sortingOrder);
-            panel.SetSiblingIndex(siblingIndex);
-            panelDict.Add(panel.panelId, panel);
-            UIManager.Instance.SetBackgroundAndFocus();
-
-            return panel;
+            return CreatePanel<T>(panelId, prefabPath, GetIncrementedSortingOrder());
         }
 
         public T CreatePanel<T>(string prefabPath, int sortingOrder) where T : UIPanel
@@ -56,30 +45,9 @@ namespace NRFramework
             return CreatePanel<T>(typeof(T).Name, prefabPath, sortingOrder);
         }
 
-        public T CreatePanel<T>(UIPanelBehaviour panelBehaviour, int sortingOrder) where T : UIPanel
-        {
-            return CreatePanel<T>(typeof(T).Name, panelBehaviour, sortingOrder);
-        }
-
-        public T CreatePanel<T>(string panelId, string prefabPath) where T : UIPanel
-        {
-            return CreatePanel<T>(panelId, prefabPath, GetIncrementedSortingOrder());
-        }
-
-        public T CreatePanel<T>(string panelId, UIPanelBehaviour panelBehaviour) where T : UIPanel
-        {
-            return CreatePanel<T>(panelId, panelBehaviour, GetIncrementedSortingOrder());
-
-        }
-
         public T CreatePanel<T>(string prefabPath) where T : UIPanel
         {
             return CreatePanel<T>(typeof(T).Name, prefabPath);
-        }
-
-        public T CreatePanel<T>(UIPanelBehaviour panelBehaviour) where T : UIPanel
-        {
-            return CreatePanel<T>(typeof(T).Name, panelBehaviour);
         }
 
         public void ClosePanel(string panelId, Action onFinish = null)
@@ -148,26 +116,21 @@ namespace NRFramework
             return ExistPanel(typeof(T).Name);
         }
 
-        public int FindComponent<T>(string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
+        public int FindPanelComponent<T>(string panelId, string compDefine, out T comp) where T : Component
+        {
+            comp = null;
+            if (string.IsNullOrEmpty(panelId)) { return FindCompErrorCode.PANEL_ID_IS_NULL_OR_EMPTY; }
+            UIPanel panel = GetPanel(panelId);
+            return panel.FindComponent<T>(compDefine, out comp);
+        }
+
+        public int FindWidgetComponent<T>(string panelId, string[] widgetIds, string compDefine, out T comp) where T : Component
         {
             comp = null;
             if (string.IsNullOrEmpty(panelId)) { return FindCompErrorCode.PANEL_ID_IS_NULL_OR_EMPTY; }
             if (!ExistPanel(panelId)) { return FindCompErrorCode.NOT_EXIST_THIS_PANEL; }
             UIPanel panel = GetPanel(panelId);
-            return panel.FindComponent<T>(widgetIds, compDefine, out comp);
-        }
-
-        public int FindComponent<T>(string viewPath, string compDefine, out T comp) where T : Component
-        {
-            comp = null;
-            if (string.IsNullOrEmpty(viewPath)) { return FindCompErrorCode.VIEW_PATH_IS_NULL_OR_EMPTY; }
-            string[] strs = viewPath.Split("/");
-            string panelId = strs[0];
-            string[] widgetIds = new string[strs.Length - 1];
-            for (int i = 0; i < strs.Length - 1; i++)
-            { widgetIds[i] = strs[i + 1]; }
-
-            return FindComponent<T>(panelId, widgetIds, compDefine, out comp);
+            return panel.FindWidgetComponent<T>(widgetIds, compDefine, out comp);
         }
 
         private int GetIncrementedSortingOrder()
