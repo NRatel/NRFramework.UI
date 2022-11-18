@@ -13,8 +13,8 @@ public class UIPanelAlert : UIPanelAlertBase
     {
         Debug.Log("UIPanelAlert OnCreating");
 
-        //CommonAlertTitle title = CreateWidget<CommonAlertTitle>("title", m_BtnOK_Button., m_CommonAlertTitle_UIWidgetBehaviour);
-        //title.Init("Alert Common Tilte");
+        CommonAlertTitle title = CreateWidget<CommonAlertTitle>("title", m_CommonAlertTitle_UIWidgetBehaviour);
+        title.Init("Alert Common Tilte");
     }
 
     protected override void OnCreated()
