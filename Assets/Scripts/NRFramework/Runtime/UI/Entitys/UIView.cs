@@ -118,7 +118,7 @@ namespace NRFramework
             widget.Destroy();
         }
 
-        public void DestroyWidget<T>()
+        public void DestroyWidget<T>() where T : UIWidget
         {
             DestroyWidget(typeof(T).Name);
         }
@@ -128,9 +128,14 @@ namespace NRFramework
             return widgetDict[widgetId];
         }
 
-        public UIWidget GetWidget<T>() where T : UIWidget
+        public T GetWidget<T>(string widgetId) where T : UIWidget
         {
-            return GetWidget(typeof(T).Name);
+            return widgetDict[widgetId] as T;
+        }
+
+        public T GetWidget<T>() where T : UIWidget
+        {
+            return GetWidget(typeof(T).Name) as T;
         }
 
         public bool ExistWidget(string widgetId)

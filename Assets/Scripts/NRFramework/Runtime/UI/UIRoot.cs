@@ -101,9 +101,14 @@ namespace NRFramework
             return panelDict[panelId];
         }
 
-        public UIPanel GetPanel<T>() where T : UIPanel
+        public T GetPanel<T>(string panelId) where T : UIPanel
         {
-            return GetPanel(typeof(T).Name);
+            return panelDict[panelId] as T;
+        }
+
+        public T GetPanel<T>() where T : UIPanel
+        {
+            return GetPanel(typeof(T).Name) as T;
         }
 
         public bool ExistPanel(string panelId)

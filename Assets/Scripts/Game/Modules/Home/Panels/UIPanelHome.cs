@@ -39,11 +39,12 @@ public class UIPanelHome : UIPanelHomeBase
         {
             UIPanelAlert panelAlert = Game.Instance.topRoot.CreatePanel<UIPanelAlert>("Assets/GameRes/GUI/Prefabs/Alert/Panels/UIPanelAlert.prefab");
 
+            string title = "Alert";
             string content = "please confirm the \"m_Index_TMPText\" exist in \"normalRoot/UIPanelHome/MyIcon0\".";
-            panelAlert.Init(content, () =>
+            panelAlert.Init(title, content, () =>
             {
                 int retCode = UIManager.Instance.FindComponentByPath("normalRoot/UIPanelHome/MyIcon0", "m_Index_TMPText", out TextMeshProUGUI indexText);
-                Debug.Log("result：" + indexText);
+                Debug.Log(string.Format("retCode, result：{0}, {1}", retCode, indexText));
             }, null);
         }
     }

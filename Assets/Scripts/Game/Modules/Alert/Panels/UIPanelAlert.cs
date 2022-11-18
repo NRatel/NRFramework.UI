@@ -13,8 +13,7 @@ public class UIPanelAlert : UIPanelAlertBase
     {
         Debug.Log("UIPanelAlert OnCreating");
 
-        CommonAlertTitle title = CreateWidget<CommonAlertTitle>("title", m_CommonAlertTitle_UIWidgetBehaviour);
-        title.Init("Alert Common Tilte");
+        CreateWidget<CommonAlertTitle>(m_CommonAlertTitle_UIWidgetBehaviour);
     }
 
     protected override void OnCreated()
@@ -22,8 +21,9 @@ public class UIPanelAlert : UIPanelAlertBase
         Debug.Log("UIPanelAlert OnCreated");
     }
 
-    public void Init(string content, Action onOK = null, Action onCancel = null)
+    public void Init(string title, string content, Action onOK = null, Action onCancel = null)
     {
+        GetWidget<CommonAlertTitle>().Init(title);
         m_Content_TMPText.text = content;
         m_OnOK = onOK;
         m_OnCancel = onCancel;
