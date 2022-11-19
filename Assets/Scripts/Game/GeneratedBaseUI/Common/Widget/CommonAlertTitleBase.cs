@@ -11,7 +11,6 @@ public class CommonAlertTitleBase : UIWidget
     protected override void OnBindCompsAndEvents() 
     {
 		m_Title_TMPText = (TextMeshProUGUI)viewBehaviour.GetComponentByIndexs(0, 0);
-
 	}
 
     protected override void OnUnbindCompsAndEvents() 

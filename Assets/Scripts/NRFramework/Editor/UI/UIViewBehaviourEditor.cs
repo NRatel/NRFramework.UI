@@ -30,12 +30,14 @@ namespace NRFramework
             {
                 if (GUILayout.Button("ExportBase"))
                 {
+                    if (Application.isPlaying) { Debug.LogError("请在非运行时导出"); return; }
                     RefreshOpElementList(m_OpElementListRL);
                     GenerateUIBaseCode();
                 }
 
                 if (GUILayout.Button("ExportTemp"))
                 {
+                    if (Application.isPlaying) { Debug.LogError("请在非运行时导出"); return; }
                     RefreshOpElementList(m_OpElementListRL);
                     GenerateUITempCode();
                 }
@@ -314,7 +316,7 @@ namespace NRFramework
 
             content = content.Replace("${VariantsDefine}", variantsDefineStr + (!string.IsNullOrEmpty(variantsDefineStr) ? "\r" : string.Empty));
             content = content.Replace("${BindComps}", bindCompsStr);
-            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindCompsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
+            content = content.Replace("${BindEvents}", (!string.IsNullOrEmpty(bindEventsStr) ? "\r" : string.Empty) + bindEventsStr + "\r\t");
             content = content.Replace("${UnbindEvents}", unbindEventsStr);
             content = content.Replace("${UnbindComps}", (!string.IsNullOrEmpty(unbindEventsStr) ? "\r" : string.Empty) + unbindCompsStr + "\r\t");
 
@@ -387,12 +389,12 @@ namespace NRFramework
             for (int i = 0; i < uwb.opElementList.Count; i++)
             {
                 UIOpElement opElement = uwb.opElementList[i];
-                string shortGoName = UIEditorUtility.GetFormatedGoName(opElement.target.name);
+                string formatedGoName = UIEditorUtility.GetFormatedGoName(opElement.target.name);
 
                 //不允许重名
-                if (goNameDict.ContainsKey(shortGoName))
+                if (goNameDict.ContainsKey(formatedGoName))
                 {
-                    Debug.LogError(string.Format("重复的GameObejectName: {0}、{1}", goNameDict[shortGoName], opElement.target.name));
+                    Debug.LogError(string.Format("重复的GameObjectName: {0}、{1}", goNameDict[formatedGoName], opElement.target.name));
 
                     variantsDefineStr = string.Empty;
                     bindCompsStr = string.Empty;
@@ -411,13 +413,13 @@ namespace NRFramework
 
                     string vdLine = new string(variantsDefineTempalte);
                     vdLine = vdLine.Replace("${CompType}", compType);
-                    vdLine = vdLine.Replace("${GoName}", shortGoName);
+                    vdLine = vdLine.Replace("${GoName}", formatedGoName);
                     vdLine = vdLine.Replace("${CompName}", shortCompName);
                     vdsb.Append("\r\t").Append(vdLine);
 
                     string bcLine = new string(bindCompsLine);
                     bcLine = bcLine.Replace("${CompType}", compType);
-                    bcLine = bcLine.Replace("${GoName}", shortGoName);
+                    bcLine = bcLine.Replace("${GoName}", formatedGoName);
                     bcLine = bcLine.Replace("${CompName}", shortCompName);
                     bcLine = bcLine.Replace("${i}", i.ToString());
                     bcLine = bcLine.Replace("${j}", j.ToString());
@@ -426,18 +428,18 @@ namespace NRFramework
                     if (canBindEventCompSet.Contains(compType))
                     {
                         string beLine = new string(bindEventsLine);
-                        beLine = beLine.Replace("${GoName}", shortGoName);
+                        beLine = beLine.Replace("${GoName}", formatedGoName);
                         beLine = beLine.Replace("${CompName}", shortCompName);
                         besb.Append("\r\t\t").Append(beLine);
 
                         string ubeLine = new string(unbindEventsLine);
-                        ubeLine = ubeLine.Replace("${GoName}", shortGoName);
+                        ubeLine = ubeLine.Replace("${GoName}", formatedGoName);
                         ubeLine = ubeLine.Replace("${CompName}", shortCompName);
                         ubesb.Append("\r\t\t").Append(ubeLine); ;
                     }
 
                     string ubcLine = new string(unbindCompsLine);
-                    ubcLine = ubcLine.Replace("${GoName}", shortGoName);
+                    ubcLine = ubcLine.Replace("${GoName}", formatedGoName);
                     ubcLine = ubcLine.Replace("${CompName}", shortCompName);
                     ubcsb.Append("\r\t\t").Append(ubcLine);
                 }
