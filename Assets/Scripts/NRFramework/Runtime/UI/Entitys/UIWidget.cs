@@ -16,10 +16,10 @@ namespace NRFramework
             base.Create(widgetId, parentTransform, prefabPath);
         }
 
-        protected internal void Create(string widgetId, UIView parentView, UIWidgetBehaviour widgetBehaviour)
+        protected internal void Create(string widgetId, UIView parentView, Transform parentTransform, UIWidgetBehaviour widgetBehaviour)
         {
             this.parentView = parentView;
-            base.Create(widgetId, widgetBehaviour);
+            base.Create(widgetId, parentTransform, widgetBehaviour);
         }
 
         protected void DestroySelf()
