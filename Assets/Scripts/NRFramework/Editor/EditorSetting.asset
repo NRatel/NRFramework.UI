@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44c961dc2a06c6347a4e492913d3f8ba, type: 3}
-  m_Name: NRFrameworkEditorSetting
+  m_Name: EditorSetting
   m_EditorClassIdentifier: 
   enableOpElementHierarchy: 1
   uiPrefabRootDir: GameRes/GUI/Prefabs
