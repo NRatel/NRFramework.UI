@@ -62,11 +62,12 @@ namespace NRFramework
                     kvPair.Value.Destroy();
                 }
             }
+            //先递归销毁子
+            DestroyAllWidgets();
 
             OnDestroying();
             OnUnbindCompsAndEvents();
             OnInternalDestroying();
-
             OnInternalDestroyed();
             OnDestroyed();
         }
@@ -121,14 +122,33 @@ namespace NRFramework
             Debug.Assert(widgetDict != null); //widgetDict未创建
             Debug.Assert(widgetDict.ContainsKey(widgetId)); //widget不存在
 
+            //解除引用
             UIWidget widget = widgetDict[widgetId];
             widgetDict.Remove(widgetId);
+
+            //开始销毁
             widget.Destroy();
         }
 
         public void DestroyWidget<T>() where T : UIWidget
         {
             DestroyWidget(typeof(T).Name);
+        }
+
+        public void DestroyAllWidgets()
+        {
+            if (widgetDict == null || widgetDict.Count <= 0) { return; }
+
+            List<string> widgetIds = new List<string>();
+            foreach (KeyValuePair<string, UIWidget> kvPair in widgetDict)
+            {
+                widgetIds.Add(kvPair.Key);
+            }
+            foreach (string widgetId in widgetIds)
+            {
+                DestroyWidget(widgetId);
+            }
+            widgetDict = null;
         }
 
         public UIWidget GetWidget(string widgetId)
