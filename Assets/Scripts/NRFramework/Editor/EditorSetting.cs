@@ -17,6 +17,8 @@ namespace NRFramework
         public string generatedBaseUIRootDir = "Scripts/Game/GeneratedBaseUI";
         public string generatedTempUIRootDir = "Scripts/Game/Modules";
 
+        private const string kAssetPath = "Assets/Scripts/NRFramework/Editor/EditorSetting.asset";
+
         private static EditorSetting sm_Instance = null;
         public static EditorSetting Instance
         {
@@ -24,12 +26,12 @@ namespace NRFramework
             {
                 if (sm_Instance == null)
                 {
-                    sm_Instance = AssetDatabase.LoadAssetAtPath<EditorSetting>("NRFrameworkEditorSetting");
+                    sm_Instance = AssetDatabase.LoadAssetAtPath<EditorSetting>(kAssetPath);
 #if UNITY_EDITOR
                     if (sm_Instance == null)
                     {
                         sm_Instance = CreateInstance<EditorSetting>();
-                        AssetDatabase.CreateAsset(sm_Instance, "Assets/Scripts/NRFramework/Editor/NRFrameworkEditorSetting.asset");
+                        AssetDatabase.CreateAsset(sm_Instance, kAssetPath);
                     }
 #else
                     Debug.Assert(sm_Instance != null);

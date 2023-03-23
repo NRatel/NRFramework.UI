@@ -55,13 +55,6 @@ namespace NRFramework
 
         protected void Destroy()
         {
-            if (widgetDict != null && widgetDict.Count > 0)
-            {
-                foreach (KeyValuePair<string, UIWidget> kvPair in widgetDict)
-                {
-                    kvPair.Value.Destroy();
-                }
-            }
             //先递归销毁子
             DestroyAllWidgets();
 
