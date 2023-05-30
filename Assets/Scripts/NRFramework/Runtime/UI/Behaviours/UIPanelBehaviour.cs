@@ -89,7 +89,7 @@ namespace NRFramework
         public UIPanelGetFocusType getFocusType { get { return m_GetFocusType; } }
 
         public UIPanelEscPressEventType escPressEventType { get { return m_EscPressEventType; } }
-        
+
         public int thickness { get { return m_Thickness; } }
 
         public UIPanelOpenAnimPlayMode openAnimPlayMode { get { return m_OpenAnimPlayMode; } }
@@ -101,13 +101,17 @@ namespace NRFramework
         {
             base.Reset();
 
+            //默认显示为 Underlay
             m_PanelType = UIPanelType.Underlay;
-            m_HasBg = false;
-            m_BgShowType = UIPanelBgShowType.CustomColor;
+
+            //默认显示为 Underlay 的子项
+            m_HasBg = true;
+            m_BgShowType = UIPanelBgShowType.Alpha;
             m_CustomBgColor = Color.white;
-            m_BgClickEventType = UIPanelBgClickEventType.Custom;
+            m_BgClickEventType = UIPanelBgClickEventType.DontRespone;
             m_GetFocusType = UIPanelGetFocusType.Get;
-            m_EscPressEventType = UIPanelEscPressEventType.Custom;
+            m_EscPressEventType = UIPanelEscPressEventType.DontRespone;
+
             m_Thickness = Config.kDefaultPanelThickness;
             m_OpenAnimPlayMode = UIPanelOpenAnimPlayMode.AutoPlay;
             m_CloseAnimPlayMode = UIPanelCloseAnimPlayMode.AutoPlay;
