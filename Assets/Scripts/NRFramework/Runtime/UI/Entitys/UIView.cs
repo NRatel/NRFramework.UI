@@ -228,6 +228,14 @@ namespace NRFramework
             });
         }
 
+        protected void BindEvent(InputField inputField)
+        {
+            inputField.onValueChanged.AddListener((value) =>
+            {
+                OnValueChanged(inputField, value);
+            });
+        }
+
         protected void BindEvent(Slider slider)
         {
             slider.onValueChanged.AddListener((value) => { OnValueChanged(slider, value); });
