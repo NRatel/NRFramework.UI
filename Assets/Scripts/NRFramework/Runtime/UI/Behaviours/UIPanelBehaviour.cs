@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NRFramework
 {
-    public enum UIPanelType { Underlay, Overlay, Window, Float, System, Custom }
+    public enum UIPanelType { Underlay, Overlay, Window, ModalWindow, Float, System, Custom }
 
     public enum UIPanelBgShowType { Alpha, HalfAlphaBlack, CustomColor, /* CustomTexture, BlurryScreenshot */ }
 
@@ -48,10 +48,6 @@ namespace NRFramework
         //层级相关
         [SerializeField]
         private int m_Thickness;
-
-        ////适配相关
-        //[SerializeField]
-        //private bool m_InSafeArea;
 
         [SerializeField]
         private UIPanelOpenAnimPlayMode m_OpenAnimPlayMode;

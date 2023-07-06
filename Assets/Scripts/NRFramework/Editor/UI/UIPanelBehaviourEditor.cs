@@ -146,6 +146,14 @@ namespace NRFramework
                     m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.CloseSelf;     //默认关闭自身
                     break;
 
+                case UIPanelType.ModalWindow:
+                    m_HasBgSP.boolValue = true;
+                    m_BgShowTypeSP.enumValueIndex = (int)UIPanelBgShowType.HalfAlphaBlack;
+                    m_BgClickEventTypeSP.enumValueIndex = (int)UIPanelBgClickEventType.DontRespone;
+                    m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.Get;
+                    m_EscPressEventTypeSP.enumValueIndex = (int)UIPanelEscPressEventType.DontRespone;   //默认不响应
+                    break;
+
                 case UIPanelType.Float:
                     m_HasBgSP.boolValue = false;
                     m_GetFocusTypeSP.enumValueIndex = (int)UIPanelGetFocusType.DontGet;
@@ -162,6 +170,9 @@ namespace NRFramework
 
                 case UIPanelType.Custom:
                     break;
+
+                default:
+                    throw new NotImplementedException();
             }
         }
     }
