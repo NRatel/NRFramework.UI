@@ -161,6 +161,7 @@ namespace NRFramework
 
         public bool ExistWidget(string widgetId)
         {
+            if (widgetDict == null) { return false; }
             return widgetDict.ContainsKey(widgetId);
         }
 
