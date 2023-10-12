@@ -34,7 +34,7 @@ namespace NRFramework
             //...
         };
 
-        [MenuItem("GameObject/NRUITools/SetAsUIOpElement &s", false, 0)]
+        [MenuItem("GameObject/NRUITools/SetAsUIOpElement &1", false, 0)]
         static public void DoSet()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }
@@ -85,7 +85,7 @@ namespace NRFramework
                 //Debug.Log(transformComp);
 
                 Component theComp = selectableComp ?? layoutComp ?? customComp ?? graphicComp ?? transformComp;
-                
+
                 if (!behaviour.HasSavedComponent(go, theComp))
                 {
                     opElement.componentList.Add(theComp);

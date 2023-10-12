@@ -12,7 +12,7 @@ namespace NRFramework
     /// </summary>
     public class RemoveUIOpElement : Editor
     {
-        [MenuItem("GameObject/NRUITools/RemoveUIOpElement &r", false, 1)]
+        [MenuItem("GameObject/NRUITools/RemoveUIOpElement &2", false, 1)]
         static public void DoRemove()
         {
             if (Selection.gameObjects == null || Selection.gameObjects.Length <= 0) { return; }
@@ -24,10 +24,13 @@ namespace NRFramework
 
                 if (behaviour == null) { return; }
 
-                List<UIOpElement> opElements = behaviour.opElementList.FindAll((x) => { return go.Equals(x.target); });
-                for (int j = opElements.Count - 1; j >= 0; j--)
+                for (int j = 0; j < behaviour.opElementList.Count; j++)
                 {
-                    behaviour.opElementList.RemoveAt(j);
+                    GameObject target = behaviour.opElementList[j].target;
+                    if (go.Equals(target))
+                    {
+                        behaviour.opElementList.RemoveAt(j);
+                    }
                 }
 
                 EditorUtility.SetDirty(behaviour);
