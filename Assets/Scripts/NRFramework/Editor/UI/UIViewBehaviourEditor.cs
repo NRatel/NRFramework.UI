@@ -14,6 +14,10 @@ namespace NRFramework
     {
         protected ReorderableList m_OpElementListRL;
 
+        private HashSet<GameObject> m_CurObjSet_ForSort;
+        private List<GameObject> m_CurObjList_ForSort;
+
+
         protected virtual void OnEnable()
         {
             m_OpElementListRL = CreateReorderableList(serializedObject.FindProperty("m_OpElementList"));
@@ -222,6 +226,48 @@ namespace NRFramework
                 }
             }
 
+            #region 按照 Hierarchy 从上到下（深度优先）顺序排序
+            //将待操作元素加入 HashSet，用于从所有元素中筛选操作元素
+            if (m_CurObjSet_ForSort == null) { m_CurObjSet_ForSort = new HashSet<GameObject>(); }
+            m_CurObjSet_ForSort.Clear();
+            for (int i = 0; i < listSP.arraySize; i++)
+            {
+                SerializedProperty elementSP = listSP.GetArrayElementAtIndex(i);
+                SerializedProperty targetSP = elementSP.FindPropertyRelative("m_Target");
+                m_CurObjSet_ForSort.Add((GameObject)targetSP.objectReferenceValue);
+            }
+
+            if (m_CurObjList_ForSort == null) { m_CurObjList_ForSort = new List<GameObject>(); }
+            m_CurObjList_ForSort.Clear();
+
+            //从上到下（深度优先）遍历子物体，筛选待操作元素，加入有序列表
+            GameObject root = ((Component)target).gameObject;
+            UIEditorUtility.DFTraverse(root, (go) =>
+            {
+                if (!m_CurObjSet_ForSort.Contains(go)) { return; }
+                m_CurObjList_ForSort.Add(go);
+            });
+
+            //倒序遍历有序列表，依次移动元素至首位置
+            for (int i = m_CurObjList_ForSort.Count - 1; i >= 0; i--)
+            {
+                GameObject go = m_CurObjList_ForSort[i];
+                int srcIndex = -1;
+                for (int j = 0; j < listSP.arraySize; j++)
+                {
+                    SerializedProperty elementSP = listSP.GetArrayElementAtIndex(j);
+                    SerializedProperty targetSP = elementSP.FindPropertyRelative("m_Target");
+                    if (((GameObject)targetSP.objectReferenceValue).Equals(go))
+                    {
+                        srcIndex = j;
+                        break;
+                    }
+                }
+                Debug.Assert(srcIndex >= 0);
+                listSP.MoveArrayElement(srcIndex, 0);
+            }
+            #endregion
+
             listSP.serializedObject.ApplyModifiedProperties();
         }
 
@@ -349,10 +395,16 @@ namespace NRFramework
 
             string subPath = Path.GetRelativePath(fullRootDir, fullPrefabPath);
             string className = Path.GetFileNameWithoutExtension(subPath);
-            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + "_Temp.cs");
+            string subSavePath = Path.Combine(Path.GetDirectoryName(subPath), className + ".cs");
             string savePath = Path.GetFullPath(Path.Combine(Application.dataPath, EditorSetting.Instance.generatedTempUIRootDir, subSavePath));
 
-            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className + "_Temp");
+            if (File.Exists(savePath))
+            {
+                Debug.LogWarning("已存在此文件，本次创建被忽略：" + savePath);
+                return;
+            }
+
+            string content = UIEditorUtility.kUITemporaryCode.Replace("${ClassName}", className);
             content = content.Replace("${BaseClassName}", className + "Base");
             content = content.Replace("${PanelLifeCycleCode}", target is UIPanelBehaviour ? UIEditorUtility.kPanelLifeCycleCode : "");
             content = content.Trim();
@@ -454,5 +506,7 @@ namespace NRFramework
             return 0;
         }
         #endregion
+
+
     }
 }

@@ -150,5 +150,15 @@ public class ${ClassName} : ${BaseClassName}
 
             return systemIcon ?? customIcon ?? csScriptIcon;
         }
+
+        //深度优先遍历
+        static public void DFTraverse(GameObject go, Action<GameObject> onDeal)
+        {
+            onDeal(go);
+            foreach (Transform child in go.transform)
+            {
+                DFTraverse(child.gameObject, onDeal);
+            }
+        }
     }
 }
