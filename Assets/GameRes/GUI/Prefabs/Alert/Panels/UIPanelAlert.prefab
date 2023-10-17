@@ -222,6 +222,9 @@ MonoBehaviour:
   - m_Target: {fileID: 5144000339934200905}
     m_ComponentList:
     - {fileID: 5383461286505250072}
+  - m_Target: {fileID: 7008846566386723018}
+    m_ComponentList:
+    - {fileID: 5305418231440337863}
   - m_Target: {fileID: 4555213227138424520}
     m_ComponentList:
     - {fileID: 2286887268018695947}
@@ -231,9 +234,6 @@ MonoBehaviour:
   - m_Target: {fileID: 7355487994257160023}
     m_ComponentList:
     - {fileID: 5710250760426837253}
-  - m_Target: {fileID: 7008846566386723018}
-    m_ComponentList:
-    - {fileID: 5305418231440337863}
   m_PanelType: 2
   m_HasBg: 1
   m_BgShowType: 1
